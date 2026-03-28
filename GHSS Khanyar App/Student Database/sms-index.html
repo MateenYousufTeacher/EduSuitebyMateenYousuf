@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a4a6b">
+<meta name="description" content="GGHSS Khanyar Student Management System">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="GGHSS SMS">
+<title>GGHSS Khanyar – Student Management System</title>
+<link rel="manifest" href="manifest.json">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #1a4a6b;
+  --primary-light: #2563a8;
+  --primary-dark: #0f2d45;
+  --accent: #c0813a;
+  --accent-light: #e8a020;
+  --success: #15803d;
+  --danger: #b91c1c;
+  --warning: #ca8a04;
+  --bg: #eef2f7;
+  --surface: #ffffff;
+  --surface2: #e4eaf2;
+  --surface3: #f8fafc;
+  --text: #1e293b;
+  --text2: #56677e;
+  --border: #c8d5e3;
+  --shadow: 0 4px 20px rgba(26,74,107,0.10);
+  --shadow-md: 0 8px 32px rgba(26,74,107,0.15);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --font-head: 'Lora', serif;
+  --font-body: 'Nunito', sans-serif;
+  --tr: 0.2s cubic-bezier(.4,0,.2,1);
+}
+[data-dark="true"] {
+  --primary: #2563a8;
+  --primary-light: #3b82f6;
+  --accent: #e8a020;
+  --bg: #0c1826;
+  --surface: #172135;
+  --surface2: #1e2f47;
+  --surface3: #1a2a40;
+  --text: #e8f0fb;
+  --text2: #8faabf;
+  --border: #2b3f5c;
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background var(--tr), color var(--tr);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══ INSTALL BANNER ═══ */
+#install-banner {
+  display: none;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%);
+  color: #1e293b;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-body);
+}
+#install-banner.show { display: flex; }
+#install-banner button {
+  background: #1e293b; color: #fff; border: none;
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: var(--font-body);
+}
+#dismiss-banner { background: none !important; color: #1e293b !important; font-size: 18px !important; padding: 0 6px !important; }
+
+/* ═══ HEADER ═══ */
+.app-header {
+  background: linear-gradient(150deg, var(--primary-dark) 0%, var(--primary) 55%, #1f5c84 100%);
+  color: #fff;
+  padding: 24px 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.app-header::before {
+  content:''; position:absolute; top:-80px; right:-60px;
+  width:240px; height:240px; border-radius:50%;
+  background:rgba(255,255,255,0.04);
+}
+.app-header::after {
+  content:''; position:absolute; bottom:-50px; left:-50px;
+  width:180px; height:180px; border-radius:50%;
+  background:rgba(192,129,58,0.10);
+}
+.header-top {
+  display:flex; justify-content:space-between;
+  align-items:flex-start; margin-bottom:18px;
+  position:relative; z-index:2;
+}
+.school-identity { flex:1; }
+.school-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(192,129,58,0.22); border:1px solid rgba(232,160,32,0.4);
+  border-radius:20px; padding:3px 12px; font-size:10px;
+  font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--accent-light); margin-bottom:8px;
+}
+.school-name {
+  font-family:var(--font-head); font-size:clamp(15px,3.8vw,21px);
+  font-weight:700; line-height:1.25; color:#fff; margin-bottom:3px;
+}
+.school-sub { font-size:11px; color:rgba(255,255,255,0.55); letter-spacing:0.04em; }
+.header-actions { display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.btn-dark {
+  background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.22);
+  color:#fff; border-radius:20px; padding:5px 13px;
+  font-size:12px; cursor:pointer; font-family:var(--font-body);
+  transition:background var(--tr); white-space:nowrap;
+}
+.btn-dark:hover { background:rgba(255,255,255,0.22); }
+.header-time { font-size:11px; color:rgba(255,255,255,0.5); text-align:right; }
+
+/* Staff cards */
+.staff-row { display:flex; gap:10px; position:relative; z-index:2; }
+.staff-card {
+  flex:1; background:rgba(255,255,255,0.09);
+  border:1px solid rgba(255,255,255,0.14);
+  border-radius:var(--radius-sm); padding:10px 12px;
+  display:flex; align-items:center; gap:10px;
+  backdrop-filter:blur(8px);
+}
+.staff-avatar {
+  width:50px; height:50px; border-radius:50%;
+  border:2px solid var(--accent-light); flex-shrink:0;
+  overflow:hidden; background:rgba(255,255,255,0.08);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px;
+}
+.staff-avatar img { width:100%; height:100%; object-fit:cover; }
+.staff-name { font-weight:700; font-size:12px; color:#fff; }
+.staff-role { font-size:10px; color:var(--accent-light); margin-top:2px; }
+
+/* ═══ MAIN ═══ */
+.main { max-width:760px; margin:0 auto; padding:18px 12px 90px; }
+
+/* ═══ STATS BAR ═══ */
+.stats-bar {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:8px; margin-bottom:16px;
+}
+.stat-pill {
+  background:var(--surface); border-radius:var(--radius-sm);
+  padding:12px 10px; text-align:center;
+  box-shadow:var(--shadow); border-top:3px solid var(--primary);
+  transition:background var(--tr);
+}
+.stat-pill.green { border-top-color:var(--success); }
+.stat-pill.red { border-top-color:var(--danger); }
+.stat-pill.gold { border-top-color:var(--accent); }
+.stat-val {
+  font-family:var(--font-head); font-size:22px;
+  font-weight:700; color:var(--primary); line-height:1;
+}
+.stat-pill.green .stat-val { color:var(--success); }
+.stat-pill.red .stat-val { color:var(--danger); }
+.stat-pill.gold .stat-val { color:var(--accent); }
+.stat-lbl { font-size:10px; color:var(--text2); margin-top:3px; font-weight:600; }
+
+/* ═══ NAV TABS ═══ */
+.nav-tabs {
+  display:flex; gap:5px; background:var(--surface);
+  border-radius:var(--radius); padding:5px;
+  box-shadow:var(--shadow); margin-bottom:18px;
+  overflow-x:auto; scrollbar-width:none;
+}
+.nav-tabs::-webkit-scrollbar { display:none; }
+.nav-tab {
+  flex:1; min-width:68px; padding:8px 5px;
+  border:none; border-radius:9px; background:transparent;
+  color:var(--text2); font-family:var(--font-body);
+  font-size:10.5px; font-weight:600; cursor:pointer;
+  text-align:center; transition:all var(--tr); white-space:nowrap;
+}
+.nav-tab span { display:block; font-size:15px; margin-bottom:2px; }
+.nav-tab.active { background:var(--primary); color:#fff; box-shadow:0 2px 8px rgba(26,74,107,0.28); }
+
+/* ═══ SECTIONS ═══ */
+.section { display:none; animation:fadeUp 0.3s ease; }
+.section.active { display:block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+/* ═══ CARD ═══ */
+.card {
+  background:var(--surface); border-radius:var(--radius);
+  padding:18px; box-shadow:var(--shadow);
+  margin-bottom:14px; transition:background var(--tr);
+}
+.card-title {
+  font-family:var(--font-head); font-size:16px; font-weight:600;
+  color:var(--primary); margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+
+/* ═══ FORM ═══ */
+.form-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+}
+.form-group { display:flex; flex-direction:column; gap:5px; }
+.form-group.full { grid-column:1/-1; }
+label { font-size:12px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; }
+input, select, textarea {
+  width:100%; padding:10px 13px;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:var(--surface2); color:var(--text);
+  font-family:var(--font-body); font-size:13px;
+  outline:none; transition:border-color var(--tr), background var(--tr);
+  appearance:none; -webkit-appearance:none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color:var(--primary-light); background:var(--surface);
+}
+textarea { resize:vertical; min-height:70px; }
+.select-wrap { position:relative; }
+.select-wrap::after {
+  content:'▾'; position:absolute; right:12px; top:50%;
+  transform:translateY(-50%); color:var(--text2); pointer-events:none;
+}
+
+/* ═══ BUTTONS ═══ */
+.btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:10px 18px; border:none;
+  border-radius:var(--radius-sm); font-family:var(--font-body);
+  font-size:13px; font-weight:700; cursor:pointer;
+  transition:all var(--tr); text-decoration:none;
+}
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary:hover { background:var(--primary-light); transform:translateY(-1px); }
+.btn-success { background:var(--success); color:#fff; }
+.btn-success:hover { opacity:.88; }
+.btn-danger { background:var(--danger); color:#fff; }
+.btn-danger:hover { opacity:.88; }
+.btn-accent { background:var(--accent); color:#fff; }
+.btn-accent:hover { background:var(--accent-light); }
+.btn-ghost { background:var(--surface2); color:var(--text); border:1.5px solid var(--border); }
+.btn-ghost:hover { background:var(--border); }
+.btn-warning { background:var(--warning); color:#fff; }
+.btn-sm { padding:6px 12px; font-size:11.5px; }
+.btn-xs { padding:4px 9px; font-size:11px; }
+.btn-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+
+/* ═══ SEARCH + FILTER ROW ═══ */
+.ctrl-row { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+.ctrl-row > * { flex:1; min-width:130px; }
+
+/* ═══ TABLE ═══ */
+.table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+table {
+  width:100%; border-collapse:collapse; font-size:13px;
+  min-width:460px;
+}
+thead th {
+  background:var(--surface2); color:var(--text2);
+  font-weight:700; padding:10px 11px; text-align:left;
+  border-bottom:2px solid var(--border);
+  font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em;
+  white-space:nowrap;
+}
+tbody td { padding:10px 11px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:middle; }
+tbody tr:hover td { background:var(--surface2); }
+tbody tr:last-child td { border-bottom:none; }
+.td-actions { display:flex; gap:5px; }
+
+/* ═══ BADGES ═══ */
+.badge {
+  display:inline-flex; align-items:center;
+  padding:2px 9px; border-radius:10px;
+  font-size:11px; font-weight:700;
+}
+.badge-blue { background:#dbeafe; color:#1d4ed8; }
+.badge-green { background:#dcfce7; color:#15803d; }
+.badge-purple { background:#ede9fe; color:#6d28d9; }
+.badge-orange { background:#ffedd5; color:#c2410c; }
+[data-dark="true"] .badge-blue { background:#1e3a5f; color:#93c5fd; }
+[data-dark="true"] .badge-green { background:#14532d44; color:#4ade80; }
+[data-dark="true"] .badge-purple { background:#4c1d9544; color:#c4b5fd; }
+[data-dark="true"] .badge-orange { background:#7c2d1244; color:#fdba74; }
+
+/* ═══ PROFILE MODAL ═══ */
+.modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(10,20,35,0.65); z-index:1000;
+  align-items:flex-end; justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:var(--surface); border-radius:var(--radius) var(--radius) 0 0;
+  width:100%; max-width:600px; max-height:92vh;
+  overflow-y:auto; padding:24px 20px 32px;
+  box-shadow:var(--shadow-md);
+  animation:slideUp 0.3s ease;
+}
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.modal-header {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:18px;
+}
+.modal-title { font-family:var(--font-head); font-size:17px; font-weight:700; color:var(--primary); }
+.modal-close {
+  background:var(--surface2); border:none; border-radius:50%;
+  width:32px; height:32px; font-size:16px; cursor:pointer;
+  color:var(--text2); display:flex; align-items:center; justify-content:center;
+  transition:background var(--tr);
+}
+.modal-close:hover { background:var(--border); }
+
+.profile-avatar-big {
+  width:70px; height:70px; border-radius:50%;
+  background:linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color:#fff; font-size:26px; display:flex; align-items:center;
+  justify-content:center; margin:0 auto 16px; font-family:var(--font-head);
+  font-weight:700; border:3px solid var(--accent-light);
+}
+
+.detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-bottom:16px; }
+.detail-item { }
+.detail-label { font-size:10.5px; font-weight:700; color:var(--text2); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:3px; }
+.detail-value { font-size:13px; font-weight:600; color:var(--text); }
+
+.remarks-area { background:var(--surface2); border-radius:var(--radius-sm); padding:12px; margin-bottom:12px; }
+.remarks-text { font-size:13px; color:var(--text2); font-style:italic; }
+
+/* ═══ TOAST ═══ */
+#toast-c {
+  position:fixed; bottom:74px; left:50%; transform:translateX(-50%);
+  z-index:9999; display:flex; flex-direction:column; align-items:center;
+  gap:8px; pointer-events:none;
+}
+.toast {
+  background:#1e293b; color:#f1f5f9; padding:11px 22px;
+  border-radius:24px; font-size:13px; font-weight:600;
+  font-family:var(--font-body); box-shadow:0 6px 24px rgba(0,0,0,0.25);
+  animation:toIn 0.3s ease, toOut 0.3s ease 2.4s forwards;
+  display:flex; align-items:center; gap:8px;
+}
+@keyframes toIn  { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+@keyframes toOut { from{opacity:1} to{opacity:0;transform:translateY(14px)} }
+
+/* ═══ EMPTY STATE ═══ */
+.empty { text-align:center; padding:36px 16px; color:var(--text2); }
+.empty .ico { font-size:42px; margin-bottom:10px; }
+.empty p { font-size:13px; line-height:1.7; }
+
+/* ═══ SECTION HEADER ═══ */
+.sec-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+.sec-title { font-family:var(--font-head); font-size:17px; font-weight:700; color:var(--text); }
+
+/* ═══ COUNT BADGE ═══ */
+.cnt {
+  display:inline-flex; align-items:center; justify-content:center;
+  background:var(--accent); color:#fff; font-size:11px;
+  font-weight:700; border-radius:10px; padding:2px 8px; margin-left:5px;
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:480px) {
+  .form-grid { grid-template-columns:1fr; }
+  .stats-bar { grid-template-columns:1fr 1fr; }
+  .staff-row { flex-direction:column; }
+  .detail-grid { grid-template-columns:1fr; }
+}
+
+/* ═══ PRINT ═══ */
+@media print {
+  .app-header,.nav-tabs,.stats-bar,.btn-row,.ctrl-row,.td-actions,.modal-overlay,#toast-c,#install-banner { display:none!important; }
+  .section { display:block!important; }
+  body { background:#fff; color:#000; }
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:var(--surface2); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<!-- Install Banner -->
+<div id="install-banner">
+  📲 Install GGHSS SMS on your device!
+  <button id="install-btn">Install App</button>
+  <button id="dismiss-banner">✕</button>
+</div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-top">
+    <div class="school-identity">
+      <div class="school-badge">🏫 JKBOSE Affiliated</div>
+      <div class="school-name">Govt Girls Higher Secondary School Khanyar</div>
+      <div class="school-sub">Srinagar, Jammu &amp; Kashmir · Est. School Management System</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-dark" id="dark-toggle">🌙 Dark</button>
+      <div class="header-time" id="hdr-time"></div>
+    </div>
+  </div>
+  <div class="staff-row">
+    <div class="staff-card">
+      <div class="staff-avatar">
+        <img src="principal.jpg" alt="Principal" onerror="this.parentElement.innerHTML='👩‍💼'">
+      </div>
+      <div>
+        <div class="staff-name">Ms. Wahida Sheikh</div>
+        <div class="staff-role">🎓 Principal</div>
+      </div>
+    </div>
+    <div class="staff-card">
+      <div class="staff-avatar">
+        <img src="author.jpg" alt="Developer" onerror="this.parentElement.innerHTML='👨‍💻'">
+      </div>
+      <div>
+        <div class="staff-name">Mateen Yousuf</div>
+        <div class="staff-role">🧑‍🏫 Teacher &amp; Developer</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <div class="stat-val" id="stat-total">0</div>
+      <div class="stat-lbl">Total</div>
+    </div>
+    <div class="stat-pill green">
+      <div class="stat-val" id="stat-9">0</div>
+      <div class="stat-lbl">Class 9</div>
+    </div>
+    <div class="stat-pill gold">
+      <div class="stat-val" id="stat-10">0</div>
+      <div class="stat-lbl">Class 10</div>
+    </div>
+    <div class="stat-pill red">
+      <div class="stat-val" id="stat-1112">0</div>
+      <div class="stat-lbl">11 &amp; 12</div>
+    </div>
+  </div>
+
+  <!-- NAV TABS -->
+  <nav class="nav-tabs">
+    <button class="nav-tab active" data-tab="add"><span>➕</span>Add Student</button>
+    <button class="nav-tab" data-tab="list"><span>📋</span>Student List</button>
+    <button class="nav-tab" data-tab="search"><span>🔍</span>Search</button>
+    <button class="nav-tab" data-tab="export"><span>📤</span>Export</button>
+    <button class="nav-tab" data-tab="data"><span>🗄️</span>Data Mgmt</button>
+  </nav>
+
+  <!-- ═══ TAB: ADD STUDENT ═══ -->
+  <section class="section active" id="tab-add">
+    <div class="card">
+      <div class="card-title" id="form-title">➕ Add New Student</div>
+      <input type="hidden" id="edit-id">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Student Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. Aisha Bashir">
+        </div>
+        <div class="form-group">
+          <label>Father / Guardian Name *</label>
+          <input type="text" id="f-father" placeholder="e.g. Mr. Bashir Ahmad">
+        </div>
+        <div class="form-group">
+          <label>Class *</label>
+          <div class="select-wrap">
+            <select id="f-class">
+              <option value="">Select Class</option>
+              <option value="9">Class 9</option>
+              <option value="10">Class 10</option>
+              <option value="11">Class 11</option>
+              <option value="12">Class 12</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Section</label>
+          <div class="select-wrap">
+            <select id="f-section">
+              <option value="">Select Section</option>
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+              <option value="C">Section C</option>
+              <option value="D">Section D</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Roll Number *</label>
+          <input type="text" id="f-roll" placeholder="e.g. 2024-001">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="f-phone" placeholder="e.g. 9419000000">
+        </div>
+        <div class="form-group">
+          <label>Admission Date</label>
+          <input type="date" id="f-admission">
+        </div>
+        <div class="form-group">
+          <label>Date of Birth</label>
+          <input type="date" id="f-dob">
+        </div>
+        <div class="form-group full">
+          <label>Address</label>
+          <input type="text" id="f-address" placeholder="e.g. Khanyar, Srinagar">
+        </div>
+        <div class="form-group full">
+          <label>Academic Notes / Remarks</label>
+          <textarea id="f-remarks" placeholder="Any academic notes, remarks, or observations..."></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="save-btn">💾 Save Student</button>
+        <button class="btn btn-ghost" id="clear-form-btn">🔄 Clear Form</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TAB: STUDENT LIST ═══ -->
+  <section class="section" id="tab-list">
+    <div class="card">
+      <div class="sec-head">
+        <div class="sec-title">Student Database <span class="cnt" id="list-count">0</span></div>
+      </div>
+      <div class="ctrl-row">
+        <div class="select-wrap">
+          <select id="filter-class">
+            <option value="">All Classes</option>
+            <option value="9">Class 9</option>
+            <option value="10">Class 10</option>
+            <option value="11">Class 11</option>
+            <option value="12">Class 12</option>
+          </select>
+        </div>
+        <div class="select-wrap">
+          <select id="filter-section">
+            <option value="">All Sections</option>
+            <option value="A">Section A</option>
+            <option value="B">Section B</option>
+            <option value="C">Section C</option>
+            <option value="D">Section D</option>
+          </select>
+        </div>
+        <div class="select-wrap">
+          <select id="sort-by">
+            <option value="name">Sort: Name</option>
+            <option value="class">Sort: Class</option>
+            <option value="roll">Sort: Roll No</option>
+            <option value="admission">Sort: Admission</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="students-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student Name</th>
+              <th>Class</th>
+              <th>Section</th>
+              <th>Roll No</th>
+              <th>Phone</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div id="list-empty" class="empty" style="display:none;">
+        <div class="ico">👩‍🎓</div>
+        <p>No students found.<br>Add students using the <strong>Add Student</strong> tab.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TAB: SEARCH ═══ -->
+  <section class="section" id="tab-search">
+    <div class="card">
+      <div class="card-title">🔍 Search Students</div>
+      <div style="margin-bottom:12px;">
+        <input type="text" id="search-input" placeholder="Search by name, roll number, father name, phone...">
+      </div>
+      <div id="search-results"></div>
+      <div id="search-empty" class="empty" style="display:none;">
+        <div class="ico">🔎</div>
+        <p>No results found.<br>Try a different search term.</p>
+      </div>
+      <div id="search-hint" class="empty">
+        <div class="ico">🔍</div>
+        <p>Type above to search through all students.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TAB: EXPORT ═══ -->
+  <section class="section" id="tab-export">
+    <div class="card">
+      <div class="card-title">📤 Export Student Data</div>
+      <div class="ctrl-row">
+        <div class="select-wrap">
+          <select id="exp-class">
+            <option value="">All Classes</option>
+            <option value="9">Class 9</option>
+            <option value="10">Class 10</option>
+            <option value="11">Class 11</option>
+            <option value="12">Class 12</option>
+          </select>
+        </div>
+        <div class="select-wrap">
+          <select id="exp-section">
+            <option value="">All Sections</option>
+            <option value="A">Section A</option>
+            <option value="B">Section B</option>
+            <option value="C">Section C</option>
+            <option value="D">Section D</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="exp-print">🖨️ Print / PDF View</button>
+        <button class="btn btn-accent" id="exp-text">📄 Export as Text</button>
+        <button class="btn btn-success" id="exp-csv">📊 Export as CSV</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">💾 Backup &amp; Restore</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:14px;">Download a full JSON backup of all student data, or restore from a previous backup file.</p>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="backup-btn">⬇️ Download Backup (JSON)</button>
+        <label class="btn btn-ghost" style="cursor:pointer;">
+          ⬆️ Restore from Backup
+          <input type="file" id="restore-file" accept=".json" style="display:none;">
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TAB: DATA MANAGEMENT ═══ -->
+  <section class="section" id="tab-data">
+    <div class="card">
+      <div class="card-title">🗄️ Data Management</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.8;">
+        Manage all stored student data. Use with caution — deletions cannot be undone.
+      </div>
+
+      <div style="display:grid;gap:12px;">
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:14px;">
+          <div style="font-weight:700;font-size:13px;color:var(--text);margin-bottom:5px;">⚠️ Reset All Students</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">Permanently delete all student records. This cannot be undone.</div>
+          <button class="btn btn-danger btn-sm" id="reset-all-btn">🗑️ Reset All Data</button>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:14px;">
+          <div style="font-weight:700;font-size:13px;color:var(--text);margin-bottom:5px;">📦 Load Demo Data</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">Load 20 sample students to explore the system (existing data preserved).</div>
+          <button class="btn btn-success btn-sm" id="demo-btn">📦 Load Demo Students</button>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:14px;">
+          <div style="font-weight:700;font-size:13px;color:var(--text);margin-bottom:5px;">📊 Storage Info</div>
+          <div id="storage-info" style="font-size:12px;color:var(--text2);margin-top:4px;line-height:1.8;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /main -->
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Student Profile</div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast-c"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const val = id => $(id).value.trim();
+
+function toast(msg, type='info') {
+  const c = $('toast-c');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  const ico = {success:'✅',error:'❌',info:'ℹ️',warn:'⚠️'};
+  t.textContent = (ico[type]||'ℹ️') + ' ' + msg;
+  if(type==='success') t.style.background='#15803d';
+  if(type==='error') t.style.background='#b91c1c';
+  if(type==='warn') t.style.background='#b45309';
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function classBadge(cls) {
+  const m = {'9':'badge-green','10':'badge-blue','11':'badge-purple','12':'badge-orange'};
+  return `<span class="badge ${m[cls]||'badge-blue'}">Class ${cls}</span>`;
+}
+
+// ═══════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════
+function getData() {
+  try { return JSON.parse(localStorage.getItem('sms_students') || '[]'); }
+  catch(e) { return []; }
+}
+function setData(arr) {
+  localStorage.setItem('sms_students', JSON.stringify(arr));
+}
+
+const DEMO_STUDENTS = [
+  {name:'Aisha Bashir',father:'Mr. Bashir Ahmad',class:'9',section:'A',roll:'9001',phone:'9419111001',address:'Khanyar, Srinagar',admission:'2025-04-01',dob:'2011-05-12',remarks:'Excellent student'},
+  {name:'Fatima Noor',father:'Mr. Noor Din',class:'9',section:'A',roll:'9002',phone:'9419111002',address:'Nowhatta, Srinagar',admission:'2025-04-01',dob:'2011-07-08',remarks:''},
+  {name:'Zainab Mir',father:'Mr. Ghulam Mir',class:'9',section:'B',roll:'9003',phone:'9419111003',address:'Safakadal, Srinagar',admission:'2025-04-01',dob:'2011-03-22',remarks:'Good in Mathematics'},
+  {name:'Huma Wani',father:'Mr. Ali Wani',class:'9',section:'B',roll:'9004',phone:'9419111004',address:'Rainawari, Srinagar',admission:'2025-04-01',dob:'2011-09-15',remarks:''},
+  {name:'Sana Bhat',father:'Mr. Rafi Bhat',class:'10',section:'A',roll:'10001',phone:'9419222001',address:'Khanyar, Srinagar',admission:'2024-04-01',dob:'2010-06-18',remarks:'Science topper'},
+  {name:'Ruqaya Jan',father:'Mr. Habib Jan',class:'10',section:'A',roll:'10002',phone:'9419222002',address:'Nawab Bazar, Srinagar',admission:'2024-04-01',dob:'2010-11-25',remarks:''},
+  {name:'Nadia Qadri',father:'Mr. Abdul Qadri',class:'10',section:'B',roll:'10003',phone:'9419222003',address:'Barbarshah, Srinagar',admission:'2024-04-01',dob:'2010-01-30',remarks:'Class monitor'},
+  {name:'Shazia Khan',father:'Mr. Farooq Khan',class:'10',section:'B',roll:'10004',phone:'9419222004',address:'Khanyar, Srinagar',admission:'2024-04-01',dob:'2010-04-05',remarks:''},
+  {name:'Asma Lone',father:'Mr. Bashir Lone',class:'11',section:'A',roll:'11001',phone:'9419333001',address:'Badami Bagh, Srinagar',admission:'2023-04-01',dob:'2009-08-14',remarks:'Medical stream'},
+  {name:'Rabia Sheikh',father:'Mr. Muzaffar Sheikh',class:'11',section:'A',roll:'11002',phone:'9419333002',address:'Khanyar, Srinagar',admission:'2023-04-01',dob:'2009-12-20',remarks:''},
+  {name:'Insha Dar',father:'Mr. Shafi Dar',class:'11',section:'B',roll:'11003',phone:'9419333003',address:'Iddgah, Srinagar',admission:'2023-04-01',dob:'2009-02-17',remarks:'Arts stream'},
+  {name:'Mehwish Ganie',father:'Mr. Ab Ganie',class:'11',section:'B',roll:'11004',phone:'9419333004',address:'Safakadal, Srinagar',admission:'2023-04-01',dob:'2009-07-09',remarks:''},
+  {name:'Saba Andrabi',father:'Mr. Mukhtar Andrabi',class:'12',section:'A',roll:'12001',phone:'9419444001',address:'Khanyar, Srinagar',admission:'2022-04-01',dob:'2008-05-28',remarks:'Board topper candidate'},
+  {name:'Farida Mufti',father:'Mr. Said Mufti',class:'12',section:'A',roll:'12002',phone:'9419444002',address:'Karan Nagar, Srinagar',admission:'2022-04-01',dob:'2008-09-03',remarks:''},
+  {name:'Gulshan Rather',father:'Mr. Bashir Rather',class:'12',section:'B',roll:'12003',phone:'9419444003',address:'Khanyar, Srinagar',admission:'2022-04-01',dob:'2008-03-11',remarks:'Commerce stream'},
+  {name:'Tahira Beg',father:'Mr. Mirza Beg',class:'12',section:'B',roll:'12004',phone:'9419444004',address:'Rainawari, Srinagar',admission:'2022-04-01',dob:'2008-11-22',remarks:''},
+  {name:'Afshan Sofi',father:'Mr. Ghulam Sofi',class:'9',section:'C',roll:'9005',phone:'9419111005',address:'Nowhatta, Srinagar',admission:'2025-04-01',dob:'2011-10-06',remarks:''},
+  {name:'Noor Ul Ain',father:'Mr. Bashir Ahmad',class:'10',section:'C',roll:'10005',phone:'9419222005',address:'Khanyar, Srinagar',admission:'2024-04-01',dob:'2010-08-19',remarks:''},
+  {name:'Lubna Akhtar',father:'Mr. Akhtar Hussain',class:'11',section:'C',roll:'11005',phone:'9419333005',address:'Safakadal, Srinagar',admission:'2023-04-01',dob:'2009-04-24',remarks:''},
+  {name:'Uzma Parray',father:'Mr. Ali Parray',class:'12',section:'C',roll:'12005',phone:'9419444005',address:'Barbarshah, Srinagar',admission:'2022-04-01',dob:'2008-06-30',remarks:'Science stream'}
+];
+
+// ═══════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════
+let dark = localStorage.getItem('sms_dark') === 'true';
+function applyDark() {
+  document.body.setAttribute('data-dark', dark);
+  $('dark-toggle').textContent = dark ? '☀️ Light' : '🌙 Dark';
+}
+applyDark();
+$('dark-toggle').addEventListener('click', () => {
+  dark = !dark; localStorage.setItem('sms_dark', dark); applyDark();
+});
+
+// ═══════════════════════════════════════════
+// HEADER TIME
+// ═══════════════════════════════════════════
+function updateTime() {
+  const now = new Date();
+  $('hdr-time').textContent = now.toLocaleDateString('en-IN', {weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+updateTime();
+
+// ═══════════════════════════════════════════
+// NAV TABS
+// ═══════════════════════════════════════════
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    $('tab-' + tab.dataset.tab).classList.add('active');
+    if(tab.dataset.tab === 'list') renderList();
+    if(tab.dataset.tab === 'data') updateStorageInfo();
+  });
+});
+
+// ═══════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════
+function updateStats() {
+  const d = getData();
+  $('stat-total').textContent = d.length;
+  $('stat-9').textContent = d.filter(s => s.class==='9').length;
+  $('stat-10').textContent = d.filter(s => s.class==='10').length;
+  $('stat-1112').textContent = d.filter(s => s.class==='11'||s.class==='12').length;
+}
+updateStats();
+
+// ═══════════════════════════════════════════
+// ADD / EDIT STUDENT FORM
+// ═══════════════════════════════════════════
+$('f-admission').value = new Date().toISOString().split('T')[0];
+
+function clearForm() {
+  ['f-name','f-father','f-roll','f-phone','f-address','f-remarks','f-dob'].forEach(id => $(id).value = '');
+  $('f-class').value = ''; $('f-section').value = '';
+  $('f-admission').value = new Date().toISOString().split('T')[0];
+  $('edit-id').value = '';
+  $('form-title').textContent = '➕ Add New Student';
+  $('save-btn').textContent = '💾 Save Student';
+}
+
+$('clear-form-btn').addEventListener('click', clearForm);
+
+$('save-btn').addEventListener('click', () => {
+  const name = val('f-name'), father = val('f-father');
+  const cls = val('f-class'), roll = val('f-roll');
+  if(!name){ toast('Student name is required.','error'); return; }
+  if(!father){ toast('Father/Guardian name is required.','error'); return; }
+  if(!cls){ toast('Please select a class.','error'); return; }
+  if(!roll){ toast('Roll number is required.','error'); return; }
+
+  const data = getData();
+  const editId = val('edit-id');
+
+  if(editId) {
+    const idx = data.findIndex(s => s.id === editId);
+    if(idx > -1) {
+      data[idx] = { ...data[idx], name, father, class:cls, section:val('f-section'), roll, phone:val('f-phone'), address:val('f-address'), admission:val('f-admission'), dob:val('f-dob'), remarks:val('f-remarks'), updatedAt:Date.now() };
+      setData(data); updateStats();
+      toast('Student updated successfully!','success');
+      clearForm();
+    }
+  } else {
+    // Check duplicate roll
+    if(data.find(s => s.roll === roll && s.class === cls)){
+      toast('Roll number already exists in this class.','warn'); return;
+    }
+    data.push({ id:genId(), name, father, class:cls, section:val('f-section'), roll, phone:val('f-phone'), address:val('f-address'), admission:val('f-admission'), dob:val('f-dob'), remarks:val('f-remarks'), createdAt:Date.now() });
+    setData(data); updateStats();
+    toast('Student added successfully! 🎉','success');
+    clearForm();
+  }
+});
+
+// ═══════════════════════════════════════════
+// STUDENT LIST RENDERING
+// ═══════════════════════════════════════════
+function getFiltered() {
+  let data = getData();
+  const fc = $('filter-class').value;
+  const fs = $('filter-section').value;
+  const sb = $('sort-by').value;
+  if(fc) data = data.filter(s => s.class === fc);
+  if(fs) data = data.filter(s => s.section === fs);
+  if(sb === 'name') data.sort((a,b) => a.name.localeCompare(b.name));
+  else if(sb === 'class') data.sort((a,b) => a.class.localeCompare(b.class) || a.name.localeCompare(b.name));
+  else if(sb === 'roll') data.sort((a,b) => a.roll.localeCompare(b.roll));
+  else if(sb === 'admission') data.sort((a,b) => (b.admission||'').localeCompare(a.admission||''));
+  return data;
+}
+
+function renderList() {
+  const data = getFiltered();
+  const tbody = $('table-body');
+  $('list-count').textContent = data.length;
+
+  if(!data.length) {
+    tbody.innerHTML = '';
+    $('list-empty').style.display = 'block';
+    return;
+  }
+  $('list-empty').style.display = 'none';
+
+  tbody.innerHTML = data.map((s,i) => `
+    <tr>
+      <td><span style="color:var(--text2);font-size:11px;font-weight:700;">${i+1}</span></td>
+      <td>
+        <div style="font-weight:700;font-size:13px;">${s.name}</div>
+        <div style="font-size:11px;color:var(--text2);">${s.father}</div>
+      </td>
+      <td>${classBadge(s.class)}</td>
+      <td><span style="font-size:12px;font-weight:600;">${s.section||'—'}</span></td>
+      <td><span style="font-size:12px;font-weight:700;color:var(--primary);">${s.roll}</span></td>
+      <td><span style="font-size:12px;">${s.phone||'—'}</span></td>
+      <td>
+        <div class="td-actions">
+          <button class="btn btn-primary btn-xs" onclick="viewProfile('${s.id}')">👁️</button>
+          <button class="btn btn-accent btn-xs" onclick="editStudent('${s.id}')">✏️</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteStudent('${s.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+['filter-class','filter-section','sort-by'].forEach(id => {
+  $(id).addEventListener('change', renderList);
+});
+
+// ═══════════════════════════════════════════
+// EDIT & DELETE
+// ═══════════════════════════════════════════
+function editStudent(id) {
+  const s = getData().find(x => x.id === id);
+  if(!s) return;
+  $('f-name').value = s.name;
+  $('f-father').value = s.father;
+  $('f-class').value = s.class;
+  $('f-section').value = s.section||'';
+  $('f-roll').value = s.roll;
+  $('f-phone').value = s.phone||'';
+  $('f-address').value = s.address||'';
+  $('f-admission').value = s.admission||'';
+  $('f-dob').value = s.dob||'';
+  $('f-remarks').value = s.remarks||'';
+  $('edit-id').value = id;
+  $('form-title').textContent = '✏️ Edit Student';
+  $('save-btn').textContent = '💾 Update Student';
+  // Switch to add tab
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s2 => s2.classList.remove('active'));
+  document.querySelector('[data-tab="add"]').classList.add('active');
+  $('tab-add').classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+  toast('Editing student record.','info');
+}
+
+function deleteStudent(id) {
+  const s = getData().find(x => x.id === id);
+  if(!s) return;
+  if(!confirm(`Delete "${s.name}"?\nThis cannot be undone.`)) return;
+  const newData = getData().filter(x => x.id !== id);
+  setData(newData); updateStats(); renderList();
+  toast('Student deleted.','warn');
+}
+
+// ═══════════════════════════════════════════
+// PROFILE MODAL
+// ═══════════════════════════════════════════
+function viewProfile(id) {
+  const s = getData().find(x => x.id === id);
+  if(!s) return;
+  const initials = s.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  $('modal-title').textContent = '👤 Student Profile';
+  $('modal-body').innerHTML = `
+    <div class="profile-avatar-big">${initials}</div>
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--text);">${s.name}</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px;">${classBadge(s.class)} ${s.section?`<span class="badge badge-blue">Sec ${s.section}</span>`:''} <span class="badge badge-purple">Roll: ${s.roll}</span></div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">Father / Guardian</div><div class="detail-value">${s.father||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Phone</div><div class="detail-value">${s.phone||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Date of Birth</div><div class="detail-value">${s.dob||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Admission Date</div><div class="detail-value">${s.admission||'—'}</div></div>
+      <div class="detail-item detail-item-full" style="grid-column:1/-1;"><div class="detail-label">Address</div><div class="detail-value">${s.address||'—'}</div></div>
+    </div>
+    <div style="margin-bottom:8px;font-size:10.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;">Academic Notes / Remarks</div>
+    <div class="remarks-area">
+      <div class="remarks-text">${s.remarks||'No remarks added.'}</div>
+    </div>
+    <div id="inline-remarks-edit" style="margin-top:10px;">
+      <textarea id="modal-remarks" style="width:100%;margin-bottom:8px;" placeholder="Add/edit remarks...">${s.remarks||''}</textarea>
+      <button class="btn btn-primary btn-sm" onclick="saveRemarks('${s.id}')">💾 Save Remarks</button>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-accent btn-sm" onclick="editStudent('${s.id}');closeModal();">✏️ Edit Full Profile</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}');closeModal();">🗑️ Delete</button>
+    </div>
+  `;
+  $('profile-modal').classList.add('open');
+}
+
+function saveRemarks(id) {
+  const data = getData();
+  const idx = data.findIndex(s => s.id === id);
+  if(idx > -1) {
+    data[idx].remarks = $('modal-remarks').value.trim();
+    setData(data);
+    toast('Remarks saved!','success');
+  }
+}
+
+function closeModal() { $('profile-modal').classList.remove('open'); }
+$('modal-close').addEventListener('click', closeModal);
+$('profile-modal').addEventListener('click', e => { if(e.target === $('profile-modal')) closeModal(); });
+
+// ═══════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════
+$('search-input').addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  $('search-hint').style.display = q ? 'none' : 'block';
+  $('search-empty').style.display = 'none';
+  $('search-results').innerHTML = '';
+  if(!q) return;
+
+  const results = getData().filter(s =>
+    s.name.toLowerCase().includes(q) ||
+    s.roll.toLowerCase().includes(q) ||
+    (s.father||'').toLowerCase().includes(q) ||
+    (s.phone||'').includes(q) ||
+    (s.address||'').toLowerCase().includes(q)
+  );
+
+  if(!results.length) { $('search-empty').style.display = 'block'; return; }
+
+  $('search-results').innerHTML = `
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">${results.length} result${results.length>1?'s':''} found</div>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>#</th><th>Student Name</th><th>Class</th><th>Roll</th><th>Phone</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${results.map((s,i) => `<tr>
+          <td>${i+1}</td>
+          <td><div style="font-weight:700;">${s.name}</div><div style="font-size:11px;color:var(--text2);">${s.father}</div></td>
+          <td>${classBadge(s.class)}</td>
+          <td style="font-weight:700;color:var(--primary);">${s.roll}</td>
+          <td>${s.phone||'—'}</td>
+          <td><div class="td-actions">
+            <button class="btn btn-primary btn-xs" onclick="viewProfile('${s.id}')">👁️</button>
+            <button class="btn btn-accent btn-xs" onclick="editStudent('${s.id}')">✏️</button>
+          </div></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    </div>`;
+});
+
+// ═══════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════
+function getExpData() {
+  let data = getData();
+  const ec = $('exp-class').value;
+  const es = $('exp-section').value;
+  if(ec) data = data.filter(s => s.class === ec);
+  if(es) data = data.filter(s => s.section === es);
+  return data;
+}
+
+$('exp-print').addEventListener('click', () => {
+  const data = getExpData();
+  if(!data.length){ toast('No students to export.','error'); return; }
+  const ec = $('exp-class').value;
+  const es = $('exp-section').value;
+  const label = (ec?`Class ${ec}`:'')+' '+(es?`Section ${es}`:'');
+
+  const rows = data.map((s,i) => `<tr>
+    <td>${i+1}</td><td>${s.name}</td><td>${s.father}</td>
+    <td>Class ${s.class}</td><td>${s.section||'—'}</td>
+    <td>${s.roll}</td><td>${s.phone||'—'}</td>
+    <td>${s.address||'—'}</td><td>${s.admission||'—'}</td>
+  </tr>`).join('');
+
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>GGHSS Khanyar – Student List</title>
+  <style>
+    body{font-family:Arial,sans-serif;padding:24px;color:#1e293b;}
+    h2{color:#1a4a6b;} h3{color:#56677e;font-weight:normal;font-size:14px;margin:4px 0 16px;}
+    table{width:100%;border-collapse:collapse;font-size:12px;}
+    th{background:#1a4a6b;color:#fff;padding:8px;text-align:left;}
+    td{padding:7px 8px;border-bottom:1px solid #e2e8f0;}
+    tr:nth-child(even) td{background:#f8fafc;}
+    .foot{margin-top:16px;font-size:11px;color:#94a3b8;}
+    @media print{.no-print{display:none}}
+  </style></head><body>
+  <h2>🏫 GGHSS Khanyar – Student List</h2>
+  <h3>Filter: ${label||'All Students'} &nbsp;|&nbsp; Total: ${data.length} students &nbsp;|&nbsp; Generated: ${new Date().toLocaleString('en-IN')}</h3>
+  <table><thead><tr><th>#</th><th>Name</th><th>Father</th><th>Class</th><th>Section</th><th>Roll</th><th>Phone</th><th>Address</th><th>Admission</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <div class="foot">Principal: Ms. Wahida Sheikh &nbsp;|&nbsp; Developer: Mateen Yousuf, GGHSS Khanyar</div>
+  <br><button class="no-print" onclick="window.print()">🖨️ Print</button>
+  </body></html>`);
+  w.document.close();
+  toast('Print view opened!','success');
+});
+
+$('exp-text').addEventListener('click', () => {
+  const data = getExpData();
+  if(!data.length){ toast('No data to export.','error'); return; }
+  let txt = `GGHSS KHANYAR – STUDENT LIST\n`;
+  txt += `School: Govt Girls Higher Secondary School, Khanyar, Srinagar\n`;
+  txt += `Generated: ${new Date().toLocaleString('en-IN')}\n`;
+  txt += `${'='.repeat(65)}\n\n`;
+  txt += `${'#'.padEnd(4)}${'Name'.padEnd(22)}${'Father'.padEnd(20)}${'Class'.padEnd(7)}${'Roll'.padEnd(10)}${'Phone'.padEnd(14)}Section\n`;
+  txt += `${'─'.repeat(80)}\n`;
+  data.forEach((s,i) => {
+    txt += `${String(i+1).padEnd(4)}${s.name.slice(0,21).padEnd(22)}${(s.father||'').slice(0,19).padEnd(20)}${('Cls '+s.class).padEnd(7)}${s.roll.padEnd(10)}${(s.phone||'').padEnd(14)}${s.section||''}\n`;
+  });
+  txt += `\nTotal: ${data.length} students\n`;
+  txt += `Principal: Ms. Wahida Sheikh | Developer: Mateen Yousuf\n`;
+  const blob = new Blob([txt],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `students_${Date.now()}.txt`;
+  a.click();
+  toast('Text file downloaded!','success');
+});
+
+$('exp-csv').addEventListener('click', () => {
+  const data = getExpData();
+  if(!data.length){ toast('No data to export.','error'); return; }
+  const hdr = ['Name','Father','Class','Section','Roll','Phone','Address','Admission','DOB','Remarks'];
+  const rows = data.map(s => [s.name,s.father,s.class,s.section,s.roll,s.phone,s.address,s.admission,s.dob,s.remarks].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv = [hdr.join(','), ...rows].join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `students_${Date.now()}.csv`;
+  a.click();
+  toast('CSV downloaded!','success');
+});
+
+// ═══════════════════════════════════════════
+// BACKUP & RESTORE
+// ═══════════════════════════════════════════
+$('backup-btn').addEventListener('click', () => {
+  const data = getData();
+  if(!data.length){ toast('No data to backup.','error'); return; }
+  const blob = new Blob([JSON.stringify({school:'GGHSS Khanyar',version:'1.0',exported:new Date().toISOString(),students:data},null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `gghss_backup_${Date.now()}.json`;
+  a.click();
+  toast('Backup downloaded!','success');
+});
+
+$('restore-file').addEventListener('change', function() {
+  const file = this.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const json = JSON.parse(e.target.result);
+      const arr = json.students || json;
+      if(!Array.isArray(arr)) throw new Error('Invalid format');
+      if(!confirm(`Restore ${arr.length} students? Existing data will be REPLACED.`)) return;
+      setData(arr); updateStats(); renderList();
+      toast(`${arr.length} students restored!`,'success');
+    } catch(err) {
+      toast('Invalid backup file.','error');
+    }
+    this.value = '';
+  };
+  reader.readAsText(file);
+});
+
+// ═══════════════════════════════════════════
+// DATA MANAGEMENT
+// ═══════════════════════════════════════════
+$('reset-all-btn').addEventListener('click', () => {
+  if(!confirm('DELETE ALL student records permanently?')) return;
+  if(!confirm('Are you absolutely sure? This cannot be undone!')) return;
+  setData([]); updateStats(); renderList(); updateStorageInfo();
+  toast('All data cleared.','warn');
+});
+
+$('demo-btn').addEventListener('click', () => {
+  const cur = getData();
+  const toAdd = DEMO_STUDENTS.map(s => ({...s, id:genId(), createdAt:Date.now()}));
+  setData([...cur, ...toAdd]); updateStats(); updateStorageInfo();
+  toast(`${toAdd.length} demo students added!`,'success');
+});
+
+function updateStorageInfo() {
+  const data = getData();
+  const raw = localStorage.getItem('sms_students')||'';
+  const kb = (new Blob([raw]).size/1024).toFixed(1);
+  $('storage-info').innerHTML = `
+    👩‍🎓 Total Students: <strong>${data.length}</strong><br>
+    📦 Storage Used: <strong>${kb} KB</strong><br>
+    📅 Last Updated: <strong>${data.length?new Date(Math.max(...data.map(s=>s.createdAt||0))).toLocaleString('en-IN'):'—'}</strong>
+  `;
+}
+
+// ═══════════════════════════════════════════
+// PWA INSTALL
+// ═══════════════════════════════════════════
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  $('install-banner').classList.add('show');
+});
+$('install-btn').addEventListener('click', () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(r => {
+    if(r.outcome==='accepted') toast('App installed! 🎉','success');
+    deferredPrompt = null;
+    $('install-banner').classList.remove('show');
+  });
+});
+$('dismiss-banner').addEventListener('click', () => $('install-banner').classList.remove('show'));
+
+// ═══════════════════════════════════════════
+// SERVICE WORKER
+// ═══════════════════════════════════════════
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(()=>console.log('SW OK')).catch(()=>{});
+}
+
+// Init
+renderList();
+updateStorageInfo();
+</script>
+</body>
+</html>

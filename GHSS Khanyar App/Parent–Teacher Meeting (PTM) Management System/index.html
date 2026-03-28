@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="theme-color" content="#1e40af"/>
+<meta name="description" content="PTM Management System - GGHSS Khanyar"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="PTM Manager"/>
+<link rel="manifest" href="manifest.json"/>
+<title>GGHSS Khanyar – PTM System</title>
+<style>
+/* ===== CSS VARIABLES ===== */
+:root{
+  --bg:#f0f4ff;
+  --bg2:#e8eeff;
+  --card:#ffffff;
+  --card2:#f8faff;
+  --border:#c7d4f5;
+  --text:#0f1e4a;
+  --text2:#3d5080;
+  --text3:#6b7fb5;
+  --accent:#1e40af;
+  --accent2:#3b5fe2;
+  --accent3:#60a5fa;
+  --gold:#d97706;
+  --gold2:#fbbf24;
+  --green:#059669;
+  --green2:#d1fae5;
+  --red:#dc2626;
+  --red2:#fee2e2;
+  --orange:#ea580c;
+  --orange2:#ffedd5;
+  --purple:#7c3aed;
+  --purple2:#ede9fe;
+  --shadow:0 4px 24px rgba(30,64,175,0.10);
+  --shadow2:0 8px 40px rgba(30,64,175,0.18);
+  --radius:14px;
+  --radius2:20px;
+  --font-head:'Georgia',serif;
+  --font-body:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  --transition:all 0.25s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"]{
+  --bg:#0a0f1e;
+  --bg2:#0f172a;
+  --card:#111827;
+  --card2:#1e2636;
+  --border:#1e3a6e;
+  --text:#e2e8ff;
+  --text2:#93aad4;
+  --text3:#4d6898;
+  --accent:#3b82f6;
+  --accent2:#60a5fa;
+  --accent3:#93c5fd;
+  --gold:#f59e0b;
+  --gold2:#fcd34d;
+  --green:#10b981;
+  --green2:#064e3b;
+  --red:#f87171;
+  --red2:#450a0a;
+  --orange:#fb923c;
+  --orange2:#431407;
+  --purple:#a78bfa;
+  --purple2:#2e1065;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+  --shadow2:0 8px 40px rgba(0,0,0,0.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  transition:background 0.3s,color 0.3s;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+/* ===== TOAST NOTIFICATION ===== */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--accent);color:#fff;padding:12px 28px;border-radius:50px;
+  font-size:.9rem;font-weight:600;z-index:9999;opacity:0;
+  transition:all 0.35s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow2);
+  white-space:nowrap;pointer-events:none;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.success{background:var(--green)}
+#toast.error{background:var(--red)}
+#toast.info{background:var(--purple)}
+
+/* ===== TOP HEADER ===== */
+.school-header{
+  background:linear-gradient(135deg,#0f2060 0%,#1e40af 40%,#1e3a8a 70%,#0c1a5e 100%);
+  color:#fff;padding:0;position:relative;overflow:hidden;
+  box-shadow:0 6px 32px rgba(15,32,96,0.4);
+}
+.header-bg-pattern{
+  position:absolute;inset:0;opacity:0.07;
+  background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%);
+  background-size:20px 20px;
+}
+.header-inner{
+  position:relative;z-index:1;max-width:960px;margin:0 auto;
+  padding:24px 20px 20px;
+}
+.school-name-row{
+  text-align:center;margin-bottom:20px;
+}
+.school-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.2);border-radius:50px;
+  padding:6px 20px 6px 8px;margin-bottom:10px;
+}
+.school-badge-icon{font-size:1.6rem}
+.school-badge-text{font-size:.75rem;font-weight:600;letter-spacing:.08em;opacity:.85;text-transform:uppercase}
+.school-title{
+  font-family:var(--font-head);font-size:clamp(1.2rem,4vw,1.9rem);
+  font-weight:700;line-height:1.2;margin-bottom:6px;
+  text-shadow:0 2px 12px rgba(0,0,0,0.3);
+}
+.school-subtitle{
+  font-size:.85rem;opacity:.75;letter-spacing:.04em;
+}
+.header-divider{
+  width:60px;height:3px;background:var(--gold2);
+  border-radius:2px;margin:12px auto;
+}
+
+/* Profile Cards */
+.profile-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;
+  max-width:600px;margin:0 auto;
+}
+.profile-card{
+  background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.2);border-radius:16px;
+  padding:16px;display:flex;align-items:center;gap:14px;
+  transition:var(--transition);
+}
+.profile-card:hover{background:rgba(255,255,255,0.17);transform:translateY(-2px)}
+.profile-photo{
+  width:64px;height:64px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.4);
+  object-fit:cover;flex-shrink:0;
+  background:rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;
+}
+.profile-photo img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.profile-info{min-width:0}
+.profile-role{
+  font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  opacity:.7;margin-bottom:3px;color:var(--gold2);
+}
+.profile-name{font-size:.9rem;font-weight:700;line-height:1.2}
+.profile-dept{font-size:.72rem;opacity:.65;margin-top:2px}
+
+/* ===== DARK MODE TOGGLE ===== */
+.topbar{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:8px 16px;display:flex;justify-content:space-between;align-items:center;
+}
+.topbar-left{font-size:.8rem;color:var(--text2);font-weight:500}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.btn-icon{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:8px;padding:6px 12px;cursor:pointer;
+  font-size:.8rem;color:var(--text2);transition:var(--transition);
+  display:flex;align-items:center;gap:5px;font-weight:600;
+}
+.btn-icon:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ===== NAV TABS ===== */
+.nav-tabs{
+  background:var(--card);border-bottom:2px solid var(--border);
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(30,64,175,0.08);
+}
+.nav-inner{
+  max-width:960px;margin:0 auto;
+  display:flex;overflow-x:auto;gap:0;
+  scrollbar-width:none;
+}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-tab{
+  flex-shrink:0;padding:14px 20px;cursor:pointer;
+  font-size:.82rem;font-weight:600;color:var(--text3);
+  border-bottom:3px solid transparent;transition:var(--transition);
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+  background:none;border-top:none;border-left:none;border-right:none;
+  margin-bottom:-2px;
+}
+.nav-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-tab:hover{color:var(--accent);background:var(--bg2)}
+
+/* ===== MAIN CONTENT ===== */
+.main{max-width:960px;margin:0 auto;padding:20px 16px 40px}
+
+/* Sections */
+.section{display:none;animation:fadeIn .3s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius2);padding:22px;
+  box-shadow:var(--shadow);margin-bottom:18px;
+  transition:var(--transition);
+}
+.card:hover{box-shadow:var(--shadow2)}
+.card-title{
+  font-size:1rem;font-weight:700;color:var(--text);
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;
+}
+.card-title .icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+.icon-blue{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
+.icon-green{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
+.icon-gold{background:linear-gradient(135deg,#fef3c7,#fde68a)}
+.icon-purple{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}
+.icon-red{background:linear-gradient(135deg,#fee2e2,#fecaca)}
+[data-theme="dark"] .icon-blue{background:linear-gradient(135deg,#1e3a6e,#1e40af)}
+[data-theme="dark"] .icon-green{background:linear-gradient(135deg,#064e3b,#065f46)}
+[data-theme="dark"] .icon-gold{background:linear-gradient(135deg,#451a03,#78350f)}
+[data-theme="dark"] .icon-purple{background:linear-gradient(135deg,#2e1065,#3b0764)}
+[data-theme="dark"] .icon-red{background:linear-gradient(135deg,#450a0a,#7f1d1d)}
+
+/* ===== FORMS ===== */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:520px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:.78rem;font-weight:700;color:var(--text2);letter-spacing:.03em}
+input,select,textarea{
+  padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;
+  background:var(--bg2);color:var(--text);font-family:var(--font-body);
+  font-size:.88rem;transition:var(--transition);outline:none;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,64,175,.12);
+  background:var(--card);
+}
+textarea{resize:vertical;min-height:70px}
+select{cursor:pointer}
+
+/* ===== BUTTONS ===== */
+.btn{
+  padding:10px 20px;border-radius:10px;border:none;cursor:pointer;
+  font-family:var(--font-body);font-size:.85rem;font-weight:700;
+  transition:var(--transition);display:inline-flex;align-items:center;gap:6px;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;box-shadow:0 4px 14px rgba(30,64,175,.3);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(30,64,175,.4)}
+.btn-primary:active{transform:translateY(0)}
+.btn-secondary{background:var(--bg2);color:var(--text2);border:1.5px solid var(--border)}
+.btn-secondary:hover{background:var(--border);color:var(--text)}
+.btn-danger{background:var(--red2);color:var(--red);border:1.5px solid var(--red)}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-success{background:var(--green2);color:var(--green);border:1.5px solid var(--green)}
+.btn-success:hover{background:var(--green);color:#fff}
+.btn-sm{padding:6px 14px;font-size:.78rem}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+/* ===== BADGES ===== */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:50px;font-size:.72rem;font-weight:700;
+}
+.badge-blue{background:var(--bg2);color:var(--accent);border:1px solid var(--border)}
+.badge-green{background:var(--green2);color:var(--green)}
+.badge-red{background:var(--red2);color:var(--red)}
+.badge-orange{background:var(--orange2);color:var(--orange)}
+.badge-purple{background:var(--purple2);color:var(--purple)}
+.badge-gold{background:#fef3c7;color:var(--gold)}
+
+/* ===== DASHBOARD STAT CARDS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:18px 16px;text-align:center;transition:var(--transition);
+  box-shadow:var(--shadow);cursor:default;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow2)}
+.stat-icon{font-size:2rem;margin-bottom:8px}
+.stat-value{font-size:2rem;font-weight:800;color:var(--accent);line-height:1}
+.stat-label{font-size:.72rem;color:var(--text2);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+
+/* ===== TABLE ===== */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{
+  background:var(--bg2);color:var(--text2);font-weight:700;
+  padding:10px 14px;text-align:left;font-size:.75rem;text-transform:uppercase;
+  letter-spacing:.05em;border-bottom:1px solid var(--border);
+}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg2)}
+.no-data{text-align:center;color:var(--text3);font-style:italic;padding:30px}
+
+/* ===== SEARCH BAR ===== */
+.search-bar{
+  display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;
+}
+.search-input-wrap{position:relative;flex:1;min-width:200px}
+.search-input-wrap input{padding-left:36px;width:100%}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3)}
+
+/* ===== PERFORMANCE INDICATOR ===== */
+.perf-bar{height:8px;border-radius:4px;background:var(--border);overflow:hidden;margin-top:6px}
+.perf-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.perf-excellent .perf-fill{background:var(--green);width:100%}
+.perf-good .perf-fill{background:var(--accent3);width:70%}
+.perf-needs .perf-fill{background:var(--orange);width:35%}
+
+/* ===== SECTION HEADER ===== */
+.section-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;flex-wrap:wrap;gap:10px;
+}
+.section-header h2{
+  font-family:var(--font-head);font-size:1.4rem;color:var(--text);
+  display:flex;align-items:center;gap:8px;
+}
+.section-header h2 span{font-size:1.5rem}
+
+/* ===== TIME SLOT ===== */
+.slot-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.slot-chip{
+  background:var(--bg2);border:1.5px solid var(--border);
+  border-radius:8px;padding:6px 14px;font-size:.8rem;font-weight:600;
+  color:var(--accent);display:flex;align-items:center;gap:6px;
+}
+.slot-chip button{
+  background:none;border:none;cursor:pointer;color:var(--red);
+  font-size:1rem;line-height:1;padding:0;font-weight:900;
+}
+
+/* ===== STUDENT RECORD CARDS ===== */
+.record-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.record-cards{grid-template-columns:1fr}}
+.record-card{
+  background:var(--card);border:1.5px solid var(--border);border-radius:16px;
+  padding:18px;transition:var(--transition);
+}
+.record-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.record-card-header{
+  display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;
+}
+.record-student-name{font-weight:700;font-size:.95rem;color:var(--text)}
+.record-detail{font-size:.78rem;color:var(--text2);margin-top:2px}
+.record-card-body{display:flex;flex-direction:column;gap:8px}
+.record-field{display:flex;justify-content:space-between;align-items:center;font-size:.8rem}
+.record-field-label{color:var(--text3);font-weight:600}
+.record-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+
+/* ===== REPORT ===== */
+.report-section{margin-bottom:24px}
+.report-section h3{
+  font-size:.9rem;font-weight:700;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.06em;
+  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.perf-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:480px){.perf-summary{grid-template-columns:1fr}}
+.perf-item{
+  text-align:center;padding:14px;border-radius:12px;
+  border:1px solid var(--border);
+}
+.perf-item .pcount{font-size:1.8rem;font-weight:800;line-height:1}
+.perf-item .plabel{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-top:4px;opacity:.7}
+.perf-item.excellent{background:var(--green2);color:var(--green)}
+.perf-item.good{background:var(--bg2);color:var(--accent)}
+.perf-item.needs{background:var(--orange2);color:var(--orange)}
+
+/* ===== PRINT ===== */
+@media print{
+  .nav-tabs,.topbar,.school-header .profile-row,.btn,.search-bar,
+  .btn-row,.topbar,.nav-tabs{display:none!important}
+  body,html{background:#fff!important;color:#000!important}
+  .card{box-shadow:none!important;border:1px solid #ccc!important}
+  .section{display:block!important}
+  #print-report{display:block!important}
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state{
+  text-align:center;padding:40px 20px;color:var(--text3);
+}
+.empty-state .empty-icon{font-size:3rem;margin-bottom:12px}
+.empty-state p{font-size:.9rem}
+
+/* ===== MODAL ===== */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:500;align-items:center;justify-content:center;padding:16px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--card);border-radius:var(--radius2);
+  padding:28px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--shadow2);animation:modalIn .3s ease;
+}
+@keyframes modalIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;
+}
+.modal-title{font-size:1.1rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.modal-close{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  width:32px;height:32px;cursor:pointer;font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;color:var(--text2);
+  flex-shrink:0;
+}
+.modal-close:hover{background:var(--red2);color:var(--red)}
+
+/* ===== PTM DATE BADGE ===== */
+.ptm-date-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;padding:8px 18px;border-radius:50px;font-size:.85rem;font-weight:700;
+  box-shadow:0 4px 14px rgba(30,64,175,.25);margin-bottom:16px;
+}
+
+/* ===== CLASS FILTER PILLS ===== */
+.class-pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.class-pill{
+  padding:6px 16px;border-radius:50px;border:1.5px solid var(--border);
+  font-size:.8rem;font-weight:700;cursor:pointer;transition:var(--transition);
+  background:var(--card);color:var(--text2);
+}
+.class-pill.active,.class-pill:hover{
+  background:var(--accent);color:#fff;border-color:var(--accent);
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:480px){
+  .profile-row{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .school-title{font-size:1.1rem}
+  .profile-photo{width:52px;height:52px}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== SCHOOL HEADER ========== -->
+<header class="school-header">
+  <div class="header-bg-pattern"></div>
+  <div class="header-inner">
+    <div class="school-name-row">
+      <div class="school-badge">
+        <span class="school-badge-icon">🏛️</span>
+        <span class="school-badge-text">J&K Education Dept.</span>
+      </div>
+      <h1 class="school-title">Govt. Girls Higher Secondary School<br>Khanyar, Srinagar</h1>
+      <div class="header-divider"></div>
+      <p class="school-subtitle">📚 Parent–Teacher Meeting (PTM) Management System</p>
+    </div>
+    <div class="profile-row">
+      <div class="profile-card">
+        <div class="profile-photo" id="author-photo-wrap">
+          <img src="author.jpg" alt="Mateen Yousuf" onerror="this.style.display='none';this.parentNode.textContent='👨‍💼'"/>
+        </div>
+        <div class="profile-info">
+          <div class="profile-role">Developer & Teacher</div>
+          <div class="profile-name">Mateen Yousuf</div>
+          <div class="profile-dept">Computer Science Dept.</div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="profile-photo" id="principal-photo-wrap">
+          <img src="principal.jpg" alt="Ms Wahida Sheikh" onerror="this.style.display='none';this.parentNode.textContent='👩‍💼'"/>
+        </div>
+        <div class="profile-info">
+          <div class="profile-role">Principal</div>
+          <div class="profile-name">Ms. Wahida Sheikh</div>
+          <div class="profile-dept">GGHSS Khanyar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ========== TOPBAR ========== -->
+<div class="topbar">
+  <div class="topbar-left" id="current-date-display">📅 Loading...</div>
+  <div class="topbar-right">
+    <button class="btn-icon" onclick="toggleDarkMode()" id="dark-btn" title="Toggle Dark Mode">🌙 Dark</button>
+    <button class="btn-icon btn-danger" onclick="confirmReset()" title="Reset All Data">🗑️ Reset</button>
+  </div>
+</div>
+
+<!-- ========== NAV TABS ========== -->
+<nav class="nav-tabs">
+  <div class="nav-inner">
+    <button class="nav-tab active" onclick="showSection('dashboard')">📊 Dashboard</button>
+    <button class="nav-tab" onclick="showSection('scheduler')">📅 Schedule PTM</button>
+    <button class="nav-tab" onclick="showSection('students')">👨‍👩‍👧 Students</button>
+    <button class="nav-tab" onclick="showSection('meetings')">📝 Meeting Entry</button>
+    <button class="nav-tab" onclick="showSection('reports')">📋 Reports</button>
+    <button class="nav-tab" onclick="showSection('search')">🔍 Search</button>
+  </div>
+</nav>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="main">
+
+  <!-- ====== DASHBOARD ====== -->
+  <section id="sec-dashboard" class="section active">
+    <div class="section-header">
+      <h2><span>📊</span> Dashboard</h2>
+      <div id="ptm-active-pill"></div>
+    </div>
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card"><div class="stat-icon">👧</div><div class="stat-value" id="stat-students">0</div><div class="stat-label">Students</div></div>
+      <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="stat-present">0</div><div class="stat-label">Present</div></div>
+      <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value" id="stat-absent">0</div><div class="stat-label">Absent</div></div>
+      <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="stat-excellent">0</div><div class="stat-label">Excellent</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-blue">📅</div> Active PTM Schedule</div>
+      <div id="dashboard-schedule-info">
+        <div class="empty-state"><div class="empty-icon">📅</div><p>No PTM scheduled yet. Go to <strong>Schedule PTM</strong> tab to create one.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-gold">📊</div> Class-wise Summary</div>
+      <div id="classwise-summary">
+        <div class="empty-state"><div class="empty-icon">📊</div><p>No records yet.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-red">❌</div> Absent Parents List</div>
+      <div id="absent-list">
+        <div class="empty-state"><div class="empty-icon">✅</div><p>No absences recorded.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SCHEDULER ====== -->
+  <section id="sec-scheduler" class="section">
+    <div class="section-header">
+      <h2><span>📅</span> Schedule PTM</h2>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-blue">📅</div> Create / Update PTM</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>PTM Date</label>
+          <input type="date" id="ptm-date" />
+        </div>
+        <div class="form-group">
+          <label>Select Class</label>
+          <select id="ptm-class">
+            <option value="">All Classes</option>
+            <option value="9">Class 9</option>
+            <option value="10">Class 10</option>
+            <option value="11">Class 11</option>
+            <option value="12">Class 12</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Venue / Location</label>
+          <input type="text" id="ptm-venue" placeholder="e.g. School Auditorium, Room 1" />
+        </div>
+        <div class="form-group full">
+          <label>PTM Notice / Agenda</label>
+          <textarea id="ptm-agenda" placeholder="Write the agenda or notice for this PTM..."></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="savePTMConfig()">💾 Save PTM Config</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-green">⏰</div> Time Slots</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Start Time</label>
+          <input type="time" id="slot-start" value="09:00"/>
+        </div>
+        <div class="form-group">
+          <label>End Time</label>
+          <input type="time" id="slot-end" value="10:00"/>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="addTimeSlot()">➕ Add Slot</button>
+      </div>
+      <div class="slot-list" id="slot-list"></div>
+    </div>
+
+    <div class="card" id="ptm-preview-card" style="display:none">
+      <div class="card-title"><div class="icon icon-gold">👁️</div> PTM Preview</div>
+      <div id="ptm-preview-body"></div>
+    </div>
+  </section>
+
+  <!-- ====== STUDENTS ====== -->
+  <section id="sec-students" class="section">
+    <div class="section-header">
+      <h2><span>👨‍👩‍👧</span> Student–Parent Records</h2>
+      <button class="btn btn-primary btn-sm" onclick="openStudentModal()">➕ Add Student</button>
+    </div>
+
+    <div class="class-pills">
+      <div class="class-pill active" onclick="filterStudents('all',this)">All</div>
+      <div class="class-pill" onclick="filterStudents('9',this)">Class 9</div>
+      <div class="class-pill" onclick="filterStudents('10',this)">Class 10</div>
+      <div class="class-pill" onclick="filterStudents('11',this)">Class 11</div>
+      <div class="class-pill" onclick="filterStudents('12',this)">Class 12</div>
+    </div>
+
+    <div id="student-records-container">
+      <div class="empty-state"><div class="empty-icon">👧</div><p>No students added yet. Click <strong>+ Add Student</strong> to begin.</p></div>
+    </div>
+  </section>
+
+  <!-- ====== MEETING ENTRY ====== -->
+  <section id="sec-meetings" class="section">
+    <div class="section-header">
+      <h2><span>📝</span> Meeting Entry</h2>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon icon-blue">🔽</div> Select Student to Enter Meeting Data</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Filter by Class</label>
+          <select id="meeting-class-filter" onchange="loadMeetingStudentList()">
+            <option value="">All Classes</option>
+            <option value="9">Class 9</option>
+            <option value="10">Class 10</option>
+            <option value="11">Class 11</option>
+            <option value="12">Class 12</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Select Student</label>
+          <select id="meeting-student-select">
+            <option value="">-- Select Student --</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="loadMeetingForm()">📝 Open Meeting Form</button>
+      </div>
+    </div>
+
+    <div id="meeting-form-area"></div>
+  </section>
+
+  <!-- ====== REPORTS ====== -->
+  <section id="sec-reports" class="section">
+    <div class="section-header">
+      <h2><span>📋</span> PTM Reports</h2>
+      <button class="btn btn-primary btn-sm" onclick="printReport()">🖨️ Print Report</button>
+    </div>
+    <div id="report-body">
+      <div class="empty-state"><div class="empty-icon">📋</div><p>No meeting data recorded yet.</p></div>
+    </div>
+  </section>
+
+  <!-- ====== SEARCH ====== -->
+  <section id="sec-search" class="section">
+    <div class="section-header">
+      <h2><span>🔍</span> Search & Filter</h2>
+    </div>
+
+    <div class="card">
+      <div class="search-bar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="global-search" placeholder="Search student or parent name..." oninput="runSearch()"/>
+        </div>
+        <select id="search-class-filter" onchange="runSearch()" style="min-width:120px">
+          <option value="">All Classes</option>
+          <option value="9">Class 9</option>
+          <option value="10">Class 10</option>
+          <option value="11">Class 11</option>
+          <option value="12">Class 12</option>
+        </select>
+        <select id="search-perf-filter" onchange="runSearch()" style="min-width:140px">
+          <option value="">All Performance</option>
+          <option value="Excellent">Excellent</option>
+          <option value="Good">Good</option>
+          <option value="Needs Improvement">Needs Improvement</option>
+          <option value="">No Meeting Data</option>
+        </select>
+      </div>
+      <div id="search-results">
+        <div class="empty-state"><div class="empty-icon">🔍</div><p>Type above to search students.</p></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ====== STUDENT MODAL ====== -->
+<div class="modal-overlay" id="student-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👧 <span id="modal-student-title">Add Student Record</span></div>
+      <button class="modal-close" onclick="closeStudentModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <input type="hidden" id="edit-student-id"/>
+      <div class="form-group">
+        <label>Student Name *</label>
+        <input type="text" id="s-name" placeholder="Full name"/>
+      </div>
+      <div class="form-group">
+        <label>Class *</label>
+        <select id="s-class">
+          <option value="9">Class 9</option>
+          <option value="10">Class 10</option>
+          <option value="11">Class 11</option>
+          <option value="12">Class 12</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Section</label>
+        <input type="text" id="s-section" placeholder="e.g. A, B"/>
+      </div>
+      <div class="form-group">
+        <label>Roll No.</label>
+        <input type="text" id="s-roll" placeholder="Roll number"/>
+      </div>
+      <div class="form-group full">
+        <label>Parent / Guardian Name *</label>
+        <input type="text" id="s-parent" placeholder="Parent full name"/>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="s-phone" placeholder="10-digit number"/>
+      </div>
+      <div class="form-group">
+        <label>Relation</label>
+        <select id="s-relation">
+          <option value="Father">Father</option>
+          <option value="Mother">Mother</option>
+          <option value="Guardian">Guardian</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveStudent()">💾 Save Student</button>
+      <button class="btn btn-secondary" onclick="closeStudentModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TOAST ====== -->
+<div id="toast"></div>
+
+<!-- ========== JAVASCRIPT ========== -->
+<script>
+// ===== STATE & STORAGE =====
+const STORAGE_KEYS = {
+  STUDENTS: 'gghss_students',
+  PTM_CONFIG: 'gghss_ptm_config',
+  MEETINGS: 'gghss_meetings',
+  THEME: 'gghss_theme',
+  SLOTS: 'gghss_slots'
+};
+
+function load(key){ try{return JSON.parse(localStorage.getItem(key))||null}catch{return null} }
+function save(key,val){ localStorage.setItem(key,JSON.stringify(val)) }
+
+let students = load(STORAGE_KEYS.STUDENTS) || [];
+let ptmConfig = load(STORAGE_KEYS.PTM_CONFIG) || null;
+let meetings = load(STORAGE_KEYS.MEETINGS) || {};
+let timeSlots = load(STORAGE_KEYS.SLOTS) || [];
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', ()=>{
+  // Set date
+  const now = new Date();
+  document.getElementById('current-date-display').textContent =
+    '📅 ' + now.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  // Set PTM date input default
+  const ptmDateIn = document.getElementById('ptm-date');
+  if(ptmDateIn && !ptmConfig) ptmDateIn.value = now.toISOString().split('T')[0];
+  if(ptmConfig){
+    if(ptmDateIn) ptmDateIn.value = ptmConfig.date || '';
+    document.getElementById('ptm-class').value = ptmConfig.classFilter || '';
+    document.getElementById('ptm-venue').value = ptmConfig.venue || '';
+    document.getElementById('ptm-agenda').value = ptmConfig.agenda || '';
+  }
+
+  // Theme
+  const savedTheme = load(STORAGE_KEYS.THEME);
+  if(savedTheme === 'dark'){ document.documentElement.setAttribute('data-theme','dark'); document.getElementById('dark-btn').textContent='☀️ Light'; }
+
+  renderSlots();
+  renderDashboard();
+  renderStudentCards('all');
+  loadMeetingStudentList();
+  renderReports();
+
+  // PWA install
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', e=>{
+    e.preventDefault(); deferredPrompt=e;
+    const btn = document.createElement('button');
+    btn.className='btn btn-primary btn-sm';
+    btn.textContent='📱 Install App';
+    btn.onclick=()=>{ deferredPrompt.prompt(); deferredPrompt=null; btn.remove(); };
+    document.querySelector('.topbar-right').prepend(btn);
+  });
+
+  // Service Worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(()=>console.log('SW registered'))
+      .catch(e=>console.warn('SW failed:',e));
+  }
+});
+
+// ===== DARK MODE =====
+function toggleDarkMode(){
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('dark-btn').textContent = isDark ? '🌙 Dark' : '☀️ Light';
+  save(STORAGE_KEYS.THEME, isDark ? 'light' : 'dark');
+}
+
+// ===== TOAST =====
+function toast(msg, type='success'){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show ' + type;
+  setTimeout(()=>{ t.className=''; }, 2800);
+}
+
+// ===== NAV =====
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  const idx = ['dashboard','scheduler','students','meetings','reports','search'].indexOf(id);
+  document.querySelectorAll('.nav-tab')[idx]?.classList.add('active');
+  if(id==='dashboard') renderDashboard();
+  if(id==='reports') renderReports();
+  if(id==='meetings') loadMeetingStudentList();
+}
+
+// ===== PTM CONFIG =====
+function savePTMConfig(){
+  const date = document.getElementById('ptm-date').value;
+  if(!date){ toast('Please select a PTM date','error'); return; }
+  ptmConfig = {
+    date, classFilter: document.getElementById('ptm-class').value,
+    venue: document.getElementById('ptm-venue').value,
+    agenda: document.getElementById('ptm-agenda').value,
+    slots: timeSlots
+  };
+  save(STORAGE_KEYS.PTM_CONFIG, ptmConfig);
+  toast('PTM configuration saved! 📅','success');
+  renderPTMPreview();
+  renderDashboard();
+}
+
+// ===== TIME SLOTS =====
+function addTimeSlot(){
+  const s = document.getElementById('slot-start').value;
+  const e = document.getElementById('slot-end').value;
+  if(!s||!e){ toast('Select start and end time','error'); return; }
+  if(s>=e){ toast('End time must be after start time','error'); return; }
+  const slot = s+' – '+e;
+  if(timeSlots.includes(slot)){ toast('Slot already added','error'); return; }
+  timeSlots.push(slot);
+  save(STORAGE_KEYS.SLOTS, timeSlots);
+  renderSlots();
+  toast('Time slot added ⏰');
+}
+
+function removeSlot(i){
+  timeSlots.splice(i,1);
+  save(STORAGE_KEYS.SLOTS, timeSlots);
+  renderSlots();
+}
+
+function renderSlots(){
+  const el = document.getElementById('slot-list');
+  if(!timeSlots.length){ el.innerHTML='<span style="color:var(--text3);font-size:.8rem">No slots added yet</span>'; return; }
+  el.innerHTML = timeSlots.map((s,i)=>
+    `<div class="slot-chip">⏰ ${s} <button onclick="removeSlot(${i})" title="Remove">×</button></div>`
+  ).join('');
+}
+
+function renderPTMPreview(){
+  const card = document.getElementById('ptm-preview-card');
+  const body = document.getElementById('ptm-preview-body');
+  if(!ptmConfig){ card.style.display='none'; return; }
+  card.style.display='block';
+  body.innerHTML = `
+    <div class="ptm-date-pill">📅 ${formatDate(ptmConfig.date)}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:.85rem">
+      <div><strong>Class:</strong> ${ptmConfig.classFilter ? 'Class '+ptmConfig.classFilter : 'All Classes'}</div>
+      <div><strong>Venue:</strong> ${ptmConfig.venue||'Not specified'}</div>
+    </div>
+    ${ptmConfig.agenda ? `<div style="margin-top:12px;padding:12px;background:var(--bg2);border-radius:10px;font-size:.85rem"><strong>Agenda:</strong><br>${ptmConfig.agenda}</div>` : ''}
+    ${timeSlots.length ? `<div style="margin-top:12px"><strong>Time Slots:</strong> <div class="slot-list">${timeSlots.map(s=>`<div class="slot-chip">⏰ ${s}</div>`).join('')}</div></div>` : ''}
+  `;
+}
+
+// ===== STUDENTS =====
+function openStudentModal(id=null){
+  document.getElementById('student-modal').classList.add('open');
+  if(id){
+    const s = students.find(x=>x.id===id);
+    if(!s) return;
+    document.getElementById('modal-student-title').textContent='Edit Student Record';
+    document.getElementById('edit-student-id').value=id;
+    document.getElementById('s-name').value=s.name;
+    document.getElementById('s-class').value=s.cls;
+    document.getElementById('s-section').value=s.section||'';
+    document.getElementById('s-roll').value=s.roll||'';
+    document.getElementById('s-parent').value=s.parent;
+    document.getElementById('s-phone').value=s.phone;
+    document.getElementById('s-relation').value=s.relation||'Father';
+  } else {
+    document.getElementById('modal-student-title').textContent='Add Student Record';
+    document.getElementById('edit-student-id').value='';
+    ['s-name','s-section','s-roll','s-parent','s-phone'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('s-class').value='9';
+    document.getElementById('s-relation').value='Father';
+  }
+}
+function closeStudentModal(){ document.getElementById('student-modal').classList.remove('open'); }
+
+function saveStudent(){
+  const name = document.getElementById('s-name').value.trim();
+  const parent = document.getElementById('s-parent').value.trim();
+  if(!name||!parent){ toast('Student name and parent name are required','error'); return; }
+  const editId = document.getElementById('edit-student-id').value;
+  const data = {
+    name, cls: document.getElementById('s-class').value,
+    section: document.getElementById('s-section').value.trim(),
+    roll: document.getElementById('s-roll').value.trim(),
+    parent, phone: document.getElementById('s-phone').value.trim(),
+    relation: document.getElementById('s-relation').value,
+    addedAt: new Date().toISOString()
+  };
+  if(editId){
+    const idx = students.findIndex(s=>s.id===editId);
+    if(idx>-1){ data.id=editId; students[idx]=data; }
+  } else {
+    data.id = 's_'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+    students.push(data);
+  }
+  save(STORAGE_KEYS.STUDENTS, students);
+  closeStudentModal();
+  toast(editId ? 'Student record updated ✏️' : 'Student added successfully 👧','success');
+  renderStudentCards(document.querySelector('.class-pill.active')?.textContent==='All'?'all':document.querySelector('.class-pill.active')?.textContent.replace('Class ',''));
+  loadMeetingStudentList();
+  renderDashboard();
+}
+
+function deleteStudent(id){
+  if(!confirm('Delete this student record?')) return;
+  students = students.filter(s=>s.id!==id);
+  delete meetings[id];
+  save(STORAGE_KEYS.STUDENTS, students);
+  save(STORAGE_KEYS.MEETINGS, meetings);
+  toast('Student record deleted 🗑️','info');
+  renderStudentCards('all');
+  renderDashboard();
+}
+
+function filterStudents(cls, el){
+  document.querySelectorAll('.class-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  renderStudentCards(cls);
+}
+
+function renderStudentCards(clsFilter){
+  const container = document.getElementById('student-records-container');
+  let list = clsFilter==='all' ? students : students.filter(s=>s.cls===clsFilter);
+  if(!list.length){
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon">👧</div><p>${clsFilter==='all'?'No students added yet.':'No students in Class '+clsFilter+'.'}</p></div>`;
+    return;
+  }
+  container.innerHTML=`<div class="record-cards">${list.map(s=>{
+    const m = meetings[s.id];
+    const perfBadge = m ? perfBadgeHTML(m.performance) : '<span class="badge badge-blue">No Entry</span>';
+    const attendBadge = m ? (m.status==='Present'?'<span class="badge badge-green">✅ Present</span>':'<span class="badge badge-red">❌ Absent</span>') : '';
+    return `<div class="record-card">
+      <div class="record-card-header">
+        <div>
+          <div class="record-student-name">👧 ${s.name}</div>
+          <div class="record-detail">Class ${s.cls}${s.section?' – Sec. '+s.section:''} ${s.roll?'| Roll: '+s.roll:''}</div>
+        </div>
+        ${perfBadge}
+      </div>
+      <div class="record-card-body">
+        <div class="record-field"><span class="record-field-label">👨‍👩‍👧 ${s.relation||'Parent'}</span><span>${s.parent}</span></div>
+        ${s.phone?`<div class="record-field"><span class="record-field-label">📞 Phone</span><span>${s.phone}</span></div>`:''}
+        ${m?`<div class="record-field"><span class="record-field-label">🎯 Attendance</span>${attendBadge}</div>`:''}
+        ${m?.remarks?`<div style="font-size:.78rem;color:var(--text2);padding:8px;background:var(--bg2);border-radius:8px;margin-top:4px">💬 ${m.remarks}</div>`:''}
+      </div>
+      <div class="record-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openStudentModal('${s.id}')">✏️ Edit</button>
+        <button class="btn btn-primary btn-sm" onclick="openMeetingForStudent('${s.id}')">📝 Meeting</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function perfBadgeHTML(perf){
+  if(!perf) return '';
+  if(perf==='Excellent') return '<span class="badge badge-green">⭐ Excellent</span>';
+  if(perf==='Good') return '<span class="badge badge-blue">👍 Good</span>';
+  return '<span class="badge badge-orange">📈 Needs Improvement</span>';
+}
+
+// ===== MEETING ENTRY =====
+function loadMeetingStudentList(){
+  const cls = document.getElementById('meeting-class-filter').value;
+  const sel = document.getElementById('meeting-student-select');
+  let list = cls ? students.filter(s=>s.cls===cls) : students;
+  sel.innerHTML = '<option value="">-- Select Student --</option>' +
+    list.map(s=>`<option value="${s.id}">${s.name} (Class ${s.cls}${s.section?' '+s.section:''})</option>`).join('');
+}
+
+function openMeetingForStudent(id){
+  showSection('meetings');
+  setTimeout(()=>{
+    document.getElementById('meeting-student-select').value=id;
+    loadMeetingForm();
+  },100);
+}
+
+function loadMeetingForm(){
+  const sid = document.getElementById('meeting-student-select').value;
+  const area = document.getElementById('meeting-form-area');
+  if(!sid){ area.innerHTML=''; return; }
+  const s = students.find(x=>x.id===sid);
+  if(!s){ area.innerHTML=''; return; }
+  const m = meetings[sid] || {};
+  area.innerHTML = `
+  <div class="card">
+    <div class="card-title"><div class="icon icon-purple">📝</div> Meeting Entry – ${s.name}</div>
+    <div style="background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:.85rem">
+      <strong>👧 ${s.name}</strong> | Class ${s.cls}${s.section?' '+s.section:''} | 
+      👨‍👩‍👧 ${s.parent} ${s.phone?'| 📞 '+s.phone:''}
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Attendance Status</label>
+        <select id="m-status">
+          <option value="Present" ${m.status==='Present'?'selected':''}>✅ Present</option>
+          <option value="Absent" ${m.status==='Absent'?'selected':''}>❌ Absent</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Performance Level</label>
+        <select id="m-performance">
+          <option value="Excellent" ${m.performance==='Excellent'?'selected':''}>⭐ Excellent</option>
+          <option value="Good" ${m.performance==='Good'?'selected':''}>👍 Good</option>
+          <option value="Needs Improvement" ${m.performance==='Needs Improvement'?'selected':''}>📈 Needs Improvement</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Teacher's Remarks</label>
+        <textarea id="m-remarks" placeholder="Write observations, feedback, areas to improve...">${m.remarks||''}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Subject Concern</label>
+        <input type="text" id="m-subject" value="${m.subject||''}" placeholder="e.g. Mathematics, Science"/>
+      </div>
+      <div class="form-group">
+        <label>Next Meeting Date</label>
+        <input type="date" id="m-next-date" value="${m.nextDate||''}"/>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveMeeting('${sid}')">💾 Save Meeting Entry</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('meeting-form-area').innerHTML=''">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function saveMeeting(sid){
+  meetings[sid] = {
+    status: document.getElementById('m-status').value,
+    performance: document.getElementById('m-performance').value,
+    remarks: document.getElementById('m-remarks').value.trim(),
+    subject: document.getElementById('m-subject').value.trim(),
+    nextDate: document.getElementById('m-next-date').value,
+    savedAt: new Date().toISOString()
+  };
+  save(STORAGE_KEYS.MEETINGS, meetings);
+  toast('Meeting entry saved! 📝','success');
+  renderDashboard();
+  renderStudentCards('all');
+  renderReports();
+}
+
+// ===== DASHBOARD =====
+function renderDashboard(){
+  const total = students.length;
+  const entries = Object.values(meetings);
+  const present = entries.filter(m=>m.status==='Present').length;
+  const absent = entries.filter(m=>m.status==='Absent').length;
+  const excellent = entries.filter(m=>m.performance==='Excellent').length;
+
+  document.getElementById('stat-students').textContent=total;
+  document.getElementById('stat-present').textContent=present;
+  document.getElementById('stat-absent').textContent=absent;
+  document.getElementById('stat-excellent').textContent=excellent;
+
+  // PTM info pill
+  const pill = document.getElementById('ptm-active-pill');
+  if(ptmConfig){ pill.innerHTML=`<div class="ptm-date-pill">📅 PTM: ${formatDate(ptmConfig.date)}</div>`; }
+
+  // Dashboard schedule info
+  const sched = document.getElementById('dashboard-schedule-info');
+  if(ptmConfig){
+    sched.innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.88rem;margin-bottom:12px">
+        <div><strong>📅 Date:</strong> ${formatDate(ptmConfig.date)}</div>
+        <div><strong>📍 Venue:</strong> ${ptmConfig.venue||'Not set'}</div>
+        <div><strong>🎓 Class:</strong> ${ptmConfig.classFilter?'Class '+ptmConfig.classFilter:'All'}</div>
+        <div><strong>⏰ Slots:</strong> ${timeSlots.length?timeSlots.length+' slot(s)':'Not set'}</div>
+      </div>
+      ${ptmConfig.agenda?`<div style="padding:10px;background:var(--bg2);border-radius:8px;font-size:.82rem;color:var(--text2)">${ptmConfig.agenda}</div>`:''}
+    `;
+  } else {
+    sched.innerHTML='<div class="empty-state"><div class="empty-icon">📅</div><p>No PTM scheduled. <a href="#" onclick="showSection(\'scheduler\')" style="color:var(--accent)">Create one →</a></p></div>';
+  }
+
+  // Class-wise summary
+  const summary = document.getElementById('classwise-summary');
+  const classes = ['9','10','11','12'];
+  const hasStudents = students.length > 0;
+  if(!hasStudents){
+    summary.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><p>No students added.</p></div>';
+  } else {
+    summary.innerHTML=`<div class="table-wrap"><table>
+      <thead><tr><th>Class</th><th>Students</th><th>Present</th><th>Absent</th><th>No Entry</th><th>Excellent</th></tr></thead>
+      <tbody>${classes.map(c=>{
+        const cs = students.filter(s=>s.cls===c);
+        if(!cs.length) return '';
+        const cm = cs.map(s=>meetings[s.id]).filter(Boolean);
+        const cpresent = cm.filter(m=>m.status==='Present').length;
+        const cabsent = cm.filter(m=>m.status==='Absent').length;
+        const cnoentry = cs.length - cm.length;
+        const cexcellent = cm.filter(m=>m.performance==='Excellent').length;
+        return `<tr>
+          <td><strong>Class ${c}</strong></td><td>${cs.length}</td>
+          <td><span class="badge badge-green">${cpresent}</span></td>
+          <td><span class="badge badge-red">${cabsent}</span></td>
+          <td>${cnoentry}</td>
+          <td><span class="badge badge-gold">${cexcellent}</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>`;
+  }
+
+  // Absent list
+  const absentEl = document.getElementById('absent-list');
+  const absentStudents = students.filter(s=>meetings[s.id]?.status==='Absent');
+  if(!absentStudents.length){
+    absentEl.innerHTML='<div class="empty-state" style="padding:16px"><div class="empty-icon" style="font-size:1.8rem">✅</div><p>No absences recorded.</p></div>';
+  } else {
+    absentEl.innerHTML=`<div class="table-wrap"><table>
+      <thead><tr><th>Student</th><th>Class</th><th>Parent</th><th>Phone</th></tr></thead>
+      <tbody>${absentStudents.map(s=>`<tr>
+        <td>${s.name}</td><td>Class ${s.cls}${s.section?' '+s.section:''}</td>
+        <td>${s.parent}</td><td>${s.phone||'—'}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+}
+
+// ===== REPORTS =====
+function renderReports(){
+  const el = document.getElementById('report-body');
+  const entries = Object.entries(meetings);
+  if(!entries.length){
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><p>No meeting data recorded yet.</p></div>';
+    return;
+  }
+  const total = students.length;
+  const present = entries.filter(([,m])=>m.status==='Present').length;
+  const absent = entries.filter(([,m])=>m.status==='Absent').length;
+  const excellent = entries.filter(([,m])=>m.performance==='Excellent').length;
+  const good = entries.filter(([,m])=>m.performance==='Good').length;
+  const needs = entries.filter(([,m])=>m.performance==='Needs Improvement').length;
+  const pct = v=>total?Math.round(v/total*100)+'%':'0%';
+
+  el.innerHTML=`
+  <div class="card report-section">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:700">Govt. Girls Higher Secondary School Khanyar</div>
+      <div style="font-size:.85rem;color:var(--text2)">PTM Report — ${ptmConfig?formatDate(ptmConfig.date):new Date().toLocaleDateString()}</div>
+    </div>
+    <div class="stats-grid" style="margin-bottom:0">
+      <div class="stat-card"><div class="stat-icon">👧</div><div class="stat-value">${total}</div><div class="stat-label">Total</div></div>
+      <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value">${present}</div><div class="stat-label">Present</div></div>
+      <div class="stat-card"><div class="stat-icon">❌</div><div class="stat-value">${absent}</div><div class="stat-label">Absent</div></div>
+      <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-value">${entries.length}</div><div class="stat-label">Entries</div></div>
+    </div>
+  </div>
+
+  <div class="card report-section">
+    <h3>Performance Distribution</h3>
+    <div class="perf-summary">
+      <div class="perf-item excellent"><div class="pcount">⭐ ${excellent}</div><div class="plabel">Excellent</div><div style="font-size:.7rem;margin-top:2px">${pct(excellent)}</div></div>
+      <div class="perf-item good"><div class="pcount">👍 ${good}</div><div class="plabel">Good</div><div style="font-size:.7rem;margin-top:2px">${pct(good)}</div></div>
+      <div class="perf-item needs"><div class="pcount">📈 ${needs}</div><div class="plabel">Needs Work</div><div style="font-size:.7rem;margin-top:2px">${pct(needs)}</div></div>
+    </div>
+  </div>
+
+  <div class="card report-section">
+    <h3>Detailed Meeting Records</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Student</th><th>Class</th><th>Parent</th><th>Status</th><th>Performance</th><th>Remarks</th></tr></thead>
+        <tbody>
+        ${students.map((s,i)=>{
+          const m=meetings[s.id];
+          return `<tr>
+            <td>${i+1}</td>
+            <td><strong>${s.name}</strong>${s.roll?`<br><small>Roll: ${s.roll}</small>`:''}</td>
+            <td>Class ${s.cls}${s.section?' '+s.section:''}</td>
+            <td>${s.parent}<br><small>${s.phone||''}</small></td>
+            <td>${m?(m.status==='Present'?'<span class="badge badge-green">✅ Present</span>':'<span class="badge badge-red">❌ Absent</span>'):'<span class="badge badge-blue">No Entry</span>'}</td>
+            <td>${m?perfBadgeHTML(m.performance):'—'}</td>
+            <td style="font-size:.78rem;max-width:150px">${m?.remarks||'—'}</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  `;
+}
+
+function printReport(){
+  renderReports();
+  window.print();
+}
+
+// ===== SEARCH =====
+function runSearch(){
+  const q = document.getElementById('global-search').value.trim().toLowerCase();
+  const cls = document.getElementById('search-class-filter').value;
+  const perf = document.getElementById('search-perf-filter').value;
+  const el = document.getElementById('search-results');
+
+  let results = students.filter(s=>{
+    const m = meetings[s.id];
+    const matchQ = !q || s.name.toLowerCase().includes(q) || s.parent.toLowerCase().includes(q);
+    const matchCls = !cls || s.cls===cls;
+    const matchPerf = !perf || (m?.performance===perf);
+    return matchQ && matchCls && matchPerf;
+  });
+
+  if(!results.length){
+    el.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><p>No students match your criteria.</p></div>';
+    return;
+  }
+
+  el.innerHTML=`<div style="font-size:.8rem;color:var(--text2);margin-bottom:10px">${results.length} result(s) found</div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Student</th><th>Class</th><th>Parent</th><th>Phone</th><th>Status</th><th>Performance</th><th>Action</th></tr></thead>
+    <tbody>${results.map(s=>{
+      const m=meetings[s.id];
+      return `<tr>
+        <td><strong>${s.name}</strong></td>
+        <td>Class ${s.cls}${s.section?' '+s.section:''}</td>
+        <td>${s.parent}</td>
+        <td>${s.phone||'—'}</td>
+        <td>${m?(m.status==='Present'?'<span class="badge badge-green">✅ Present</span>':'<span class="badge badge-red">❌ Absent</span>'):'<span class="badge badge-blue">—</span>'}</td>
+        <td>${m?perfBadgeHTML(m.performance):'—'}</td>
+        <td><button class="btn btn-primary btn-sm" onclick="openMeetingForStudent('${s.id}')">📝</button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+// ===== RESET =====
+function confirmReset(){
+  if(!confirm('⚠️ This will DELETE all PTM data, students, and meeting records. Are you absolutely sure?')) return;
+  if(!confirm('Final confirmation: Reset everything?')) return;
+  Object.values(STORAGE_KEYS).forEach(k=>localStorage.removeItem(k));
+  students=[]; ptmConfig=null; meetings={}; timeSlots=[];
+  toast('All data has been reset 🗑️','info');
+  location.reload();
+}
+
+// ===== UTILS =====
+function formatDate(d){
+  if(!d) return 'Not set';
+  try{ return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+  catch{ return d; }
+}
+
+// Init preview on load
+window.addEventListener('DOMContentLoaded',()=>{ if(ptmConfig) renderPTMPreview(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="theme-color" content="#1a3a6e"/>
+<meta name="description" content="Staff Management System – GGHSS Khanyar"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Staff Manager"/>
+<link rel="manifest" href="manifest.json"/>
+<title>GGHSS Khanyar – Staff Management</title>
+<style>
+/* ==============================
+   CSS CUSTOM PROPERTIES
+============================== */
+:root {
+  --bg:        #eef1f8;
+  --bg2:       #e2e8f5;
+  --bg3:       #d4ddf0;
+  --card:      #ffffff;
+  --card2:     #f7f9ff;
+  --border:    #c5d0e8;
+  --border2:   #b0bedd;
+  --text:      #0e1e45;
+  --text2:     #3a4e7a;
+  --text3:     #6878a8;
+  --text4:     #9aaad0;
+  --accent:    #1a3a6e;
+  --accent2:   #2554a0;
+  --accent3:   #4a7fd4;
+  --accentL:   #dce8ff;
+  --gold:      #b45309;
+  --gold2:     #f59e0b;
+  --goldL:     #fef3c7;
+  --green:     #047857;
+  --greenL:    #d1fae5;
+  --red:       #b91c1c;
+  --redL:      #fee2e2;
+  --orange:    #c2410c;
+  --orangeL:   #ffedd5;
+  --purple:    #6d28d9;
+  --purpleL:   #ede9fe;
+  --teal:      #0e7490;
+  --tealL:     #cffafe;
+  --shadow:    0 2px 16px rgba(26,58,110,.10);
+  --shadow2:   0 6px 32px rgba(26,58,110,.18);
+  --shadow3:   0 12px 48px rgba(26,58,110,.24);
+  --r:         12px;
+  --r2:        18px;
+  --r3:        24px;
+  --font-h:    Georgia, 'Times New Roman', serif;
+  --font-b:    'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --ease:      cubic-bezier(.4,0,.2,1);
+  --tr:        all .22s var(--ease);
+}
+[data-theme="dark"] {
+  --bg:        #080e1e;
+  --bg2:       #0d1529;
+  --bg3:       #111e38;
+  --card:      #0f1e3a;
+  --card2:     #152447;
+  --border:    #1c3060;
+  --border2:   #244080;
+  --text:      #dce8ff;
+  --text2:     #8aaad8;
+  --text3:     #4d6898;
+  --text4:     #2a4070;
+  --accent:    #4a7fd4;
+  --accent2:   #6699e8;
+  --accent3:   #93bbf8;
+  --accentL:   #0d2050;
+  --gold:      #f59e0b;
+  --gold2:     #fbbf24;
+  --goldL:     #451a03;
+  --green:     #10b981;
+  --greenL:    #022c22;
+  --red:       #f87171;
+  --redL:      #3b0505;
+  --orange:    #fb923c;
+  --orangeL:   #3a1200;
+  --purple:    #a78bfa;
+  --purpleL:   #1e0a4e;
+  --teal:      #22d3ee;
+  --tealL:     #042028;
+  --shadow:    0 2px 16px rgba(0,0,0,.35);
+  --shadow2:   0 6px 32px rgba(0,0,0,.50);
+  --shadow3:   0 12px 48px rgba(0,0,0,.65);
+}
+
+/* ==============================
+   BASE
+============================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: var(--font-b);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background .3s, color .3s;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--accent3); border-radius: 4px; }
+a { color: var(--accent2); text-decoration: none; }
+button { font-family: var(--font-b); cursor: pointer; }
+
+/* ==============================
+   TOAST
+============================== */
+#toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(70px);
+  padding: 12px 28px; border-radius: 50px;
+  font-size: .86rem; font-weight: 700; color: #fff;
+  z-index: 9999; opacity: 0; pointer-events: none;
+  transition: all .32s var(--ease); white-space: nowrap;
+  box-shadow: var(--shadow2);
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast.s { background: var(--green); }
+#toast.e { background: var(--red); }
+#toast.i { background: var(--purple); }
+#toast.w { background: var(--gold); }
+
+/* ==============================
+   SCHOOL HEADER
+============================== */
+.school-header {
+  background: linear-gradient(145deg, #060e22 0%, #0d2050 35%, #1a3a6e 65%, #0a1835 100%);
+  color: #fff; position: relative; overflow: hidden;
+}
+.hdr-geo {
+  position: absolute; inset: 0; opacity: .05;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, #fff 39px, #fff 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, #fff 39px, #fff 40px);
+}
+.hdr-glow {
+  position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(100,160,255,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hdr-inner { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 28px 20px 24px; }
+
+.school-top { text-align: center; margin-bottom: 24px; }
+.school-emblem {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(255,255,255,.08); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.18); border-radius: 50px;
+  padding: 6px 20px 6px 10px; margin-bottom: 14px;
+}
+.emblem-icon { font-size: 1.5rem; }
+.emblem-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .8; }
+.school-name {
+  font-family: var(--font-h); font-size: clamp(1.15rem, 4vw, 2rem);
+  font-weight: 700; line-height: 1.2; margin-bottom: 6px;
+  text-shadow: 0 2px 14px rgba(0,0,0,.4);
+}
+.school-tagline { font-size: .82rem; opacity: .65; letter-spacing: .04em; }
+.hdr-rule {
+  width: 70px; height: 3px; margin: 12px auto;
+  background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+  border-radius: 2px;
+}
+
+/* Profile cards */
+.profile-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 580px; margin: 0 auto; }
+.profile-card {
+  display: flex; align-items: center; gap: 13px;
+  background: rgba(255,255,255,.08); backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.16); border-radius: 16px;
+  padding: 14px 16px; transition: var(--tr);
+}
+.profile-card:hover { background: rgba(255,255,255,.15); transform: translateY(-2px); }
+.p-photo {
+  width: 60px; height: 60px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,.35); overflow: hidden;
+  background: rgba(255,255,255,.12); display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+}
+.p-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.p-info { min-width: 0; }
+.p-role { font-size: .62rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #fbbf24; margin-bottom: 3px; }
+.p-name { font-size: .88rem; font-weight: 700; line-height: 1.2; }
+.p-dept { font-size: .7rem; opacity: .6; margin-top: 2px; }
+
+/* ==============================
+   TOPBAR
+============================== */
+.topbar {
+  background: var(--card); border-bottom: 1px solid var(--border);
+  padding: 8px 16px; display: flex; justify-content: space-between; align-items: center;
+  gap: 8px; flex-wrap: wrap;
+}
+.topbar-left { font-size: .78rem; color: var(--text2); font-weight: 600; }
+.topbar-right { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.tb-btn {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 12px; font-size: .75rem; font-weight: 700; color: var(--text2);
+  transition: var(--tr); display: inline-flex; align-items: center; gap: 4px;
+}
+.tb-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tb-btn.danger:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+/* ==============================
+   NAV TABS
+============================== */
+.nav-tabs {
+  background: var(--card); border-bottom: 2px solid var(--border);
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 2px 10px rgba(26,58,110,.07);
+}
+.nav-inner {
+  max-width: 980px; margin: 0 auto;
+  display: flex; overflow-x: auto; scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-tab {
+  flex-shrink: 0; padding: 13px 18px;
+  font-size: .8rem; font-weight: 700; color: var(--text3);
+  border: none; border-bottom: 3px solid transparent; margin-bottom: -2px;
+  background: none; transition: var(--tr); display: inline-flex; align-items: center; gap: 5px;
+  white-space: nowrap;
+}
+.nav-tab:hover { color: var(--accent2); background: var(--bg2); }
+.nav-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+
+/* ==============================
+   MAIN & SECTIONS
+============================== */
+.main { max-width: 980px; margin: 0 auto; padding: 20px 14px 60px; }
+.section { display: none; animation: fadeUp .3s var(--ease); }
+.section.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* ==============================
+   SECTION HEADER
+============================== */
+.sec-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+}
+.sec-title {
+  font-family: var(--font-h); font-size: 1.35rem; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.sec-title .ico { font-size: 1.4rem; }
+
+/* ==============================
+   CARDS
+============================== */
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r2);
+  padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; transition: var(--tr);
+}
+.card:hover { box-shadow: var(--shadow2); }
+.card-title {
+  font-size: .92rem; font-weight: 800; color: var(--text); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.cico {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: .95rem;
+}
+.cico-b { background: var(--accentL); }
+.cico-g { background: var(--greenL); }
+.cico-o { background: var(--orangeL); }
+.cico-p { background: var(--purpleL); }
+.cico-r { background: var(--redL); }
+.cico-t { background: var(--tealL); }
+.cico-gold { background: var(--goldL); }
+[data-theme="dark"] .cico-b { background: #0d2050; }
+[data-theme="dark"] .cico-g { background: #022c22; }
+[data-theme="dark"] .cico-o { background: #3a1200; }
+[data-theme="dark"] .cico-p { background: #1e0a4e; }
+[data-theme="dark"] .cico-r { background: #3b0505; }
+[data-theme="dark"] .cico-t { background: #042028; }
+[data-theme="dark"] .cico-gold { background: #451a03; }
+
+/* ==============================
+   STATS
+============================== */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r2);
+  padding: 16px 12px; text-align: center; box-shadow: var(--shadow);
+  transition: var(--tr);
+}
+.stat:hover { transform: translateY(-2px); box-shadow: var(--shadow2); }
+.stat-ico { font-size: 1.9rem; margin-bottom: 6px; }
+.stat-val { font-size: 1.8rem; font-weight: 900; color: var(--accent2); line-height: 1; }
+.stat-lbl { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-top: 3px; }
+
+/* ==============================
+   FORMS
+============================== */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+@media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg.full { grid-column: 1 / -1; }
+label { font-size: .74rem; font-weight: 800; color: var(--text2); letter-spacing: .03em; text-transform: uppercase; }
+input, select, textarea {
+  padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 10px;
+  background: var(--bg2); color: var(--text); font-family: var(--font-b);
+  font-size: .86rem; outline: none; transition: var(--tr);
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent2); background: var(--card);
+  box-shadow: 0 0 0 3px rgba(37,84,160,.12);
+}
+textarea { resize: vertical; min-height: 72px; }
+select { cursor: pointer; }
+
+/* ==============================
+   BUTTONS
+============================== */
+.btn {
+  padding: 10px 18px; border-radius: 10px; border: none;
+  font-size: .82rem; font-weight: 800; transition: var(--tr);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-p { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 4px 14px rgba(26,58,110,.28); }
+.btn-p:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,58,110,.38); }
+.btn-s { background: var(--bg2); color: var(--text2); border: 1.5px solid var(--border); }
+.btn-s:hover { background: var(--border); color: var(--text); }
+.btn-g { background: var(--greenL); color: var(--green); border: 1.5px solid var(--green); }
+.btn-g:hover { background: var(--green); color: #fff; }
+.btn-r { background: var(--redL); color: var(--red); border: 1.5px solid var(--red); }
+.btn-r:hover { background: var(--red); color: #fff; }
+.btn-o { background: var(--orangeL); color: var(--orange); border: 1.5px solid var(--orange); }
+.btn-o:hover { background: var(--orange); color: #fff; }
+.btn-gold { background: var(--goldL); color: var(--gold); border: 1.5px solid var(--gold2); }
+.btn-gold:hover { background: var(--gold2); color: #fff; }
+.btn-t { background: var(--tealL); color: var(--teal); border: 1.5px solid var(--teal); }
+.btn-t:hover { background: var(--teal); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: .74rem; border-radius: 8px; }
+.btn-xs { padding: 4px 9px; font-size: .7rem; border-radius: 6px; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+
+/* ==============================
+   BADGES
+============================== */
+.badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 3px 10px; border-radius: 50px; font-size: .68rem; font-weight: 800;
+}
+.b-blue { background: var(--accentL); color: var(--accent2); }
+.b-green { background: var(--greenL); color: var(--green); }
+.b-red { background: var(--redL); color: var(--red); }
+.b-orange { background: var(--orangeL); color: var(--orange); }
+.b-purple { background: var(--purpleL); color: var(--purple); }
+.b-gold { background: var(--goldL); color: var(--gold); }
+.b-teal { background: var(--tealL); color: var(--teal); }
+[data-theme="dark"] .b-blue { background: #0d2050; }
+[data-theme="dark"] .b-green { background: #022c22; }
+[data-theme="dark"] .b-red { background: #3b0505; }
+[data-theme="dark"] .b-orange { background: #3a1200; }
+[data-theme="dark"] .b-purple { background: #1e0a4e; }
+[data-theme="dark"] .b-gold { background: #451a03; }
+[data-theme="dark"] .b-teal { background: #042028; }
+
+/* ==============================
+   TABLE
+============================== */
+.tbl-wrap { overflow-x: auto; border-radius: var(--r); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+th {
+  background: var(--bg2); color: var(--text2); font-weight: 800;
+  padding: 10px 13px; text-align: left; font-size: .7rem;
+  text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+td { padding: 10px 13px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg2); }
+
+/* ==============================
+   SEARCH BAR
+============================== */
+.search-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.s-wrap { position: relative; flex: 1; min-width: 180px; }
+.s-wrap input { width: 100%; padding-left: 34px; }
+.s-ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: .9rem; }
+
+/* ==============================
+   DUTY CHIPS
+============================== */
+.duty-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 8px; }
+.duty-chip {
+  background: var(--accentL); color: var(--accent2); border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 5px 13px; font-size: .74rem; font-weight: 700;
+  display: flex; align-items: center; gap: 5px; cursor: pointer; transition: var(--tr);
+}
+.duty-chip.active, .duty-chip:hover { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+.duty-chip.active { cursor: default; }
+
+/* ==============================
+   PROFILE MODAL
+============================== */
+.modal-ov {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6);
+  z-index: 800; align-items: center; justify-content: center; padding: 14px;
+}
+.modal-ov.open { display: flex; }
+.modal {
+  background: var(--card); border-radius: var(--r3);
+  padding: 24px; max-width: 580px; width: 100%; max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--shadow3); animation: mIn .28s var(--ease);
+}
+@keyframes mIn { from { transform: scale(.92); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-title { font-size: 1.05rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 7px; }
+.modal-close {
+  width: 30px; height: 30px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; cursor: pointer; color: var(--text2); transition: var(--tr); flex-shrink: 0;
+}
+.modal-close:hover { background: var(--redL); color: var(--red); }
+
+/* ==============================
+   STAFF PROFILE CARD (DETAIL)
+============================== */
+.staff-profile-top {
+  display: flex; align-items: center; gap: 16px;
+  background: linear-gradient(135deg, var(--accentL), var(--bg2));
+  border-radius: var(--r); padding: 16px; margin-bottom: 18px;
+}
+[data-theme="dark"] .staff-profile-top { background: linear-gradient(135deg, var(--bg3), var(--bg2)); }
+.sp-avatar {
+  width: 70px; height: 70px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; font-weight: 900; color: #fff;
+  border: 3px solid rgba(255,255,255,.4);
+}
+.sp-name { font-size: 1.05rem; font-weight: 800; color: var(--text); }
+.sp-desig { font-size: .8rem; color: var(--text2); margin-top: 3px; }
+.sp-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+
+/* ==============================
+   ROLE HIGHLIGHT ROWS
+============================== */
+tr.role-principal td:first-child::before { content: '👑 '; }
+tr.role-admin td:first-child::before { content: '🛡️ '; }
+tr.role-principal { background: rgba(245,158,11,.06); }
+tr.role-admin { background: rgba(109,40,217,.06); }
+
+/* ==============================
+   EMPTY STATE
+============================== */
+.empty {
+  text-align: center; padding: 40px 20px; color: var(--text3);
+}
+.empty .e-ico { font-size: 2.8rem; margin-bottom: 10px; }
+.empty p { font-size: .88rem; }
+
+/* ==============================
+   PRINT
+============================== */
+@media print {
+  .school-header .profile-row, .topbar, .nav-tabs, .btn, .btn-row,
+  .search-row, .modal-ov { display: none !important; }
+  body, html { background: #fff !important; color: #000 !important; }
+  .card { box-shadow: none !important; border: 1px solid #ccc !important; }
+  .section { display: block !important; }
+}
+
+/* ==============================
+   RESPONSIVE
+============================== */
+@media (max-width: 480px) {
+  .profile-row { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .school-name { font-size: 1.05rem; }
+  .p-photo { width: 50px; height: 50px; }
+}
+
+/* ==============================
+   HIGHLIGHT ROW / SEARCH HIT
+============================== */
+.hl { background: var(--goldL) !important; }
+[data-theme="dark"] .hl { background: #3a2200 !important; }
+
+/* duty tag inline */
+.d-tag {
+  display: inline-block; background: var(--accentL); color: var(--accent2);
+  border-radius: 5px; padding: 2px 7px; font-size: .66rem; font-weight: 700;
+  margin: 2px;
+}
+[data-theme="dark"] .d-tag { background: #0d2050; }
+
+/* ==============================
+   IMPORT/EXPORT AREA
+============================== */
+.json-area {
+  width: 100%; min-height: 120px; font-family: monospace; font-size: .76rem;
+  background: var(--bg2); color: var(--text); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 10px; resize: vertical;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================
+     SCHOOL HEADER
+============================ -->
+<header class="school-header">
+  <div class="hdr-geo"></div>
+  <div class="hdr-glow"></div>
+  <div class="hdr-inner">
+    <div class="school-top">
+      <div class="school-emblem">
+        <span class="emblem-icon">🏛️</span>
+        <span class="emblem-label">J&K Education Department</span>
+      </div>
+      <h1 class="school-name">Govt. Girls Higher Secondary School<br>Khanyar, Srinagar</h1>
+      <div class="hdr-rule"></div>
+      <p class="school-tagline">👩‍🏫 Staff Management System</p>
+    </div>
+    <div class="profile-row">
+      <div class="profile-card">
+        <div class="p-photo">
+          <img src="author.jpg" alt="Mateen Yousuf" onerror="this.style.display='none';this.parentNode.innerHTML='👨‍💼'"/>
+        </div>
+        <div class="p-info">
+          <div class="p-role">Developer &amp; Teacher</div>
+          <div class="p-name">Mateen Yousuf</div>
+          <div class="p-dept">Computer Science</div>
+        </div>
+      </div>
+      <div class="profile-card">
+        <div class="p-photo">
+          <img src="principal.jpg" alt="Ms Wahida Sheikh" onerror="this.style.display='none';this.parentNode.innerHTML='👩‍💼'"/>
+        </div>
+        <div class="p-info">
+          <div class="p-role">Principal</div>
+          <div class="p-name">Ms. Wahida Sheikh</div>
+          <div class="p-dept">GGHSS Khanyar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left" id="date-display">📅 Loading…</div>
+  <div class="topbar-right">
+    <button class="tb-btn" id="install-btn" style="display:none">📲 Install</button>
+    <button class="tb-btn" onclick="toggleDark()" id="dark-btn">🌙 Dark</button>
+    <button class="tb-btn" onclick="printList()">🖨️ Print</button>
+    <button class="tb-btn danger" onclick="confirmReset()">🗑️ Reset All</button>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <div class="nav-inner">
+    <button class="nav-tab active"  onclick="goTo('dashboard')">📊 Dashboard</button>
+    <button class="nav-tab"        onclick="goTo('add')">➕ Add Staff</button>
+    <button class="nav-tab"        onclick="goTo('list')">📋 Staff List</button>
+    <button class="nav-tab"        onclick="goTo('duties')">🧾 Duties</button>
+    <button class="nav-tab"        onclick="goTo('search')">🔍 Search</button>
+    <button class="nav-tab"        onclick="goTo('data')">💾 Data</button>
+  </div>
+</nav>
+
+<!-- ============================
+     MAIN
+============================ -->
+<main class="main">
+
+  <!-- ===== DASHBOARD ===== -->
+  <section id="sec-dashboard" class="section active">
+    <div class="sec-header">
+      <h2 class="sec-title"><span class="ico">📊</span> Dashboard</h2>
+    </div>
+    <div class="stats-row" id="stats-row">
+      <div class="stat"><div class="stat-ico">👩‍🏫</div><div class="stat-val" id="st-total">0</div><div class="stat-lbl">Total Staff</div></div>
+      <div class="stat"><div class="stat-ico">🎓</div><div class="stat-val" id="st-teacher">0</div><div class="stat-lbl">Teachers</div></div>
+      <div class="stat"><div class="stat-ico">📚</div><div class="stat-val" id="st-lecturer">0</div><div class="stat-lbl">Lecturers</div></div>
+      <div class="stat"><div class="stat-ico">🗂️</div><div class="stat-val" id="st-admin">0</div><div class="stat-lbl">Admin</div></div>
+      <div class="stat"><div class="stat-ico">🛠️</div><div class="stat-val" id="st-support">0</div><div class="stat-lbl">Support</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="cico cico-gold">📋</div> Designation Breakdown</div>
+      <div id="desg-breakdown">
+        <div class="empty"><div class="e-ico">📊</div><p>No staff added yet.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="cico cico-p">🧾</div> Duty Assignments Overview</div>
+      <div id="duty-overview">
+        <div class="empty"><div class="e-ico">🧾</div><p>No duty assignments yet.</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="cico cico-gold">👑</div> Key Personnel</div>
+      <div id="key-personnel">
+        <div class="empty"><div class="e-ico">👤</div><p>No Principal / Admin assigned yet.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ADD STAFF ===== -->
+  <section id="sec-add" class="section">
+    <div class="sec-header">
+      <h2 class="sec-title"><span class="ico">➕</span> <span id="add-title">Add Staff Member</span></h2>
+      <button class="btn btn-s btn-sm" onclick="clearForm()">🔄 Clear Form</button>
+    </div>
+    <div class="card">
+      <input type="hidden" id="edit-id"/>
+      <div class="form-grid">
+        <div class="fg">
+          <label>Full Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. Ms. Aisha Bano"/>
+        </div>
+        <div class="fg">
+          <label>Designation *</label>
+          <select id="f-desig">
+            <option value="">Select designation</option>
+            <option value="Lecturer">Lecturer</option>
+            <option value="Teacher">Teacher</option>
+            <option value="Head Teacher">Head Teacher</option>
+            <option value="Clerk">Clerk</option>
+            <option value="Lab Assistant">Lab Assistant</option>
+            <option value="Support Staff">Support Staff</option>
+            <option value="Peon">Peon</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Subject / Department</label>
+          <input type="text" id="f-subject" placeholder="e.g. Mathematics, Science"/>
+        </div>
+        <div class="fg">
+          <label>Phone Number</label>
+          <input type="tel" id="f-phone" placeholder="10-digit mobile number"/>
+        </div>
+        <div class="fg">
+          <label>Email Address</label>
+          <input type="email" id="f-email" placeholder="email@example.com"/>
+        </div>
+        <div class="fg">
+          <label>Qualification</label>
+          <input type="text" id="f-qual" placeholder="e.g. M.Sc., B.Ed., M.A."/>
+        </div>
+        <div class="fg">
+          <label>Date of Joining</label>
+          <input type="date" id="f-joining"/>
+        </div>
+        <div class="fg">
+          <label>Role</label>
+          <select id="f-role">
+            <option value="Teacher">Teacher</option>
+            <option value="Admin">Admin</option>
+            <option value="Principal">Principal</option>
+            <option value="Support">Support</option>
+          </select>
+        </div>
+        <div class="fg full">
+          <label>Address</label>
+          <input type="text" id="f-address" placeholder="Residential address"/>
+        </div>
+        <div class="fg full">
+          <label>Notes / Remarks</label>
+          <textarea id="f-notes" placeholder="Any additional notes about this staff member…"></textarea>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-p" onclick="saveStaff()">💾 Save Staff Member</button>
+        <button class="btn btn-s" onclick="clearForm()">✕ Clear</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STAFF LIST ===== -->
+  <section id="sec-list" class="section">
+    <div class="sec-header">
+      <h2 class="sec-title"><span class="ico">📋</span> Staff List</h2>
+      <button class="btn btn-p btn-sm" onclick="goTo('add')">➕ Add Staff</button>
+    </div>
+
+    <div class="search-row">
+      <select id="list-desg-filter" onchange="renderList()" style="min-width:150px">
+        <option value="">All Designations</option>
+        <option value="Lecturer">Lecturer</option>
+        <option value="Teacher">Teacher</option>
+        <option value="Head Teacher">Head Teacher</option>
+        <option value="Clerk">Clerk</option>
+        <option value="Lab Assistant">Lab Assistant</option>
+        <option value="Support Staff">Support Staff</option>
+        <option value="Peon">Peon</option>
+      </select>
+      <select id="list-sub-filter" onchange="renderList()" style="min-width:140px">
+        <option value="">All Subjects</option>
+      </select>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Designation</th><th>Subject</th>
+              <th>Phone</th><th>Role</th><th>Duties</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="staff-tbody">
+            <tr><td colspan="8" class="empty"><div class="e-ico">👩‍🏫</div><p>No staff records found.</p></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DUTIES ===== -->
+  <section id="sec-duties" class="section">
+    <div class="sec-header">
+      <h2 class="sec-title"><span class="ico">🧾</span> Duty &amp; Responsibility Tracker</h2>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="cico cico-b">🔽</div> Select Staff Member</div>
+      <div class="fg" style="margin-bottom:12px">
+        <label>Staff Member</label>
+        <select id="duty-staff-select" onchange="loadDutyPanel()">
+          <option value="">-- Select Staff --</option>
+        </select>
+      </div>
+      <div id="duty-panel"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="cico cico-t">📊</div> All Duty Assignments</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Staff Name</th><th>Designation</th><th>Assigned Duties</th></tr></thead>
+          <tbody id="all-duties-tbody">
+            <tr><td colspan="3" class="empty"><div class="e-ico">🧾</div><p>No duties assigned yet.</p></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SEARCH ===== -->
+  <section id="sec-search" class="section">
+    <div class="sec-header">
+      <h2 class="sec-title"><span class="ico">🔍</span> Search Staff</h2>
+    </div>
+    <div class="card">
+      <div class="search-row">
+        <div class="s-wrap">
+          <span class="s-ico">🔍</span>
+          <input type="text" id="gsearch" placeholder="Search by name, subject, designation…" oninput="runSearch()"/>
+        </div>
+        <select id="s-role" onchange="runSearch()" style="min-width:130px">
+          <option value="">All Roles</option>
+          <option value="Teacher">Teacher</option>
+          <option value="Admin">Admin</option>
+          <option value="Principal">Principal</option>
+          <option value="Support">Support</option>
+        </select>
+      </div>
+      <div id="search-results">
+        <div class="empty"><div class="e-ico">🔍</div><p>Type above to search staff.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DATA MANAGEMENT ===== -->
+  <section id="sec-data" class="section">
+    <div class="sec-header">
+      <h2 class="sec-title"><span class="ico">💾</span> Data Management</h2>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="cico cico-g">📤</div> Export Staff Data</div>
+      <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px">Download all staff records as a JSON backup file that can be restored later.</p>
+      <div class="btn-row">
+        <button class="btn btn-g" onclick="exportJSON()">📥 Download JSON Backup</button>
+        <button class="btn btn-t" onclick="exportCSV()">📊 Export as CSV</button>
+        <button class="btn btn-gold" onclick="printList()">🖨️ Printable List</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="cico cico-o">📥</div> Restore / Import Data</div>
+      <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px">Paste your JSON backup below or upload a file to restore staff data.</p>
+      <div class="fg">
+        <label>Paste JSON Data</label>
+        <textarea class="json-area" id="import-json" placeholder='[{"name":"...","designation":"..."}]'></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-o" onclick="importJSON()">📂 Import from Text</button>
+        <label class="btn btn-s" style="cursor:pointer">📁 Upload File <input type="file" accept=".json" onchange="importFile(event)" style="display:none"/></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="cico cico-r">⚠️</div> Danger Zone</div>
+      <p style="font-size:.83rem;color:var(--text2);margin-bottom:14px">These actions are irreversible. Proceed with caution.</p>
+      <div class="btn-row">
+        <button class="btn btn-r" onclick="confirmReset()">🗑️ Reset All Staff Data</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================
+     STAFF PROFILE MODAL
+============================ -->
+<div class="modal-ov" id="profile-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">👤 Staff Profile</div>
+      <button class="modal-close" onclick="closeModal('profile-modal')">✕</button>
+    </div>
+    <div id="profile-body"></div>
+  </div>
+</div>
+
+<!-- EDIT DUTIES MODAL -->
+<div class="modal-ov" id="duty-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">🧾 Edit Duties</div>
+      <button class="modal-close" onclick="closeModal('duty-modal')">✕</button>
+    </div>
+    <div id="duty-modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ============================
+     JAVASCRIPT
+============================ -->
+<script>
+/* =============================
+   CONSTANTS & STATE
+============================= */
+const SK = {
+  STAFF: 'gghss_staff',
+  THEME: 'gghss_theme'
+};
+
+const DUTIES_LIST = [
+  'Class Teacher', 'Examination Duty', 'PTM Incharge', 'AIP Coordinator',
+  'Library Incharge', 'Lab Incharge', 'Sports Incharge', 'Cultural Coordinator',
+  'Time Table Committee', 'Admission Committee', 'NSS Coordinator', 'First Aid Duty'
+];
+
+function LS(k, v) {
+  if (v !== undefined) { localStorage.setItem(k, JSON.stringify(v)); return; }
+  try { return JSON.parse(localStorage.getItem(k)); } catch { return null; }
+}
+
+let staff = LS(SK.STAFF) || [];
+
+/* =============================
+   INIT
+============================= */
+window.addEventListener('DOMContentLoaded', () => {
+  // Date
+  const now = new Date();
+  document.getElementById('date-display').textContent =
+    '📅 ' + now.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  // Default joining date
+  document.getElementById('f-joining').value = now.toISOString().split('T')[0];
+
+  // Theme
+  if (LS(SK.THEME) === 'dark') applyDark(true);
+
+  // Render all views
+  refresh();
+
+  // PWA
+  let dPr;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault(); dPr = e;
+    const btn = document.getElementById('install-btn');
+    btn.style.display = 'inline-flex';
+    btn.onclick = () => { dPr.prompt(); dPr = null; btn.style.display = 'none'; };
+  });
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+  }
+});
+
+/* =============================
+   DARK MODE
+============================= */
+function applyDark(on) {
+  document.documentElement.setAttribute('data-theme', on ? 'dark' : 'light');
+  document.getElementById('dark-btn').textContent = on ? '☀️ Light' : '🌙 Dark';
+}
+function toggleDark() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  applyDark(!dark);
+  LS(SK.THEME, dark ? 'light' : 'dark');
+}
+
+/* =============================
+   TOAST
+============================= */
+function toast(msg, type = 's') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'show ' + type;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.className = ''; }, 2800);
+}
+
+/* =============================
+   NAVIGATION
+============================= */
+function goTo(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  const tabs = ['dashboard','add','list','duties','search','data'];
+  document.querySelectorAll('.nav-tab')[tabs.indexOf(id)]?.classList.add('active');
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'list') renderList();
+  if (id === 'duties') { populateDutySelect(); renderAllDuties(); }
+  if (id === 'search') runSearch();
+}
+
+/* =============================
+   REFRESH ALL
+============================= */
+function refresh() {
+  renderDashboard();
+  renderList();
+  populateDutySelect();
+  renderAllDuties();
+  populateSubjectFilter();
+}
+
+/* =============================
+   ADD / EDIT STAFF
+============================= */
+function saveStaff() {
+  const name  = document.getElementById('f-name').value.trim();
+  const desig = document.getElementById('f-desig').value;
+  if (!name)  { toast('Staff name is required', 'e'); return; }
+  if (!desig) { toast('Please select a designation', 'e'); return; }
+
+  const id = document.getElementById('edit-id').value;
+  const rec = {
+    id:       id || 'st_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    name,
+    desig,
+    subject:  document.getElementById('f-subject').value.trim(),
+    phone:    document.getElementById('f-phone').value.trim(),
+    email:    document.getElementById('f-email').value.trim(),
+    qual:     document.getElementById('f-qual').value.trim(),
+    joining:  document.getElementById('f-joining').value,
+    role:     document.getElementById('f-role').value,
+    address:  document.getElementById('f-address').value.trim(),
+    notes:    document.getElementById('f-notes').value.trim(),
+    duties:   id ? (staff.find(s => s.id === id)?.duties || []) : [],
+    addedAt:  id ? (staff.find(s => s.id === id)?.addedAt || new Date().toISOString()) : new Date().toISOString()
+  };
+
+  if (id) {
+    const i = staff.findIndex(s => s.id === id);
+    if (i > -1) staff[i] = rec;
+    toast('Staff record updated ✏️');
+  } else {
+    staff.push(rec);
+    toast('Staff member added 👩‍🏫');
+  }
+  LS(SK.STAFF, staff);
+  clearForm();
+  refresh();
+  goTo('list');
+}
+
+function clearForm() {
+  ['f-name','f-subject','f-phone','f-email','f-qual','f-address','f-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-desig').value = '';
+  document.getElementById('f-role').value = 'Teacher';
+  document.getElementById('f-joining').value = new Date().toISOString().split('T')[0];
+  document.getElementById('edit-id').value = '';
+  document.getElementById('add-title').textContent = 'Add Staff Member';
+}
+
+function editStaff(id) {
+  const s = staff.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('edit-id').value   = id;
+  document.getElementById('f-name').value    = s.name;
+  document.getElementById('f-desig').value   = s.desig;
+  document.getElementById('f-subject').value = s.subject || '';
+  document.getElementById('f-phone').value   = s.phone   || '';
+  document.getElementById('f-email').value   = s.email   || '';
+  document.getElementById('f-qual').value    = s.qual    || '';
+  document.getElementById('f-joining').value = s.joining || '';
+  document.getElementById('f-role').value    = s.role    || 'Teacher';
+  document.getElementById('f-address').value = s.address || '';
+  document.getElementById('f-notes').value   = s.notes   || '';
+  document.getElementById('add-title').textContent = 'Edit Staff – ' + s.name;
+  goTo('add');
+  window.scrollTo(0, 0);
+}
+
+function deleteStaff(id) {
+  const s = staff.find(x => x.id === id);
+  if (!s || !confirm('Delete ' + s.name + '?')) return;
+  staff = staff.filter(x => x.id !== id);
+  LS(SK.STAFF, staff);
+  toast('Record deleted 🗑️', 'i');
+  refresh();
+}
+
+/* =============================
+   DASHBOARD
+============================= */
+function renderDashboard() {
+  // Stats
+  const total    = staff.length;
+  const teachers = staff.filter(s => s.desig === 'Teacher').length;
+  const lects    = staff.filter(s => s.desig === 'Lecturer').length;
+  const adm      = staff.filter(s => ['Clerk','Lab Assistant'].includes(s.desig)).length;
+  const supp     = staff.filter(s => ['Support Staff','Peon'].includes(s.desig)).length;
+  document.getElementById('st-total').textContent    = total;
+  document.getElementById('st-teacher').textContent  = teachers;
+  document.getElementById('st-lecturer').textContent = lects;
+  document.getElementById('st-admin').textContent    = adm;
+  document.getElementById('st-support').textContent  = supp;
+
+  // Designation breakdown
+  const desgEl = document.getElementById('desg-breakdown');
+  if (!total) { desgEl.innerHTML = '<div class="empty"><div class="e-ico">📊</div><p>No staff added yet.</p></div>'; }
+  else {
+    const counts = {};
+    staff.forEach(s => { counts[s.desig] = (counts[s.desig] || 0) + 1; });
+    const colors = { 'Lecturer':'b-blue','Teacher':'b-green','Head Teacher':'b-gold','Clerk':'b-orange','Lab Assistant':'b-teal','Support Staff':'b-purple','Peon':'b-red' };
+    desgEl.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:10px">
+      ${Object.entries(counts).map(([d,c]) =>
+        `<div style="display:flex;align-items:center;gap:8px;background:var(--bg2);padding:10px 16px;border-radius:10px;border:1px solid var(--border)">
+          <span class="badge ${colors[d]||'b-blue'}">${d}</span>
+          <span style="font-size:1.3rem;font-weight:900;color:var(--accent2)">${c}</span>
+        </div>`
+      ).join('')}
+    </div>`;
+  }
+
+  // Duty overview
+  const dutyEl = document.getElementById('duty-overview');
+  const withDuties = staff.filter(s => s.duties && s.duties.length);
+  if (!withDuties.length) { dutyEl.innerHTML = '<div class="empty"><div class="e-ico">🧾</div><p>No duties assigned yet.</p></div>'; }
+  else {
+    dutyEl.innerHTML = `<div class="tbl-wrap"><table>
+      <thead><tr><th>Staff</th><th>Designation</th><th>Duties</th></tr></thead>
+      <tbody>${withDuties.map(s => `<tr>
+        <td><strong>${s.name}</strong></td>
+        <td>${s.desig}</td>
+        <td>${s.duties.map(d => `<span class="d-tag">${d}</span>`).join('')}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+
+  // Key personnel
+  const keyEl = document.getElementById('key-personnel');
+  const key = staff.filter(s => ['Principal','Admin'].includes(s.role));
+  if (!key.length) { keyEl.innerHTML = '<div class="empty"><div class="e-ico">👤</div><p>No Principal/Admin assigned.</p></div>'; }
+  else {
+    keyEl.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+      ${key.map(s => `<div style="display:flex;align-items:center;gap:12px;background:var(--bg2);border-radius:12px;padding:14px;border:1px solid var(--border)">
+        <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;font-weight:900;flex-shrink:0">${s.name[0]}</div>
+        <div>
+          <div style="font-weight:800;font-size:.88rem">${s.name}</div>
+          <div style="font-size:.74rem;color:var(--text2)">${s.desig} · ${s.subject||'—'}</div>
+          <span class="badge ${s.role==='Principal'?'b-gold':'b-purple'}" style="margin-top:4px">${s.role==='Principal'?'👑':'🛡️'} ${s.role}</span>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }
+}
+
+/* =============================
+   STAFF LIST
+============================= */
+function populateSubjectFilter() {
+  const sel = document.getElementById('list-sub-filter');
+  const subjects = [...new Set(staff.map(s => s.subject).filter(Boolean))].sort();
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">All Subjects</option>' + subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+  sel.value = cur;
+}
+
+function renderList() {
+  populateSubjectFilter();
+  const desgF = document.getElementById('list-desg-filter').value;
+  const subF  = document.getElementById('list-sub-filter').value;
+  let list = staff.filter(s => (!desgF || s.desig === desgF) && (!subF || s.subject === subF));
+  const tb = document.getElementById('staff-tbody');
+
+  if (!list.length) {
+    tb.innerHTML = '<tr><td colspan="8"><div class="empty"><div class="e-ico">👩‍🏫</div><p>No records found.</p></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = list.map((s, i) => {
+    const roleClass = s.role === 'Principal' ? 'role-principal' : s.role === 'Admin' ? 'role-admin' : '';
+    const roleBadge = s.role === 'Principal' ? '<span class="badge b-gold">👑 Principal</span>'
+                    : s.role === 'Admin'      ? '<span class="badge b-purple">🛡️ Admin</span>'
+                    : '<span class="badge b-blue">' + s.role + '</span>';
+    return `<tr class="${roleClass}">
+      <td><strong>${i + 1}</strong></td>
+      <td><button style="background:none;border:none;font-weight:800;color:var(--accent2);cursor:pointer;text-align:left" onclick="viewProfile('${s.id}')">${s.name}</button></td>
+      <td>${s.desig}</td>
+      <td>${s.subject || '—'}</td>
+      <td>${s.phone || '—'}</td>
+      <td>${roleBadge}</td>
+      <td>${s.duties && s.duties.length ? s.duties.map(d => `<span class="d-tag">${d}</span>`).join('') : '<span style="color:var(--text4)">None</span>'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-s btn-xs" onclick="viewProfile('${s.id}')">👤</button>
+        <button class="btn btn-o btn-xs" onclick="editStaff('${s.id}')">✏️</button>
+        <button class="btn btn-r btn-xs" onclick="deleteStaff('${s.id}')">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* =============================
+   PROFILE MODAL
+============================= */
+function viewProfile(id) {
+  const s = staff.find(x => x.id === id);
+  if (!s) return;
+  const initials = s.name.split(' ').map(w => w[0]).join('').substr(0, 2).toUpperCase();
+  const roleBadge = s.role === 'Principal' ? '<span class="badge b-gold">👑 Principal</span>'
+                  : s.role === 'Admin'      ? '<span class="badge b-purple">🛡️ Admin</span>'
+                  : '<span class="badge b-blue">' + s.role + '</span>';
+
+  document.getElementById('profile-body').innerHTML = `
+    <div class="staff-profile-top">
+      <div class="sp-avatar">${initials}</div>
+      <div>
+        <div class="sp-name">${s.name}</div>
+        <div class="sp-desig">${s.desig} ${s.subject ? '· ' + s.subject : ''}</div>
+        <div class="sp-meta">${roleBadge}</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:.82rem;margin-bottom:16px">
+      ${field('📞 Phone', s.phone)}
+      ${field('📧 Email', s.email)}
+      ${field('🎓 Qualification', s.qual)}
+      ${field('📅 Date of Joining', s.joining ? new Date(s.joining+'T00:00:00').toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'}) : '')}
+      ${field('🏠 Address', s.address, true)}
+    </div>
+
+    ${s.duties && s.duties.length ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:6px">🧾 ASSIGNED DUTIES</div>
+      <div class="duty-chips">${s.duties.map(d => `<div class="duty-chip active">${d}</div>`).join('')}</div>
+    </div>` : ''}
+
+    ${s.notes ? `
+    <div style="background:var(--bg2);border-radius:10px;padding:12px;font-size:.82rem;color:var(--text2);margin-bottom:14px">
+      <strong>📝 Notes:</strong> ${s.notes}
+    </div>` : ''}
+
+    <div class="btn-row">
+      <button class="btn btn-o btn-sm" onclick="closeModal('profile-modal');editStaff('${s.id}')">✏️ Edit Profile</button>
+      <button class="btn btn-t btn-sm" onclick="closeModal('profile-modal');openDutyModal('${s.id}')">🧾 Edit Duties</button>
+    </div>
+  `;
+  openModal('profile-modal');
+}
+
+function field(label, val, full) {
+  if (!val) return '';
+  const style = full ? 'grid-column:1/-1' : '';
+  return `<div style="${style};background:var(--bg2);padding:8px 12px;border-radius:8px;border:1px solid var(--border)">
+    <div style="font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin-bottom:2px">${label}</div>
+    <div style="font-weight:700">${val}</div>
+  </div>`;
+}
+
+/* =============================
+   DUTIES
+============================= */
+function populateDutySelect() {
+  const sel = document.getElementById('duty-staff-select');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- Select Staff --</option>' +
+    staff.map(s => `<option value="${s.id}">${s.name} (${s.desig})</option>`).join('');
+  if (cur) sel.value = cur;
+}
+
+function loadDutyPanel() {
+  const id = document.getElementById('duty-staff-select').value;
+  const panel = document.getElementById('duty-panel');
+  if (!id) { panel.innerHTML = ''; return; }
+  const s = staff.find(x => x.id === id);
+  if (!s) { panel.innerHTML = ''; return; }
+
+  panel.innerHTML = `
+    <div style="margin-bottom:10px;font-size:.83rem;color:var(--text2)">Assign duties for <strong>${s.name}</strong>:</div>
+    <div class="duty-chips" id="duty-chip-area">
+      ${DUTIES_LIST.map(d => `
+        <div class="duty-chip ${s.duties&&s.duties.includes(d)?'active':''}"
+             id="dc-${d.replace(/\s+/g,'-')}"
+             onclick="toggleDuty('${id}','${d}',this)">${d}</div>
+      `).join('')}
+    </div>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn btn-p btn-sm" onclick="saveDuties('${id}')">💾 Save Duties</button>
+      <button class="btn btn-r btn-sm" onclick="clearDuties('${id}')">✕ Clear All</button>
+    </div>
+  `;
+}
+
+function toggleDuty(id, duty, el) {
+  el.classList.toggle('active');
+}
+
+function saveDuties(id) {
+  const s = staff.find(x => x.id === id);
+  if (!s) return;
+  const chips = document.querySelectorAll('#duty-chip-area .duty-chip.active');
+  s.duties = [...chips].map(c => c.textContent.trim());
+  LS(SK.STAFF, staff);
+  toast('Duties saved for ' + s.name + ' 🧾');
+  renderAllDuties();
+  renderDashboard();
+}
+
+function clearDuties(id) {
+  document.querySelectorAll('#duty-chip-area .duty-chip').forEach(c => c.classList.remove('active'));
+}
+
+function openDutyModal(id) {
+  const s = staff.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('duty-modal-body').innerHTML = `
+    <div style="margin-bottom:10px;font-size:.84rem;color:var(--text2)">Assign duties for <strong>${s.name}</strong>:</div>
+    <div class="duty-chips" id="modal-duty-chips">
+      ${DUTIES_LIST.map(d => `
+        <div class="duty-chip ${s.duties&&s.duties.includes(d)?'active':''}"
+             onclick="this.classList.toggle('active')">${d}</div>
+      `).join('')}
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-p btn-sm" onclick="saveDutiesFromModal('${id}')">💾 Save</button>
+      <button class="btn btn-s btn-sm" onclick="closeModal('duty-modal')">Cancel</button>
+    </div>
+  `;
+  openModal('duty-modal');
+}
+
+function saveDutiesFromModal(id) {
+  const s = staff.find(x => x.id === id);
+  if (!s) return;
+  const chips = document.querySelectorAll('#modal-duty-chips .duty-chip.active');
+  s.duties = [...chips].map(c => c.textContent.trim());
+  LS(SK.STAFF, staff);
+  toast('Duties updated ✅');
+  closeModal('duty-modal');
+  renderAllDuties();
+  renderDashboard();
+}
+
+function renderAllDuties() {
+  const tb = document.getElementById('all-duties-tbody');
+  const withDuties = staff.filter(s => s.duties && s.duties.length);
+  if (!withDuties.length) {
+    tb.innerHTML = '<tr><td colspan="3"><div class="empty"><div class="e-ico">🧾</div><p>No duties assigned yet.</p></div></td></tr>';
+    return;
+  }
+  tb.innerHTML = withDuties.map(s => `<tr>
+    <td><strong>${s.name}</strong></td>
+    <td>${s.desig}</td>
+    <td>${s.duties.map(d => `<span class="d-tag">${d}</span>`).join('')}</td>
+  </tr>`).join('');
+}
+
+/* =============================
+   SEARCH
+============================= */
+function runSearch() {
+  const q    = document.getElementById('gsearch').value.trim().toLowerCase();
+  const role = document.getElementById('s-role').value;
+  const el   = document.getElementById('search-results');
+
+  const results = staff.filter(s => {
+    const matchQ = !q || s.name.toLowerCase().includes(q) || (s.subject||'').toLowerCase().includes(q) || (s.desig||'').toLowerCase().includes(q) || (s.phone||'').includes(q);
+    const matchR = !role || s.role === role;
+    return matchQ && matchR;
+  });
+
+  if (!results.length) {
+    el.innerHTML = '<div class="empty"><div class="e-ico">🔍</div><p>No staff match your search.</p></div>';
+    return;
+  }
+
+  el.innerHTML = `<div style="font-size:.78rem;color:var(--text2);margin-bottom:10px">${results.length} result(s)</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Name</th><th>Designation</th><th>Subject</th><th>Phone</th><th>Role</th><th>Actions</th></tr></thead>
+    <tbody>${results.map(s => `<tr>
+      <td><strong>${highlight(s.name, q)}</strong></td>
+      <td>${s.desig}</td>
+      <td>${highlight(s.subject||'—', q)}</td>
+      <td>${s.phone||'—'}</td>
+      <td>${s.role}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-s btn-xs" onclick="viewProfile('${s.id}')">👤</button>
+        <button class="btn btn-o btn-xs" onclick="editStaff('${s.id}')">✏️</button>
+      </td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function highlight(text, q) {
+  if (!q || !text) return text || '';
+  return text.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'), '<mark style="background:var(--goldL);color:var(--gold);border-radius:3px">$1</mark>');
+}
+
+/* =============================
+   EXPORT / IMPORT
+============================= */
+function exportJSON() {
+  if (!staff.length) { toast('No staff to export', 'w'); return; }
+  const blob = new Blob([JSON.stringify(staff, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gghss-staff-backup-' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  toast('JSON backup downloaded 📥');
+}
+
+function exportCSV() {
+  if (!staff.length) { toast('No staff to export', 'w'); return; }
+  const headers = ['Name','Designation','Subject','Phone','Email','Qualification','Joining','Role','Address','Notes','Duties'];
+  const rows = staff.map(s => [
+    s.name, s.desig, s.subject, s.phone, s.email, s.qual, s.joining, s.role, s.address, s.notes,
+    (s.duties||[]).join(' | ')
+  ].map(v => '"' + (v||'').replace(/"/g,'""') + '"'));
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gghss-staff-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+  toast('CSV exported 📊');
+}
+
+function importJSON() {
+  const raw = document.getElementById('import-json').value.trim();
+  if (!raw) { toast('Paste JSON data first', 'w'); return; }
+  try {
+    const data = JSON.parse(raw);
+    if (!Array.isArray(data)) throw new Error();
+    if (!confirm('Import ' + data.length + ' records? Existing data will be replaced.')) return;
+    staff = data.map(s => ({ ...s, id: s.id || ('st_' + Date.now() + '_' + Math.random().toString(36).substr(2,5)) }));
+    LS(SK.STAFF, staff);
+    refresh();
+    document.getElementById('import-json').value = '';
+    toast('Imported ' + staff.length + ' records ✅');
+  } catch {
+    toast('Invalid JSON data. Please check format.', 'e');
+  }
+}
+
+function importFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('import-json').value = ev.target.result;
+    importJSON();
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+/* =============================
+   PRINT
+============================= */
+function printList() {
+  const win = window.open('', '_blank');
+  const now = new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  win.document.write(`<!DOCTYPE html><html><head>
+    <title>GGHSS Staff List</title>
+    <style>
+      body{font-family:Georgia,serif;padding:24px;color:#000}
+      h1{font-size:1.4rem;text-align:center;margin-bottom:4px}
+      h2{font-size:1rem;text-align:center;font-weight:normal;margin-bottom:16px;color:#555}
+      p.date{text-align:center;font-size:.8rem;color:#666;margin-bottom:20px}
+      table{width:100%;border-collapse:collapse;font-size:.82rem}
+      th{background:#0d2050;color:#fff;padding:8px;text-align:left}
+      td{padding:8px;border-bottom:1px solid #ddd}
+      tr:nth-child(even)td{background:#f5f8ff}
+      .d-tag{display:inline-block;background:#e8f0ff;padding:1px 6px;border-radius:4px;font-size:.7rem;margin:1px}
+    </style>
+  </head><body>
+    <h1>Govt. Girls Higher Secondary School Khanyar</h1>
+    <h2>Staff Directory</h2>
+    <p class="date">Generated on ${now}</p>
+    <table>
+      <thead><tr><th>#</th><th>Name</th><th>Designation</th><th>Subject</th><th>Phone</th><th>Qualification</th><th>Joining Date</th><th>Role</th><th>Duties</th></tr></thead>
+      <tbody>
+        ${staff.map((s,i) => `<tr>
+          <td>${i+1}</td><td><strong>${s.name}</strong></td><td>${s.desig}</td>
+          <td>${s.subject||'—'}</td><td>${s.phone||'—'}</td><td>${s.qual||'—'}</td>
+          <td>${s.joining||'—'}</td><td>${s.role}</td>
+          <td>${(s.duties||[]).map(d=>'<span class="d-tag">'+d+'</span>').join('')||'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+    <p style="margin-top:20px;font-size:.75rem;color:#666;text-align:center">Total: ${staff.length} staff members | Developed by Mateen Yousuf | GGHSS Khanyar</p>
+  </body></html>`);
+  win.document.close();
+  win.print();
+}
+
+/* =============================
+   RESET
+============================= */
+function confirmReset() {
+  if (!confirm('⚠️ Delete ALL staff data? This cannot be undone.')) return;
+  if (!confirm('Are you absolutely sure?')) return;
+  staff = [];
+  LS(SK.STAFF, staff);
+  toast('All data reset 🗑️', 'i');
+  refresh();
+  goTo('dashboard');
+}
+
+/* =============================
+   MODALS
+============================= */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-ov')) e.target.classList.remove('open');
+});
+</script>
+</body>
+</html>

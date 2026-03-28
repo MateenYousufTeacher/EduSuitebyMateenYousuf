@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#6d28d9"/>
+<meta name="description" content="GGHSS Khanyar Homework & Assignment Management System"/>
+<link rel="manifest" href="manifest.json"/>
+<title>GGHSS Khanyar – Homework System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  --purple:    #6d28d9;
+  --purple2:   #7c3aed;
+  --purple3:   #8b5cf6;
+  --lavender:  #ede9fe;
+  --cream:     #faf9ff;
+  --white:     #ffffff;
+  --g100:      #f5f3ff;
+  --g200:      #e4e0f5;
+  --g400:      #9d8ec4;
+  --g600:      #5b4e8a;
+  --g800:      #1e1540;
+  --red:       #dc2626;
+  --red-lt:    #fee2e2;
+  --amber:     #d97706;
+  --amber-lt:  #fef3c7;
+  --green:     #059669;
+  --green-lt:  #d1fae5;
+  --blue:      #2563eb;
+  --blue-lt:   #dbeafe;
+  --shadow:    0 3px 18px rgba(109,40,217,0.13);
+  --shadow-lg: 0 8px 38px rgba(109,40,217,0.2);
+  --r:         14px;
+  --r-sm:      8px;
+  --t:         all 0.22s ease;
+}
+[data-theme="dark"] {
+  --purple:    #4c1d95;
+  --purple2:   #5b21b6;
+  --purple3:   #6d28d9;
+  --lavender:  #1e1040;
+  --cream:     #110c28;
+  --white:     #1a1135;
+  --g100:      #1e1545;
+  --g200:      #2a1f60;
+  --g400:      #6d5fa0;
+  --g600:      #b0a0d8;
+  --g800:      #e8e0ff;
+  --red-lt:    #3b0f0f;
+  --amber-lt:  #2d1f00;
+  --green-lt:  #052e1c;
+  --blue-lt:   #0c1f45;
+  --shadow:    0 3px 18px rgba(0,0,0,0.45);
+  --shadow-lg: 0 8px 38px rgba(0,0,0,0.6);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:var(--cream);color:var(--g800);min-height:100vh;transition:var(--t);}
+
+/* TOP BAR */
+.topbar{background:var(--purple);display:flex;align-items:center;justify-content:space-between;padding:6px 16px;flex-wrap:wrap;gap:6px;}
+.topbar span{color:rgba(255,255,255,0.5);font-size:10.5px;font-weight:600;letter-spacing:.8px;}
+.dark-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#e9d5ff;padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;transition:var(--t);}
+
+/* INSTALL */
+#install-banner{display:none;background:linear-gradient(90deg,#7c3aed,#a855f7);color:#fff;padding:9px 16px;text-align:center;font-weight:700;font-size:12px;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;}
+#install-banner.show{display:flex;}
+#install-banner button{background:#fff;color:var(--purple);border:none;padding:4px 14px;border-radius:20px;font-family:'Sora',sans-serif;font-weight:700;cursor:pointer;font-size:12px;}
+
+/* HEADER */
+.school-header{background:linear-gradient(135deg,#3b0764 0%,#6d28d9 55%,#7c3aed 100%);color:#fff;position:relative;overflow:hidden;}
+.school-header::before{content:'';position:absolute;top:-60px;right:-60px;width:230px;height:230px;border-radius:50%;background:rgba(233,213,255,0.08);}
+.school-header::after{content:'';position:absolute;bottom:-40px;left:-40px;width:170px;height:170px;border-radius:50%;background:rgba(233,213,255,0.05);}
+.hdr-top{display:flex;align-items:center;justify-content:center;gap:14px;padding:22px 20px 8px;flex-wrap:wrap;text-align:center;position:relative;z-index:1;}
+.emblem{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 18px rgba(0,0,0,0.3);flex-shrink:0;}
+.hdr-text h1{font-family:'Crimson Pro',serif;font-size:clamp(15px,3.8vw,23px);font-weight:600;color:#fde68a;text-shadow:0 2px 8px rgba(0,0,0,0.3);line-height:1.35;}
+.hdr-text p{font-size:11px;opacity:.75;margin-top:3px;}
+.gold-bar{height:2px;background:linear-gradient(90deg,transparent,#f59e0b,transparent);margin:6px 20px;}
+.staff-row{display:flex;gap:12px;padding:10px 20px 18px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;}
+.s-card{background:rgba(255,255,255,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:var(--r);padding:11px 15px;display:flex;align-items:center;gap:11px;min-width:190px;max-width:250px;flex:1;}
+.s-av{width:48px;height:48px;border-radius:50%;border:2px solid #f59e0b;overflow:hidden;background:var(--purple2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.s-av img{width:100%;height:100%;object-fit:cover;}
+.s-info strong{display:block;font-size:13px;color:#fde68a;}
+.s-info span{font-size:11px;opacity:.72;display:block;margin-top:1px;}
+.s-info em{font-size:10px;color:#fde68a;opacity:.85;font-style:normal;margin-top:3px;display:block;}
+
+/* NAV */
+.nav{background:var(--white);box-shadow:var(--shadow);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:100;border-bottom:3px solid #7c3aed;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{flex:0 0 auto;padding:13px 16px;border:none;background:transparent;font-family:'Sora',sans-serif;font-size:12.5px;font-weight:700;color:var(--g600);cursor:pointer;transition:var(--t);white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-3px;}
+.nav-btn.active,.nav-btn:hover{color:var(--purple);border-bottom-color:#7c3aed;background:rgba(124,58,237,0.07);}
+
+/* MAIN */
+.main{padding:18px 14px;max-width:980px;margin:0 auto;}
+.section{display:none;} .section.active{display:block;}
+
+/* CARD */
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:20px;margin-bottom:18px;border:1px solid var(--g200);}
+.card-title{font-size:15px;font-weight:700;color:var(--purple);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-title::after{content:'';flex:1;height:1px;background:var(--g200);margin-left:6px;}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg label{font-size:11px;font-weight:700;color:var(--g600);text-transform:uppercase;letter-spacing:.5px;}
+.fg input,.fg select,.fg textarea{padding:9px 12px;border:2px solid var(--g200);border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-size:13px;color:var(--g800);background:var(--g100);transition:var(--t);outline:none;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--purple2);background:var(--white);box-shadow:0 0 0 3px rgba(124,58,237,0.12);}
+.fg textarea{resize:vertical;min-height:64px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.fgrid .full{grid-column:1/-1;}
+@media(max-width:560px){.fgrid{grid-template-columns:1fr;}}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border-radius:var(--r-sm);border:none;font-family:'Sora',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:var(--t);display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(109,40,217,0.4);}
+.btn-amber{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;}
+.btn-green{background:linear-gradient(135deg,#059669,#10b981);color:#fff;}
+.btn-danger{background:var(--red);color:#fff;padding:6px 11px;font-size:12px;}
+.btn-sm{padding:6px 11px;font-size:12px;}
+.btn-ghost{background:var(--g100);color:var(--g800);border:1px solid var(--g200);}
+.btn-outline{background:transparent;border:2px solid var(--purple);color:var(--purple);}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:13px;}
+.stat-card{background:var(--white);border-radius:var(--r);padding:16px 14px;text-align:center;box-shadow:var(--shadow);border-top:4px solid transparent;transition:var(--t);cursor:default;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+.stat-card.s-total{border-top-color:var(--purple);}
+.stat-card.s-pend{border-top-color:var(--amber);}
+.stat-card.s-done{border-top-color:var(--green);}
+.stat-card.s-over{border-top-color:var(--red);}
+.stat-num{font-size:30px;font-weight:800;color:var(--purple);line-height:1;}
+.stat-lbl{font-size:11px;color:var(--g600);margin-top:4px;font-weight:600;}
+.stat-ico{font-size:22px;margin-bottom:6px;}
+
+/* HW CARD */
+.hw-card{background:var(--white);border:1px solid var(--g200);border-radius:var(--r);padding:16px;margin-bottom:13px;box-shadow:var(--shadow);border-left:5px solid var(--purple3);transition:var(--t);}
+.hw-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-1px);}
+.hw-card.overdue{border-left-color:var(--red);background:linear-gradient(to right,var(--red-lt),var(--white));}
+.hw-card.completed{border-left-color:var(--green);background:linear-gradient(to right,var(--green-lt),var(--white));}
+.hw-card.pending{border-left-color:var(--amber);background:linear-gradient(to right,var(--amber-lt),var(--white));}
+[data-theme="dark"] .hw-card.overdue{background:linear-gradient(to right,var(--red-lt),var(--white));}
+[data-theme="dark"] .hw-card.completed{background:linear-gradient(to right,var(--green-lt),var(--white));}
+[data-theme="dark"] .hw-card.pending{background:linear-gradient(to right,var(--amber-lt),var(--white));}
+
+.hw-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.hw-title{font-weight:800;font-size:14px;color:var(--g800);}
+.hw-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;}
+.tag{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700;}
+.tag-subj{background:var(--blue-lt);color:var(--blue);}
+.tag-cls{background:var(--lavender);color:var(--purple);}
+.tag-tchr{background:var(--g100);color:var(--g600);}
+.badge{display:inline-block;padding:3px 10px;border-radius:14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.badge-pending{background:var(--amber-lt);color:#92400e;}
+.badge-completed{background:var(--green-lt);color:#065f46;}
+.badge-overdue{background:var(--red-lt);color:#991b1b;}
+.hw-desc{margin-top:8px;font-size:13px;color:var(--g600);line-height:1.5;}
+.hw-dates{margin-top:6px;font-size:11.5px;color:var(--g400);display:flex;gap:14px;flex-wrap:wrap;}
+.hw-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+
+/* DUE INDICATOR */
+.due-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:11px;font-weight:700;}
+.due-today{background:#fef3c7;color:#92400e;}
+.due-soon{background:#dbeafe;color:#1e40af;}
+.due-past{background:#fee2e2;color:#991b1b;}
+
+/* SUBMISSION LIST */
+.sub-list{display:flex;flex-direction:column;gap:7px;margin-top:10px;}
+.sub-item{background:var(--g100);border-radius:var(--r-sm);padding:9px 12px;display:flex;align-items:center;gap:10px;border:1px solid var(--g200);}
+.sub-status-btn{padding:4px 10px;border-radius:10px;font-size:11px;font-weight:700;border:none;cursor:pointer;font-family:'Sora',sans-serif;transition:var(--t);}
+.sub-submitted{background:var(--green-lt);color:#065f46;}
+.sub-not{background:var(--red-lt);color:#991b1b;}
+
+/* CLASS BARS */
+.cls-bars{display:flex;flex-direction:column;gap:10px;}
+.cls-row{display:flex;align-items:center;gap:10px;}
+.cls-lbl{font-size:12px;font-weight:700;color:var(--purple);width:60px;}
+.cls-track{flex:1;height:14px;background:var(--g200);border-radius:7px;overflow:hidden;}
+.cls-fill{height:100%;border-radius:7px;background:linear-gradient(90deg,var(--purple),var(--purple3));transition:width .6s ease;}
+.cls-num{font-size:12px;font-weight:700;color:var(--g600);width:22px;text-align:right;}
+
+/* SEARCH BAR */
+.search-bar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px;}
+.search-bar input,.search-bar select{padding:9px 12px;border:2px solid var(--g200);border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-size:13px;background:var(--white);color:var(--g800);outline:none;transition:var(--t);}
+.search-bar input:focus,.search-bar select:focus{border-color:var(--purple2);}
+.search-bar input{flex:1;min-width:140px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.52);z-index:500;align-items:center;justify-content:center;padding:14px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--r);padding:22px;max-width:540px;width:100%;box-shadow:var(--shadow-lg);animation:popIn .22s ease;max-height:90vh;overflow-y:auto;}
+@keyframes popIn{from{transform:scale(.88);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal h3{font-size:17px;color:var(--purple);margin-bottom:14px;}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:20px;right:14px;z-index:9999;display:flex;flex-direction:column;gap:7px;}
+.toast{background:var(--purple);color:#fff;padding:11px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);animation:slideIn .28s ease;display:flex;align-items:center;gap:8px;border-left:4px solid #f59e0b;max-width:270px;}
+.toast.ok{border-left-color:var(--green);}
+.toast.err{border-left-color:var(--red);}
+@keyframes slideIn{from{transform:translateX(110%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes fadeOut{from{opacity:1;}to{opacity:0;transform:translateX(110%);}}
+
+/* EXPORT */
+.export-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+
+/* EMPTY */
+.empty{text-align:center;padding:34px 20px;color:var(--g400);}
+.empty p{font-size:14px;font-weight:600;margin-top:10px;}
+
+/* PG TITLE */
+.pg-title{font-size:18px;font-weight:800;color:var(--purple);margin-bottom:18px;display:flex;align-items:center;gap:9px;}
+
+/* OVERDUE WARNING */
+.overdue-warn{background:var(--red-lt);border:1px solid #fca5a5;border-radius:var(--r-sm);padding:9px 13px;font-size:12px;font-weight:700;color:var(--red);display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+
+/* PRINT */
+@media print{
+  .nav,.topbar,.hw-actions,.search-bar,.export-btns,#install-banner,.dark-btn,.btn-danger,.btn-primary,.btn-sm{display:none!important;}
+  .card,.hw-card{box-shadow:none!important;border:1px solid #ddd!important;}
+  body{background:#fff!important;color:#000!important;}
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--g100);}
+::-webkit-scrollbar-thumb{background:var(--g400);border-radius:3px;}
+
+@media(max-width:460px){
+  .staff-row{flex-direction:column;align-items:center;}
+  .s-card{min-width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div id="install-banner">
+  📲 Install GGHSS Homework App on your device!
+  <button id="install-btn">Install Now</button>
+  <button onclick="document.getElementById('install-banner').classList.remove('show')" style="background:transparent;color:#fff;border:none;font-size:18px;cursor:pointer;line-height:1;">✕</button>
+</div>
+
+<div class="topbar">
+  <span>GGHSS KHANYAR · HOMEWORK SYSTEM · JKBOSE</span>
+  <button class="dark-btn" id="darkBtn">🌙 Dark</button>
+</div>
+
+<header class="school-header">
+  <div class="hdr-top">
+    <div class="emblem">🏫</div>
+    <div class="hdr-text">
+      <h1>Govt Girls Higher Secondary School<br>Khanyar, Srinagar</h1>
+      <p>Homework &amp; Assignment Management System · JKBOSE</p>
+    </div>
+  </div>
+  <div class="gold-bar"></div>
+  <div class="staff-row">
+    <div class="s-card">
+      <div class="s-av"><img src="author.jpg" alt="Mateen Yousuf" onerror="this.parentElement.innerHTML='👨‍🏫'"/></div>
+      <div class="s-info"><strong>Mateen Yousuf</strong><span>Teacher &amp; Developer</span><em>💻 System Developed By</em></div>
+    </div>
+    <div class="s-card">
+      <div class="s-av"><img src="principal.jpg" alt="Ms Wahida Sheikh" onerror="this.parentElement.innerHTML='👩‍💼'"/></div>
+      <div class="s-info"><strong>Ms Wahida Sheikh</strong><span>Principal</span><em>🏫 GGHSS Khanyar</em></div>
+    </div>
+  </div>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn active" data-tab="dashboard">📊 Dashboard</button>
+  <button class="nav-btn" data-tab="create">📚 Assign</button>
+  <button class="nav-btn" data-tab="list">📋 Assignments</button>
+  <button class="nav-btn" data-tab="export">📤 Export</button>
+</nav>
+
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="section active">
+    <div class="pg-title">📊 Homework Dashboard</div>
+    <div id="overdueWarn" style="display:none;" class="overdue-warn">⚠️ <span id="overdueWarnText"></span></div>
+    <div class="stats-grid">
+      <div class="stat-card s-total"><div class="stat-ico">📚</div><div class="stat-num" id="sTotal">0</div><div class="stat-lbl">Total</div></div>
+      <div class="stat-card s-pend"><div class="stat-ico">⏳</div><div class="stat-num" id="sPend">0</div><div class="stat-lbl">Pending</div></div>
+      <div class="stat-card s-done"><div class="stat-ico">✅</div><div class="stat-num" id="sDone">0</div><div class="stat-lbl">Completed</div></div>
+      <div class="stat-card s-over"><div class="stat-ico">🔴</div><div class="stat-num" id="sOver">0</div><div class="stat-lbl">Overdue</div></div>
+    </div>
+    <div class="card" style="margin-top:18px;">
+      <div class="card-title">📚 Class-wise Assignments</div>
+      <div class="cls-bars" id="clsBars"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🕒 Recent Assignments</div>
+      <div id="recentList"></div>
+    </div>
+  </section>
+
+  <!-- CREATE -->
+  <section id="create" class="section">
+    <div class="pg-title">📚 Create Assignment</div>
+    <div class="card">
+      <div class="fgrid">
+        <div class="fg full"><label>Assignment Title *</label><input type="text" id="f_title" placeholder="e.g. Chapter 3 Exercise"/></div>
+        <div class="fg"><label>Subject *</label>
+          <select id="f_subj">
+            <option value="">– Select Subject –</option>
+            <option>Mathematics</option><option>Science</option><option>English</option>
+            <option>Urdu</option><option>Hindi</option><option>Social Studies</option>
+            <option>Physics</option><option>Chemistry</option><option>Biology</option>
+            <option>Computer Science</option><option>History</option><option>Geography</option><option>Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>Class *</label>
+          <select id="f_class">
+            <option value="">– Select Class –</option>
+            <option value="9">Class 9</option><option value="10">Class 10</option>
+            <option value="11">Class 11</option><option value="12">Class 12</option>
+          </select>
+        </div>
+        <div class="fg"><label>Teacher Name *</label><input type="text" id="f_teacher" placeholder="Assigning teacher name"/></div>
+        <div class="fg"><label>Due Date *</label><input type="date" id="f_due"/></div>
+        <div class="fg"><label>Assigned Date</label><input type="text" id="f_assigned" readonly style="background:var(--g100);color:var(--g600);"/></div>
+        <div class="fg full"><label>Description</label><textarea id="f_desc" placeholder="Details about the assignment…"></textarea></div>
+        <div class="fg full" style="align-self:end;">
+          <button class="btn btn-primary" onclick="createHW()">📌 Assign Homework</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIST -->
+  <section id="list" class="section">
+    <div class="pg-title">📋 All Assignments</div>
+    <div class="card">
+      <div class="search-bar">
+        <input type="text" id="searchQ" placeholder="🔍 Search title or subject…" oninput="renderList()"/>
+        <select id="fClass" onchange="renderList()">
+          <option value="">All Classes</option>
+          <option value="9">Class 9</option><option value="10">Class 10</option>
+          <option value="11">Class 11</option><option value="12">Class 12</option>
+        </select>
+        <select id="fSubj" onchange="renderList()">
+          <option value="">All Subjects</option>
+          <option>Mathematics</option><option>Science</option><option>English</option>
+          <option>Urdu</option><option>Hindi</option><option>Social Studies</option>
+          <option>Physics</option><option>Chemistry</option><option>Biology</option>
+          <option>Computer Science</option><option>History</option><option>Geography</option><option>Other</option>
+        </select>
+        <select id="fStatus" onchange="renderList()">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+          <option value="Overdue">Overdue</option>
+        </select>
+      </div>
+      <div id="hwList"></div>
+    </div>
+  </section>
+
+  <!-- EXPORT -->
+  <section id="export" class="section">
+    <div class="pg-title">📤 Export &amp; Print</div>
+    <div class="card">
+      <div class="card-title">📋 Export Options</div>
+      <div class="export-btns">
+        <button class="btn btn-primary" onclick="exportAll()">📄 All Assignments</button>
+        <button class="btn btn-amber" onclick="exportOverdue()">🔴 Overdue Report</button>
+        <button class="btn btn-green" onclick="exportCompleted()">✅ Completed List</button>
+        <button class="btn btn-outline" onclick="printReport()">🖨️ Print</button>
+      </div>
+      <div id="exportPreview"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL: Edit -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>✏️ Edit Assignment</h3>
+    <div class="fgrid">
+      <div class="fg full"><label>Title</label><input type="text" id="e_title"/></div>
+      <div class="fg"><label>Subject</label>
+        <select id="e_subj">
+          <option>Mathematics</option><option>Science</option><option>English</option>
+          <option>Urdu</option><option>Hindi</option><option>Social Studies</option>
+          <option>Physics</option><option>Chemistry</option><option>Biology</option>
+          <option>Computer Science</option><option>History</option><option>Geography</option><option>Other</option>
+        </select>
+      </div>
+      <div class="fg"><label>Class</label>
+        <select id="e_class">
+          <option value="9">Class 9</option><option value="10">Class 10</option>
+          <option value="11">Class 11</option><option value="12">Class 12</option>
+        </select>
+      </div>
+      <div class="fg"><label>Teacher</label><input type="text" id="e_teacher"/></div>
+      <div class="fg"><label>Due Date</label><input type="date" id="e_due"/></div>
+      <div class="fg"><label>Status</label>
+        <select id="e_status">
+          <option value="Pending">⏳ Pending</option>
+          <option value="Completed">✅ Completed</option>
+        </select>
+      </div>
+      <div class="fg full"><label>Description</label><textarea id="e_desc" style="min-height:56px;"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('editModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Submissions -->
+<div class="modal-overlay" id="subModal">
+  <div class="modal">
+    <h3 id="subModalTitle">👩‍🎓 Submissions</h3>
+    <div id="subContent"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('subModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const KEY = 'gghss_homework_v1';
+let editingId = null, subGoalId = null;
+
+// ══ DATA ══
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||[]; }catch{ return []; } }
+function save(d){ localStorage.setItem(KEY,JSON.stringify(d)); }
+
+// ══ STATUS ENGINE ══
+function computeStatus(hw){
+  if(hw.status==='Completed') return 'completed';
+  const today=new Date(); today.setHours(0,0,0,0);
+  const due=new Date(hw.due); due.setHours(0,0,0,0);
+  if(due<today) return 'overdue';
+  return 'pending';
+}
+function dueLabel(due){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const d=new Date(due); d.setHours(0,0,0,0);
+  const diff=Math.round((d-today)/(1000*60*60*24));
+  if(diff<0) return `<span class="due-badge due-past">🔴 ${Math.abs(diff)}d overdue</span>`;
+  if(diff===0) return `<span class="due-badge due-today">🟡 Due Today!</span>`;
+  if(diff<=3) return `<span class="due-badge due-soon">🔵 Due in ${diff}d</span>`;
+  return '';
+}
+
+// ══ INIT ══
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('f_assigned').value=new Date().toLocaleDateString('en-IN');
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById(b.dataset.tab).classList.add('active');
+      if(b.dataset.tab==='dashboard') refreshDash();
+      if(b.dataset.tab==='list') renderList();
+    });
+  });
+  if(localStorage.getItem('hw_theme')==='dark') applyDark();
+  document.getElementById('darkBtn').addEventListener('click',toggleDark);
+  if(!load().length) seedDemo();
+  refreshDash();
+});
+
+// ══ DARK MODE ══
+function toggleDark(){
+  if(document.documentElement.getAttribute('data-theme')==='dark'){
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('hw_theme','light');
+    document.getElementById('darkBtn').textContent='🌙 Dark';
+  } else applyDark();
+}
+function applyDark(){
+  document.documentElement.setAttribute('data-theme','dark');
+  localStorage.setItem('hw_theme','dark');
+  document.getElementById('darkBtn').textContent='☀️ Light';
+}
+
+// ══ DEMO DATA ══
+function seedDemo(){
+  const today=new Date();
+  const fmt=d=>d.toISOString().split('T')[0];
+  const past=(n)=>{ const d=new Date(); d.setDate(d.getDate()-n); return fmt(d); };
+  const future=(n)=>{ const d=new Date(); d.setDate(d.getDate()+n); return fmt(d); };
+  const demo=[
+    {id:'H1',title:'Chapter 3 – Algebra Exercises',subject:'Mathematics',class:'9',teacher:'Ms. Ruqiya Bhat',assigned:past(3),due:future(2),desc:'Solve all exercises from chapter 3. Show full working.',status:'Pending',submissions:[{name:'Student A',submitted:true,remarks:'On time'},{name:'Student B',submitted:false,remarks:''}]},
+    {id:'H2',title:'Essay – My Village',subject:'English',class:'10',teacher:'Mr. Tariq Ahmad',assigned:past(7),due:past(2),desc:'Write a 300-word essay on "My Village" in your own words.',status:'Pending',submissions:[]},
+    {id:'H3',title:'Lab Report – Acid & Base Reaction',subject:'Chemistry',class:'11',teacher:'Ms. Ulfat Mir',assigned:past(5),due:future(4),desc:'Write a complete lab report for the acid-base experiment done in class.',status:'Completed',submissions:[{name:'Aisha Bano',submitted:true,remarks:'Excellent work'},{name:'Rubia Nazir',submitted:true,remarks:'Good'}]},
+    {id:'H4',title:'Map Marking – Rivers of India',subject:'Geography',class:'9',teacher:'Mr. Zahid Khan',assigned:past(2),due:future(1),desc:'Mark all major rivers of India on the outline map.',status:'Pending',submissions:[]},
+    {id:'H5',title:'Python Program – Fibonacci Series',subject:'Computer Science',class:'12',teacher:'Mateen Yousuf',assigned:past(1),due:future(3),desc:'Write a Python program to print the first 20 Fibonacci numbers.',status:'Pending',submissions:[]},
+  ];
+  save(demo);
+}
+
+// ══ CREATE ══
+function createHW(){
+  const title=v('f_title'),subj=v('f_subj'),cls=v('f_class'),teacher=v('f_teacher'),due=v('f_due'),desc=v('f_desc');
+  if(!title||!subj||!cls||!teacher||!due){ toast('⚠️ Fill all required fields!','err'); return; }
+  const today=new Date(); const dueD=new Date(due);
+  if(dueD<today){ toast('⚠️ Due date cannot be in the past!','err'); return; }
+  const d=load();
+  d.push({id:'H'+Date.now(),title,subject:subj,class:cls,teacher,assigned:new Date().toISOString().split('T')[0],due,desc,status:'Pending',submissions:[]});
+  save(d);
+  ['f_title','f_subj','f_class','f_teacher','f_due','f_desc'].forEach(i=>{ const el=document.getElementById(i); if(el) el.value=''; });
+  toast('✅ Assignment created!','ok');
+  refreshDash();
+}
+
+// ══ DASHBOARD ══
+function refreshDash(){
+  const d=load();
+  // auto-update overdue
+  let changed=false;
+  d.forEach(hw=>{ if(hw.status!=='Completed'){ const s=computeStatus(hw); if(s==='overdue'&&hw.status!=='Overdue'){ hw.status='Overdue'; changed=true; } } });
+  if(changed) save(d);
+
+  const total=d.length;
+  const pend=d.filter(h=>h.status==='Pending').length;
+  const done=d.filter(h=>h.status==='Completed').length;
+  const over=d.filter(h=>h.status==='Overdue'||computeStatus(h)==='overdue').length;
+
+  anim('sTotal',total); anim('sPend',pend); anim('sDone',done); anim('sOver',over);
+
+  if(over>0){
+    document.getElementById('overdueWarn').style.display='flex';
+    document.getElementById('overdueWarnText').textContent=`${over} assignment(s) are overdue! Please review immediately.`;
+  } else { document.getElementById('overdueWarn').style.display='none'; }
+
+  // class bars
+  const classes=['9','10','11','12'];
+  const maxC=Math.max(1,...classes.map(c=>d.filter(h=>h.class===c).length));
+  document.getElementById('clsBars').innerHTML=classes.map(c=>{
+    const cnt=d.filter(h=>h.class===c).length;
+    return `<div class="cls-row">
+      <span class="cls-lbl">Class ${c}</span>
+      <div class="cls-track"><div class="cls-fill" style="width:${(cnt/maxC*100).toFixed(1)}%"></div></div>
+      <span class="cls-num">${cnt}</span>
+    </div>`;
+  }).join('');
+
+  // recent
+  const recent=[...d].sort((a,b)=>b.id>a.id?1:-1).slice(0,6);
+  document.getElementById('recentList').innerHTML=recent.length?recent.map(hw=>{
+    const st=computeStatus(hw);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--g200);">
+      <span style="font-size:20px;">${subjIcon(hw.subject)}</span>
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:13px;color:var(--g800);">${esc(hw.title)}</div>
+        <div style="font-size:11px;color:var(--g400);">${esc(hw.subject)} · Class ${esc(hw.class)} · ${esc(hw.teacher)}</div>
+        <div style="font-size:11px;color:var(--g400);margin-top:2px;">Due: ${esc(hw.due)}</div>
+      </div>
+      <span class="badge badge-${st}">${st.charAt(0).toUpperCase()+st.slice(1)}</span>
+    </div>`;
+  }).join(''):`<div class="empty"><p>No assignments yet. Create one!</p></div>`;
+}
+
+function anim(id,target){
+  const el=document.getElementById(id); const start=parseInt(el.textContent)||0; let i=0;
+  const t=setInterval(()=>{ i++; el.textContent=Math.round(start+(target-start)*(i/18)); if(i>=18){clearInterval(t);el.textContent=target;} },16);
+}
+
+// ══ LIST ══
+function renderList(){
+  const d=load();
+  const q=document.getElementById('searchQ').value.toLowerCase();
+  const fC=document.getElementById('fClass').value;
+  const fS=document.getElementById('fSubj').value;
+  const fSt=document.getElementById('fStatus').value;
+
+  // auto overdue update
+  let changed=false;
+  d.forEach(hw=>{ if(hw.status==='Pending'){ if(computeStatus(hw)==='overdue'){ hw.status='Overdue'; changed=true; } } });
+  if(changed) save(d);
+
+  const filtered=d.filter(hw=>{
+    const mq=!q||hw.title.toLowerCase().includes(q)||hw.subject.toLowerCase().includes(q);
+    const mC=!fC||hw.class===fC;
+    const mS=!fS||hw.subject===fS;
+    const mSt=!fSt||computeStatus(hw)===fSt.toLowerCase();
+    return mq&&mC&&mS&&mSt;
+  });
+
+  const container=document.getElementById('hwList');
+  if(!filtered.length){ container.innerHTML=`<div class="empty"><p>No assignments found</p></div>`; return; }
+
+  container.innerHTML=filtered.map(hw=>{
+    const st=computeStatus(hw);
+    const subCount=hw.submissions?hw.submissions.length:0;
+    const subDone=hw.submissions?hw.submissions.filter(s=>s.submitted).length:0;
+    return `<div class="hw-card ${st}" id="hwc_${hw.id}">
+      <div class="hw-header">
+        <div>
+          <div class="hw-title">${subjIcon(hw.subject)} ${esc(hw.title)}</div>
+          <div class="hw-meta">
+            <span class="tag tag-subj">${esc(hw.subject)}</span>
+            <span class="tag tag-cls">Class ${esc(hw.class)}</span>
+            <span class="tag tag-tchr">👤 ${esc(hw.teacher)}</span>
+            <span class="badge badge-${st}">${st.charAt(0).toUpperCase()+st.slice(1)}</span>
+          </div>
+        </div>
+        <div>${dueLabel(hw.due)}</div>
+      </div>
+      ${hw.desc?`<div class="hw-desc">${esc(hw.desc)}</div>`:''}
+      <div class="hw-dates">
+        <span>📅 Assigned: ${esc(hw.assigned)}</span>
+        <span>⏰ Due: ${esc(hw.due)}</span>
+        ${subCount?`<span>📨 Submissions: ${subDone}/${subCount}</span>`:''}
+      </div>
+      <div class="hw-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openEdit('${hw.id}')">✏️ Edit</button>
+        <button class="btn btn-ghost btn-sm" onclick="openSubs('${hw.id}')">👩‍🎓 Submissions (${subCount})</button>
+        ${st!=='completed'?`<button class="btn btn-green btn-sm" onclick="markDone('${hw.id}')">✅ Mark Done</button>`:''}
+        <button class="btn btn-danger btn-sm" onclick="deleteHW('${hw.id}')">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══ EDIT ══
+function openEdit(id){
+  const d=load(); const hw=d.find(x=>x.id===id); if(!hw) return;
+  editingId=id;
+  setV('e_title',hw.title); setV('e_subj',hw.subject); setV('e_class',hw.class);
+  setV('e_teacher',hw.teacher); setV('e_due',hw.due); setV('e_status',hw.status);
+  setV('e_desc',hw.desc||'');
+  document.getElementById('editModal').classList.add('open');
+}
+function saveEdit(){
+  const d=load(); const idx=d.findIndex(x=>x.id===editingId); if(idx===-1) return;
+  d[idx].title=v('e_title'); d[idx].subject=v('e_subj'); d[idx].class=v('e_class');
+  d[idx].teacher=v('e_teacher'); d[idx].due=v('e_due'); d[idx].status=v('e_status');
+  d[idx].desc=v('e_desc');
+  save(d); closeModal('editModal'); renderList(); refreshDash();
+  toast('✅ Assignment updated!','ok');
+}
+
+// ══ DELETE ══
+function deleteHW(id){
+  if(!confirm('Delete this assignment?')) return;
+  save(load().filter(h=>h.id!==id)); renderList(); refreshDash();
+  toast('🗑 Deleted','err');
+}
+
+// ══ MARK DONE ══
+function markDone(id){
+  const d=load(); const idx=d.findIndex(x=>x.id===id); if(idx===-1) return;
+  d[idx].status='Completed'; save(d); renderList(); refreshDash();
+  toast('✅ Marked as Completed!','ok');
+}
+
+// ══ SUBMISSIONS ══
+function openSubs(id){
+  subGoalId=id;
+  const d=load(); const hw=d.find(x=>x.id===id); if(!hw) return;
+  document.getElementById('subModalTitle').textContent=`👩‍🎓 Submissions – ${hw.title}`;
+  renderSubModal(hw);
+  document.getElementById('subModal').classList.add('open');
+}
+function renderSubModal(hw){
+  const html=`
+    <div style="margin-bottom:12px;">
+      <div class="fgrid" style="grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div class="fg"><label>Student Name</label><input type="text" id="sub_name" placeholder="Name…"/></div>
+        <div class="fg"><label>Status</label>
+          <select id="sub_status"><option value="true">✅ Submitted</option><option value="false">❌ Not Submitted</option></select>
+        </div>
+        <div class="fg"><label>Remarks</label><input type="text" id="sub_remarks" placeholder="Optional…"/></div>
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:10px;" onclick="addSub()">➕ Add</button>
+    </div>
+    <div class="sub-list" id="subList">
+      ${hw.submissions&&hw.submissions.length?hw.submissions.map((s,i)=>`
+        <div class="sub-item">
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:13px;color:var(--g800);">${esc(s.name)}</div>
+            ${s.remarks?`<div style="font-size:11px;color:var(--g400);">${esc(s.remarks)}</div>`:''}
+          </div>
+          <button class="sub-status-btn ${s.submitted?'sub-submitted':'sub-not'}" onclick="toggleSub('${subGoalId}',${i})">${s.submitted?'✅ Submitted':'❌ Not Submitted'}</button>
+          <button class="a-del" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:16px;opacity:.6;" onclick="removeSub('${subGoalId}',${i})">🗑</button>
+        </div>`).join('')
+      :`<div class="empty" style="padding:20px;"><p>No submissions recorded yet</p></div>`}
+    </div>`;
+  document.getElementById('subContent').innerHTML=html;
+}
+function addSub(){
+  const name=v('sub_name'); if(!name){ toast('⚠️ Student name required','err'); return; }
+  const d=load(); const idx=d.findIndex(x=>x.id===subGoalId); if(idx===-1) return;
+  if(!d[idx].submissions) d[idx].submissions=[];
+  d[idx].submissions.push({name,submitted:v('sub_status')==='true',remarks:v('sub_remarks')});
+  save(d); renderSubModal(d[idx]); toast('➕ Submission recorded!','ok');
+}
+function toggleSub(id,i){
+  const d=load(); const idx=d.findIndex(x=>x.id===id); if(idx===-1) return;
+  d[idx].submissions[i].submitted=!d[idx].submissions[i].submitted;
+  save(d); renderSubModal(d[idx]);
+}
+function removeSub(id,i){
+  const d=load(); const idx=d.findIndex(x=>x.id===id); if(idx===-1) return;
+  d[idx].submissions.splice(i,1); save(d); renderSubModal(d[idx]);
+}
+
+// ══ EXPORT ══
+function exportAll(){ buildExport(load(),'All Assignments'); }
+function exportOverdue(){ buildExport(load().filter(h=>computeStatus(h)==='overdue'),'Overdue Assignments'); }
+function exportCompleted(){ buildExport(load().filter(h=>computeStatus(h)==='completed'),'Completed Assignments'); }
+
+function buildExport(list,title){
+  if(!list.length){ toast('⚠️ Nothing to export!','err'); return; }
+  const html=`<div id="exportContent" style="margin-top:16px;">
+    <div style="text-align:center;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--g200);">
+      <strong style="font-size:16px;color:var(--purple);">GGHSS Khanyar – ${title}</strong><br>
+      <small style="color:var(--g600);">Generated: ${new Date().toLocaleDateString('en-IN')} · Principal: Ms Wahida Sheikh</small>
+    </div>
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:var(--purple);color:#fff;">
+        <th style="padding:8px;text-align:left;">#</th>
+        <th style="padding:8px;text-align:left;">Title</th>
+        <th style="padding:8px;">Subject</th>
+        <th style="padding:8px;">Class</th>
+        <th style="padding:8px;">Teacher</th>
+        <th style="padding:8px;">Assigned</th>
+        <th style="padding:8px;">Due</th>
+        <th style="padding:8px;">Status</th>
+        <th style="padding:8px;">Submissions</th>
+      </tr></thead>
+      <tbody>
+        ${list.map((h,i)=>{
+          const st=computeStatus(h);
+          const subDone=h.submissions?h.submissions.filter(s=>s.submitted).length:0;
+          return `<tr style="border-bottom:1px solid var(--g200);">
+            <td style="padding:7px 8px;">${i+1}</td>
+            <td style="padding:7px 8px;font-weight:700;">${esc(h.title)}</td>
+            <td style="padding:7px 8px;text-align:center;">${esc(h.subject)}</td>
+            <td style="padding:7px 8px;text-align:center;">Class ${esc(h.class)}</td>
+            <td style="padding:7px 8px;">${esc(h.teacher)}</td>
+            <td style="padding:7px 8px;text-align:center;">${esc(h.assigned)}</td>
+            <td style="padding:7px 8px;text-align:center;">${esc(h.due)}</td>
+            <td style="padding:7px 8px;text-align:center;">${st.charAt(0).toUpperCase()+st.slice(1)}</td>
+            <td style="padding:7px 8px;text-align:center;">${subDone}/${h.submissions?h.submissions.length:0}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table></div>
+  </div>`;
+  document.getElementById('exportPreview').innerHTML=html;
+  toast('📄 Report generated!','ok');
+}
+
+function printReport(){
+  if(!document.getElementById('exportPreview').innerHTML) exportAll();
+  setTimeout(()=>window.print(),300);
+}
+
+// ══ MODAL ══
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(ov=>{ ov.addEventListener('click',e=>{ if(e.target===ov) closeModal(ov.id); }); });
+
+// ══ TOAST ══
+function toast(msg,type=''){
+  const wrap=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`; t.textContent=msg;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.style.animation='fadeOut .3s ease forwards'; setTimeout(()=>t.remove(),300); },3000);
+}
+
+// ══ UTILS ══
+function v(id){ return document.getElementById(id)?.value||''; }
+function setV(id,val){ const el=document.getElementById(id); if(el) el.value=val; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function subjIcon(s){
+  const m={Mathematics:'🔢',Science:'🔬',English:'📖',Urdu:'✍️',Hindi:'📝',Physics:'⚡','Social Studies':'🌍',Chemistry:'⚗️',Biology:'🌱','Computer Science':'💻',History:'📜',Geography:'🗺️'};
+  return m[s]||'📚';
+}
+
+// ══ PWA ══
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js').then(r=>console.log('SW:',r.scope)).catch(e=>console.warn(e)); }
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferredPrompt=e; document.getElementById('install-banner').classList.add('show'); });
+document.getElementById('install-btn').addEventListener('click',async()=>{ if(deferredPrompt){ deferredPrompt.prompt(); const r=await deferredPrompt.userChoice; if(r.outcome==='accepted') toast('✅ App installed!','ok'); deferredPrompt=null; document.getElementById('install-banner').classList.remove('show'); } });
+window.addEventListener('appinstalled',()=>{ document.getElementById('install-banner').classList.remove('show'); toast('🎉 App installed!','ok'); });
+</script>
+</body>
+</html>

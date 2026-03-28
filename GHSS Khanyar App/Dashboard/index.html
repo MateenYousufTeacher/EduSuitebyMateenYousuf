@@ -1,0 +1,2807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a3a5c">
+<meta name="description" content="GGHSS Khanyar – Complete School ERP System">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="author.jpg">
+<title>GGHSS Khanyar – School ERP</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@300;400;600;700;800&display=swap');
+
+:root {
+  --primary: #1a3a5c;
+  --primary-light: #2563a8;
+  --accent: #e8a020;
+  --accent2: #28a745;
+  --danger: #dc3545;
+  --info: #17a2b8;
+  --purple: #6f42c1;
+  --bg: #f0f4f8;
+  --card: #ffffff;
+  --text: #1a2332;
+  --text-muted: #6c757d;
+  --border: #dee2e6;
+  --sidebar-w: 260px;
+  --header-h: 72px;
+  --shadow: 0 4px 20px rgba(26,58,92,0.12);
+  --shadow-lg: 0 8px 40px rgba(26,58,92,0.18);
+  --radius: 14px;
+  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+[data-theme="dark"] {
+  --bg: #0f1923;
+  --card: #1a2535;
+  --text: #e8edf2;
+  --text-muted: #8899aa;
+  --border: #2a3a4a;
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ===== LAYOUT ===== */
+#app { display: flex; min-height: 100vh; }
+
+/* ===== SIDEBAR ===== */
+#sidebar {
+  width: var(--sidebar-w);
+  background: linear-gradient(180deg, #1a3a5c 0%, #0d2137 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 1000;
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+#sidebar.collapsed { width: 68px; }
+
+.sidebar-logo {
+  padding: 20px 18px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+}
+
+.sidebar-logo .logo-icon {
+  width: 36px; height: 36px; flex-shrink: 0;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+
+.sidebar-logo .logo-text {
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.sidebar-logo .logo-text h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.sidebar-logo .logo-text span {
+  font-size: 9px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+#sidebar.collapsed .logo-text { opacity: 0; width: 0; }
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0;
+  scrollbar-width: none;
+}
+.sidebar-nav::-webkit-scrollbar { display: none; }
+
+.nav-section-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.35);
+  padding: 14px 20px 6px;
+  text-transform: uppercase;
+  transition: var(--transition);
+}
+#sidebar.collapsed .nav-section-label { opacity: 0; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 18px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.72);
+  border-radius: 0;
+  transition: var(--transition);
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.nav-item:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.nav-item.active {
+  background: rgba(232,160,32,0.18);
+  color: var(--accent);
+  border-right: 3px solid var(--accent);
+}
+
+.nav-item .nav-icon {
+  font-size: 20px;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.nav-item .nav-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+#sidebar.collapsed .nav-label { opacity: 0; width: 0; }
+
+.nav-badge {
+  margin-left: auto;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  transition: var(--transition);
+}
+#sidebar.collapsed .nav-badge { display: none; }
+
+.sidebar-footer {
+  padding: 14px 18px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-footer .version-text {
+  font-size: 10px;
+  color: rgba(255,255,255,0.35);
+  transition: var(--transition);
+}
+#sidebar.collapsed .version-text { display: none; }
+
+/* ===== MAIN CONTENT ===== */
+#main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  min-height: 100vh;
+}
+#main.expanded { margin-left: 68px; }
+
+/* ===== TOP BAR ===== */
+#topbar {
+  height: var(--header-h);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  box-shadow: var(--shadow);
+}
+
+.topbar-toggle {
+  width: 40px; height: 40px;
+  border: none;
+  background: var(--bg);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--text);
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.topbar-toggle:hover { background: var(--primary); color: #fff; }
+
+.topbar-search {
+  flex: 1;
+  max-width: 400px;
+  position: relative;
+}
+
+.topbar-search input {
+  width: 100%;
+  padding: 9px 16px 9px 40px;
+  border: 1.5px solid var(--border);
+  border-radius: 30px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13.5px;
+  transition: var(--transition);
+}
+.topbar-search input:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  background: var(--card);
+}
+
+.topbar-search .search-icon {
+  position: absolute;
+  left: 13px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+#search-results-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  max-height: 300px;
+  overflow-y: auto;
+  display: none;
+  z-index: 1000;
+}
+#search-results-dropdown.show { display: block; }
+.search-result-item {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: var(--transition);
+}
+.search-result-item:hover { background: var(--bg); }
+.search-result-item:last-child { border: none; }
+.search-result-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+.tag-student { background: rgba(40,167,69,0.15); color: var(--accent2); }
+.tag-staff { background: rgba(37,99,168,0.15); color: var(--primary-light); }
+.tag-msg { background: rgba(23,162,184,0.15); color: var(--info); }
+
+.topbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-btn {
+  width: 40px; height: 40px;
+  border: none;
+  background: var(--bg);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--text);
+  transition: var(--transition);
+  position: relative;
+}
+.topbar-btn:hover { background: var(--primary); color: #fff; }
+.topbar-btn .notif-dot {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 8px; height: 8px;
+  background: var(--danger);
+  border-radius: 50%;
+  border: 2px solid var(--card);
+}
+
+.topbar-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: var(--bg);
+  border-radius: 30px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.topbar-profile:hover { background: var(--primary); color: #fff; }
+.profile-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  overflow: hidden;
+}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.profile-name { font-size: 13px; font-weight: 700; }
+
+/* ===== PAGE CONTENT ===== */
+#content {
+  flex: 1;
+  padding: 28px 28px 40px;
+}
+
+/* ===== SECTIONS ===== */
+.section { display: none; animation: fadeSlide 0.4s ease; }
+.section.active { display: block; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SCHOOL HEADER ===== */
+.school-header {
+  background: linear-gradient(135deg, #1a3a5c 0%, #2563a8 50%, #1a3a5c 100%);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  margin-bottom: 28px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.school-header::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -10%;
+  width: 400px; height: 400px;
+  background: rgba(232,160,32,0.08);
+  border-radius: 50%;
+}
+
+.school-header-grid {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 24px;
+  align-items: center;
+  position: relative;
+}
+
+.school-header-info h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(16px, 2.5vw, 24px);
+  font-weight: 900;
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+
+.school-header-info .school-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.school-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+}
+
+.person-card {
+  text-align: center;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  backdrop-filter: blur(10px);
+  min-width: 130px;
+}
+
+.person-card .avatar-ring {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  margin: 0 auto 8px;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.2);
+  font-size: 28px;
+}
+.person-card .avatar-ring img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.person-card .person-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.person-card .person-role {
+  font-size: 10px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ===== PAGE TITLE ===== */
+.page-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-title h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== STATS CARDS ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat-card.blue::after { background: var(--primary-light); }
+.stat-card.green::after { background: var(--accent2); }
+.stat-card.amber::after { background: var(--accent); }
+.stat-card.red::after { background: var(--danger); }
+.stat-card.purple::after { background: var(--purple); }
+.stat-card.cyan::after { background: var(--info); }
+
+.stat-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.stat-icon.blue { background: rgba(37,99,168,0.12); }
+.stat-icon.green { background: rgba(40,167,69,0.12); }
+.stat-icon.amber { background: rgba(232,160,32,0.12); }
+.stat-icon.red { background: rgba(220,53,69,0.12); }
+.stat-icon.purple { background: rgba(111,66,193,0.12); }
+.stat-icon.cyan { background: rgba(23,162,184,0.12); }
+
+.stat-info .stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.stat-info .stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* ===== DATA GRID ===== */
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: var(--transition);
+}
+.card:hover { box-shadow: var(--shadow-lg); }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  text-decoration: none;
+}
+
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); }
+
+.btn-success { background: var(--accent2); color: #fff; }
+.btn-success:hover { background: #1e8f3a; transform: translateY(-1px); }
+
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { opacity: 0.85; }
+
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: #c8870a; transform: translateY(-1px); }
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--text);
+}
+.btn-outline:hover { border-color: var(--primary-light); color: var(--primary-light); }
+
+.btn-sm { padding: 6px 13px; font-size: 12px; }
+.btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 8px; justify-content: center; }
+
+/* ===== FORMS ===== */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13.5px;
+  transition: var(--transition);
+}
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  background: var(--card);
+  box-shadow: 0 0 0 3px rgba(37,99,168,0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: var(--card);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  padding: 22px 26px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 {
+  font-size: 17px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-close {
+  width: 34px; height: 34px;
+  border: none;
+  background: var(--bg);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text);
+  transition: var(--transition);
+}
+.modal-close:hover { background: var(--danger); color: #fff; }
+
+.modal-body { padding: 22px 26px; }
+.modal-footer {
+  padding: 16px 26px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* ===== TABLE ===== */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+}
+
+thead th {
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+thead th:first-child { border-radius: 12px 0 0 0; }
+thead th:last-child { border-radius: 0 12px 0 0; }
+
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+}
+tbody tr:last-child { border: none; }
+tbody tr:hover { background: var(--bg); }
+
+tbody td {
+  padding: 11px 16px;
+  font-size: 13px;
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.td-actions { display: flex; gap: 6px; align-items: center; }
+
+/* ===== BADGE ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.badge-success { background: rgba(40,167,69,0.15); color: var(--accent2); }
+.badge-warning { background: rgba(232,160,32,0.15); color: #b07a10; }
+.badge-danger { background: rgba(220,53,69,0.15); color: var(--danger); }
+.badge-info { background: rgba(23,162,184,0.15); color: var(--info); }
+.badge-primary { background: rgba(37,99,168,0.15); color: var(--primary-light); }
+
+/* ===== QUICK ACTIONS ===== */
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+/* ===== ATTENDANCE GRID ===== */
+.attendance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.attendance-student-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: var(--transition);
+}
+.attendance-student-card:hover { box-shadow: var(--shadow); }
+
+.att-status-btns { display: flex; gap: 6px; }
+.att-btn {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.att-btn.present { background: rgba(40,167,69,0.15); color: var(--accent2); }
+.att-btn.present.active, .att-btn.present:hover { background: var(--accent2); color: #fff; }
+.att-btn.absent { background: rgba(220,53,69,0.15); color: var(--danger); }
+.att-btn.absent.active, .att-btn.absent:hover { background: var(--danger); color: #fff; }
+.att-btn.leave { background: rgba(232,160,32,0.15); color: #b07a10; }
+.att-btn.leave.active, .att-btn.leave:hover { background: var(--accent); color: #fff; }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar-wrap {
+  background: var(--border);
+  border-radius: 20px;
+  height: 8px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.progress-bar {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.6s ease;
+}
+
+/* ===== MESSAGES ===== */
+.message-list { display: flex; flex-direction: column; gap: 12px; }
+
+.message-item {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary-light);
+  transition: var(--transition);
+}
+.message-item:hover { box-shadow: var(--shadow); }
+
+.message-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.message-from { font-size: 13px; font-weight: 700; }
+.message-time { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+.message-text { font-size: 13.5px; color: var(--text); line-height: 1.5; }
+
+/* ===== EVENTS ===== */
+.event-list { display: flex; flex-direction: column; gap: 10px; }
+
+.event-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.event-date-badge {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  text-align: center;
+  flex-shrink: 0;
+  min-width: 52px;
+}
+.event-date-badge .day { font-size: 20px; font-weight: 800; line-height: 1; }
+.event-date-badge .month { font-size: 10px; font-weight: 600; }
+
+.event-info .event-title { font-size: 14px; font-weight: 700; }
+.event-info .event-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* ===== AIP ===== */
+.aip-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+/* ===== NOTIFICATIONS ===== */
+#notification-panel {
+  position: fixed;
+  top: 80px; right: 20px;
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.notification {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-lg);
+  border-left: 4px solid var(--accent2);
+  min-width: 280px;
+  max-width: 340px;
+  pointer-events: all;
+  animation: notifSlide 0.3s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.notification.error { border-color: var(--danger); }
+.notification.warning { border-color: var(--accent); }
+.notification.info { border-color: var(--info); }
+
+@keyframes notifSlide {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+.notif-content { flex: 1; }
+.notif-title { font-size: 13px; font-weight: 700; }
+.notif-msg { font-size: 12px; color: var(--text-muted); }
+.notif-close { cursor: pointer; color: var(--text-muted); font-size: 14px; }
+
+/* ===== DARK MODE TOGGLE ===== */
+.dark-toggle {
+  position: relative;
+  width: 46px; height: 24px;
+}
+.dark-toggle input { opacity: 0; width: 0; height: 0; }
+.dark-toggle .slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.dark-toggle .slider::before {
+  content: '☀️';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  transition: 0.3s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.dark-toggle input:checked + .slider { background: var(--primary-light); }
+.dark-toggle input:checked + .slider::before {
+  transform: translateX(22px);
+  content: '🌙';
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 52px; margin-bottom: 14px; }
+.empty-state h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.empty-state p { font-size: 13px; }
+
+/* ===== EXAM RESULTS ===== */
+.result-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.marks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.mark-box {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+}
+.mark-box .subject { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+.mark-box .marks { font-size: 20px; font-weight: 800; }
+
+/* ===== HOMEWORK ===== */
+.hw-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--purple);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  #sidebar { transform: translateX(-100%); }
+  #sidebar.mobile-open { transform: translateX(0); }
+  #main { margin-left: 0 !important; }
+  #content { padding: 16px 14px 32px; }
+  .school-header-grid { grid-template-columns: 1fr; }
+  .person-card { display: none; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  #topbar { padding: 0 14px; }
+  .topbar-profile .profile-name { display: none; }
+
+  #overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+  #overlay.show { display: block; }
+}
+
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+/* ===== PRINT ===== */
+@media print {
+  #sidebar, #topbar, .btn, .quick-actions { display: none !important; }
+  #main { margin-left: 0 !important; }
+}
+
+/* ===== UTILS ===== */
+.text-muted { color: var(--text-muted); }
+.text-center { text-align: center; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 14px; }
+.mt-4 { margin-top: 20px; }
+.mb-3 { margin-bottom: 14px; }
+.d-flex { display: flex; }
+.align-center { align-items: center; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.justify-between { justify-content: space-between; }
+.w-100 { width: 100%; }
+.fw-bold { font-weight: 700; }
+.fs-sm { font-size: 12px; }
+.flex-wrap { flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div id="overlay"></div>
+<div id="notification-panel"></div>
+
+<div id="app">
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🏫</div>
+      <div class="logo-text">
+        <h2>GGHSS Khanyar</h2>
+        <span>School ERP v2.0</span>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">MAIN</div>
+      <div class="nav-item active" data-section="dashboard">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-item" data-section="students">
+        <span class="nav-icon">👩‍🎓</span>
+        <span class="nav-label">Students</span>
+        <span class="nav-badge" id="badge-students">0</span>
+      </div>
+      <div class="nav-item" data-section="staff">
+        <span class="nav-icon">👩‍🏫</span>
+        <span class="nav-label">Staff</span>
+        <span class="nav-badge" id="badge-staff">0</span>
+      </div>
+
+      <div class="nav-section-label">ACADEMIC</div>
+      <div class="nav-item" data-section="attendance">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Attendance</span>
+      </div>
+      <div class="nav-item" data-section="exams">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Exams & Results</span>
+      </div>
+      <div class="nav-item" data-section="homework">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Homework</span>
+        <span class="nav-badge" id="badge-hw">0</span>
+      </div>
+      <div class="nav-item" data-section="aip">
+        <span class="nav-icon">📘</span>
+        <span class="nav-label">AIP Tracker</span>
+      </div>
+
+      <div class="nav-section-label">ADMIN</div>
+      <div class="nav-item" data-section="admission">
+        <span class="nav-icon">🧾</span>
+        <span class="nav-label">Admission</span>
+      </div>
+      <div class="nav-item" data-section="messaging">
+        <span class="nav-icon">📩</span>
+        <span class="nav-label">Messaging</span>
+        <span class="nav-badge" id="badge-msg">0</span>
+      </div>
+      <div class="nav-item" data-section="activities">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Activities</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <label class="dark-toggle">
+        <input type="checkbox" id="darkToggle">
+        <span class="slider"></span>
+      </label>
+      <span class="version-text">🌙 Dark Mode</span>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div id="main">
+    <!-- TOP BAR -->
+    <header id="topbar">
+      <button class="topbar-toggle" id="sidebarToggle">☰</button>
+
+      <div class="topbar-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="globalSearch" placeholder="Search students, staff, messages...">
+        <div id="search-results-dropdown"></div>
+      </div>
+
+      <div class="topbar-actions">
+        <button class="topbar-btn" id="exportBtn" title="Export Data">📤</button>
+        <button class="topbar-btn" id="importBtn" title="Import Backup">📥</button>
+        <input type="file" id="importFile" accept=".json" style="display:none">
+        <button class="topbar-btn" title="Notifications">
+          🔔<span class="notif-dot"></span>
+        </button>
+        <div class="topbar-profile" onclick="showSection('dashboard')">
+          <div class="profile-avatar">
+            <img src="author.jpg" onerror="this.parentElement.textContent='MY'" alt="Author">
+          </div>
+          <span class="profile-name">Mateen Yousuf</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div id="content">
+
+      <!-- ============ DASHBOARD ============ -->
+      <section class="section active" id="section-dashboard">
+        <div class="school-header">
+          <div class="school-header-grid">
+            <div class="school-header-info">
+              <h1>🏫 Govt Girls Higher Secondary School Khanyar</h1>
+              <div class="school-meta">
+                <div class="school-meta-item">📍 Khanyar, Srinagar, J&K</div>
+                <div class="school-meta-item">🏛️ JKBOSE Affiliated</div>
+                <div class="school-meta-item">🎓 Classes 8–12</div>
+              </div>
+              <div class="school-meta" style="margin-top:10px">
+                <div class="school-meta-item">💻 Developed by Mateen Yousuf (Teacher)</div>
+              </div>
+            </div>
+            <div class="person-card">
+              <div class="avatar-ring">
+                <img src="principal.jpg" onerror="this.parentElement.textContent='👩‍💼'" alt="Principal">
+              </div>
+              <div class="person-name">Ms Wahida Sheikh</div>
+              <div class="person-role">🎓 Principal</div>
+            </div>
+            <div class="person-card">
+              <div class="avatar-ring">
+                <img src="author.jpg" onerror="this.parentElement.textContent='👨‍🏫'" alt="Author">
+              </div>
+              <div class="person-name">Mateen Yousuf</div>
+              <div class="person-role">💻 Developer & Teacher</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="btn btn-primary" onclick="showSection('admission');openAdmissionModal()">➕ Add Student</button>
+          <button class="btn btn-success" onclick="showSection('attendance')">✅ Take Attendance</button>
+          <button class="btn btn-accent" onclick="showSection('messaging');openMessageModal()">📩 Send Message</button>
+          <button class="btn btn-outline" onclick="showSection('homework');openHWModal()">📚 Add Homework</button>
+          <button class="btn btn-outline" onclick="showSection('activities');openEventModal()">📅 Add Event</button>
+        </div>
+
+        <div class="stats-grid" id="dashStats"></div>
+
+        <div class="data-grid">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📅 Upcoming Events</span>
+              <button class="btn btn-sm btn-outline" onclick="showSection('activities')">View All</button>
+            </div>
+            <div id="dashEvents"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📚 Pending Homework</span>
+              <button class="btn btn-sm btn-outline" onclick="showSection('homework')">View All</button>
+            </div>
+            <div id="dashHomework"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">📩 Recent Messages</span>
+              <button class="btn btn-sm btn-outline" onclick="showSection('messaging')">View All</button>
+            </div>
+            <div id="dashMessages"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STUDENTS ============ -->
+      <section class="section" id="section-students">
+        <div class="page-title">
+          <h2>👩‍🎓 Students</h2>
+          <button class="btn btn-primary" onclick="showSection('admission');openAdmissionModal()">➕ Add Student</button>
+        </div>
+        <div class="card">
+          <div class="d-flex gap-3 mb-3 flex-wrap">
+            <input type="text" class="form-control" id="studentSearch" placeholder="🔍 Search students..." oninput="renderStudents()" style="max-width:300px">
+            <select class="form-control" id="studentClassFilter" onchange="renderStudents()" style="max-width:160px">
+              <option value="">All Classes</option>
+              <option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Roll No</th>
+                  <th>Class</th>
+                  <th>Section</th>
+                  <th>Father's Name</th>
+                  <th>Contact</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STAFF ============ -->
+      <section class="section" id="section-staff">
+        <div class="page-title">
+          <h2>👩‍🏫 Staff</h2>
+          <button class="btn btn-primary" onclick="openStaffModal()">➕ Add Staff</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Designation</th>
+                  <th>Subject</th>
+                  <th>Employee ID</th>
+                  <th>Contact</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="staffTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ATTENDANCE ============ -->
+      <section class="section" id="section-attendance">
+        <div class="page-title">
+          <h2>📅 Attendance</h2>
+          <div class="d-flex gap-2 align-center flex-wrap">
+            <input type="date" class="form-control" id="attDate" style="width:160px">
+            <select class="form-control" id="attClass" style="width:130px">
+              <option value="">All Classes</option>
+              <option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+            </select>
+            <button class="btn btn-success" onclick="saveAttendance()">💾 Save</button>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div id="attSummary" class="d-flex gap-3 flex-wrap"></div>
+        </div>
+        <div class="attendance-grid" id="attendanceGrid"></div>
+        <div class="card mt-4">
+          <div class="card-header">
+            <span class="card-title">📊 Attendance History</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Class</th><th>Present</th><th>Absent</th><th>Leave</th><th>%</th></tr></thead>
+              <tbody id="attHistoryTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MESSAGING ============ -->
+      <section class="section" id="section-messaging">
+        <div class="page-title">
+          <h2>📩 Messaging</h2>
+          <button class="btn btn-primary" onclick="openMessageModal()">➕ New Message</button>
+        </div>
+        <div class="message-list" id="messageList"></div>
+      </section>
+
+      <!-- ============ ADMISSION ============ -->
+      <section class="section" id="section-admission">
+        <div class="page-title">
+          <h2>🧾 Admission</h2>
+          <button class="btn btn-primary" onclick="openAdmissionModal()">➕ New Admission</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Student Name</th>
+                  <th>Class</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admissionTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ EXAMS ============ -->
+      <section class="section" id="section-exams">
+        <div class="page-title">
+          <h2>📊 Exams & Results</h2>
+          <button class="btn btn-primary" onclick="openExamModal()">➕ Add Result</button>
+        </div>
+        <div class="d-flex gap-2 mb-3 flex-wrap">
+          <select class="form-control" id="examClassFilter" onchange="renderExams()" style="width:130px">
+            <option value="">All Classes</option>
+            <option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+          </select>
+          <select class="form-control" id="examTermFilter" onchange="renderExams()" style="width:160px">
+            <option value="">All Terms</option>
+            <option>Unit Test 1</option><option>Unit Test 2</option>
+            <option>Mid Term</option><option>Annual</option>
+          </select>
+        </div>
+        <div id="examsList"></div>
+      </section>
+
+      <!-- ============ AIP ============ -->
+      <section class="section" id="section-aip">
+        <div class="page-title">
+          <h2>📘 AIP Tracker</h2>
+          <button class="btn btn-primary" onclick="openAIPModal()">➕ Add AIP Goal</button>
+        </div>
+        <div id="aipList"></div>
+      </section>
+
+      <!-- ============ ACTIVITIES ============ -->
+      <section class="section" id="section-activities">
+        <div class="page-title">
+          <h2>📅 Activities & Events</h2>
+          <button class="btn btn-primary" onclick="openEventModal()">➕ Add Event</button>
+        </div>
+        <div class="event-list" id="eventList"></div>
+      </section>
+
+      <!-- ============ HOMEWORK ============ -->
+      <section class="section" id="section-homework">
+        <div class="page-title">
+          <h2>📚 Homework</h2>
+          <button class="btn btn-primary" onclick="openHWModal()">➕ Add Homework</button>
+        </div>
+        <div id="homeworkList"></div>
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ============ MODALS ============ -->
+
+<!-- Admission Modal -->
+<div id="admissionModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('admissionModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>🧾 New Admission</h3>
+        <button class="modal-close" onclick="closeModal('admissionModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Student Name *</label>
+            <input class="form-control" id="adm-name" placeholder="Full name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Father's Name *</label>
+            <input class="form-control" id="adm-father" placeholder="Father's name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Class *</label>
+            <select class="form-control" id="adm-class">
+              <option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Section</label>
+            <select class="form-control" id="adm-section">
+              <option>A</option><option>B</option><option>C</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Roll Number</label>
+            <input class="form-control" id="adm-roll" placeholder="Roll number">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input class="form-control" type="date" id="adm-dob">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Number</label>
+            <input class="form-control" id="adm-contact" placeholder="Phone number">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <input class="form-control" id="adm-address" placeholder="Address">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Previous School</label>
+          <input class="form-control" id="adm-prev" placeholder="Previous school name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('admissionModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitAdmission()">✅ Submit Admission</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Staff Modal -->
+<div id="staffModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('staffModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>👩‍🏫 Add Staff Member</h3>
+        <button class="modal-close" onclick="closeModal('staffModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Name *</label>
+            <input class="form-control" id="staff-name" placeholder="Full name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Designation</label>
+            <select class="form-control" id="staff-desig">
+              <option>Teacher</option>
+              <option>Head of Department</option>
+              <option>Vice Principal</option>
+              <option>Principal</option>
+              <option>Lab Assistant</option>
+              <option>Librarian</option>
+              <option>Clerk</option>
+              <option>Peon</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <input class="form-control" id="staff-subject" placeholder="e.g., Mathematics">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Employee ID</label>
+            <input class="form-control" id="staff-empid" placeholder="EMP001">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact</label>
+            <input class="form-control" id="staff-contact" placeholder="Phone">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Qualification</label>
+            <input class="form-control" id="staff-qual" placeholder="e.g., M.Sc B.Ed">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('staffModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitStaff()">✅ Add Staff</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Message Modal -->
+<div id="messageModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('messageModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📩 Send Message</h3>
+        <button class="modal-close" onclick="closeModal('messageModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">From</label>
+          <input class="form-control" id="msg-from" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">To</label>
+          <select class="form-control" id="msg-to">
+            <option value="All Students">All Students</option>
+            <option value="All Staff">All Staff</option>
+            <option value="Parents">Parents</option>
+            <option value="Class 8">Class 8</option>
+            <option value="Class 9">Class 9</option>
+            <option value="Class 10">Class 10</option>
+            <option value="Class 11">Class 11</option>
+            <option value="Class 12">Class 12</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-control" id="msg-category">
+            <option>General</option>
+            <option>Urgent</option>
+            <option>Notice</option>
+            <option>Holiday</option>
+            <option>Exam</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message *</label>
+          <textarea class="form-control" id="msg-text" rows="4" placeholder="Type your message here..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('messageModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitMessage()">📤 Send Message</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Exam Modal -->
+<div id="examModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('examModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📊 Add Exam Result</h3>
+        <button class="modal-close" onclick="closeModal('examModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Student</label>
+            <select class="form-control" id="exam-student"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Exam Term</label>
+            <select class="form-control" id="exam-term">
+              <option>Unit Test 1</option>
+              <option>Unit Test 2</option>
+              <option>Mid Term</option>
+              <option>Annual</option>
+            </select>
+          </div>
+        </div>
+        <p class="form-label mb-3" style="margin-top:8px">Enter Marks (out of 100):</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">English</label>
+            <input class="form-control" type="number" id="mark-eng" min="0" max="100" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Urdu</label>
+            <input class="form-control" type="number" id="mark-urdu" min="0" max="100" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mathematics</label>
+            <input class="form-control" type="number" id="mark-math" min="0" max="100" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Science</label>
+            <input class="form-control" type="number" id="mark-sci" min="0" max="100" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Social Science</label>
+            <input class="form-control" type="number" id="mark-sst" min="0" max="100" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Optional Subject</label>
+            <input class="form-control" type="number" id="mark-opt" min="0" max="100" placeholder="0">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('examModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitExam()">💾 Save Result</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AIP Modal -->
+<div id="aipModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('aipModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📘 Add AIP Goal</h3>
+        <button class="modal-close" onclick="closeModal('aipModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Staff Member</label>
+          <select class="form-control" id="aip-staff"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Goal Title *</label>
+          <input class="form-control" id="aip-title" placeholder="e.g., Improve class results by 20%">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" id="aip-desc" rows="3" placeholder="Describe the goal in detail..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Target Date</label>
+            <input class="form-control" type="date" id="aip-date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Priority</label>
+            <select class="form-control" id="aip-priority">
+              <option>High</option><option>Medium</option><option>Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Progress (%)</label>
+          <input class="form-control" type="range" id="aip-progress" min="0" max="100" value="0" oninput="document.getElementById('aip-progress-val').textContent=this.value+'%'">
+          <span id="aip-progress-val" class="text-muted fs-sm mt-2 d-flex">0%</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('aipModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitAIP()">✅ Add Goal</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Event Modal -->
+<div id="eventModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('eventModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📅 Add Event / Activity</h3>
+        <button class="modal-close" onclick="closeModal('eventModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Event Title *</label>
+          <input class="form-control" id="event-title" placeholder="e.g., Annual Sports Day">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date *</label>
+            <input class="form-control" type="date" id="event-date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-control" id="event-cat">
+              <option>Sports</option><option>Cultural</option><option>Academic</option>
+              <option>Holiday</option><option>Meeting</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" id="event-desc" rows="3" placeholder="Event details..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Coordinator</label>
+          <input class="form-control" id="event-coord" placeholder="Teacher/Staff name">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('eventModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitEvent()">✅ Add Event</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Homework Modal -->
+<div id="hwModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('hwModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>📚 Add Homework</h3>
+        <button class="modal-close" onclick="closeModal('hwModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Class *</label>
+            <select class="form-control" id="hw-class">
+              <option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subject *</label>
+            <input class="form-control" id="hw-subject" placeholder="e.g., Mathematics">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Due Date</label>
+            <input class="form-control" type="date" id="hw-due">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assigned By</label>
+            <input class="form-control" id="hw-teacher" placeholder="Teacher name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Homework Description *</label>
+          <textarea class="form-control" id="hw-desc" rows="3" placeholder="Describe the homework assignment..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('hwModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitHW()">✅ Add Homework</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Student Modal -->
+<div id="editStudentModal" style="display:none">
+  <div class="modal-overlay" onclick="if(event.target===this)closeModal('editStudentModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>✏️ Edit Student</h3>
+        <button class="modal-close" onclick="closeModal('editStudentModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-student-id">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Student Name</label>
+            <input class="form-control" id="edit-student-name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Father's Name</label>
+            <input class="form-control" id="edit-student-father">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Class</label>
+            <select class="form-control" id="edit-student-class">
+              <option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Section</label>
+            <select class="form-control" id="edit-student-section">
+              <option>A</option><option>B</option><option>C</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Roll No</label>
+            <input class="form-control" id="edit-student-roll">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact</label>
+            <input class="form-control" id="edit-student-contact">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('editStudentModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveEditStudent()">💾 Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// DATA LAYER
+// =============================================
+const DB_KEY = 'gghss_khanyar_erp';
+
+function loadData() {
+  const raw = localStorage.getItem(DB_KEY);
+  if (raw) return JSON.parse(raw);
+  return {
+    students: [], staff: [], attendance: {}, messages: [],
+    admissions: [], exams: [], aip: [], events: [], homework: []
+  };
+}
+
+function saveData(data) {
+  localStorage.setItem(DB_KEY, JSON.stringify(data));
+}
+
+let db = loadData();
+
+// =============================================
+// NAVIGATION
+// =============================================
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  document.querySelector(`[data-section="${id}"]`).classList.add('active');
+
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('mobile-open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  // Render relevant sections
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'students') renderStudents();
+  if (id === 'staff') renderStaff();
+  if (id === 'attendance') renderAttendance();
+  if (id === 'messaging') renderMessages();
+  if (id === 'admission') renderAdmissions();
+  if (id === 'exams') renderExams();
+  if (id === 'aip') renderAIP();
+  if (id === 'activities') renderEvents();
+  if (id === 'homework') renderHomework();
+}
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => showSection(item.dataset.section));
+});
+
+// Sidebar toggle
+const sidebar = document.getElementById('sidebar');
+const main = document.getElementById('main');
+const overlay = document.getElementById('overlay');
+
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  if (window.innerWidth <= 768) {
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('show');
+  } else {
+    sidebar.classList.toggle('collapsed');
+    main.classList.toggle('expanded');
+  }
+});
+
+overlay.addEventListener('click', () => {
+  sidebar.classList.remove('mobile-open');
+  overlay.classList.remove('show');
+});
+
+// =============================================
+// DARK MODE
+// =============================================
+const darkToggle = document.getElementById('darkToggle');
+const savedTheme = localStorage.getItem('gghss_theme');
+if (savedTheme === 'dark') {
+  document.body.setAttribute('data-theme', 'dark');
+  darkToggle.checked = true;
+}
+darkToggle.addEventListener('change', () => {
+  if (darkToggle.checked) {
+    document.body.setAttribute('data-theme', 'dark');
+    localStorage.setItem('gghss_theme', 'dark');
+  } else {
+    document.body.removeAttribute('data-theme');
+    localStorage.setItem('gghss_theme', 'light');
+  }
+});
+
+// =============================================
+// NOTIFICATIONS
+// =============================================
+function notify(msg, type = 'success', title = '') {
+  const panel = document.getElementById('notification-panel');
+  const el = document.createElement('div');
+  el.className = `notification ${type}`;
+  el.innerHTML = `
+    <span style="font-size:20px">${type==='success'?'✅':type==='error'?'❌':type==='warning'?'⚠️':'ℹ️'}</span>
+    <div class="notif-content">
+      ${title ? `<div class="notif-title">${title}</div>` : ''}
+      <div class="notif-msg">${msg}</div>
+    </div>
+    <span class="notif-close" onclick="this.closest('.notification').remove()">✕</span>
+  `;
+  panel.appendChild(el);
+  setTimeout(() => el.style.opacity = '0', 3500);
+  setTimeout(() => el.remove(), 3800);
+}
+
+// =============================================
+// MODALS
+// =============================================
+function openModal(id) { document.getElementById(id).style.display = 'block'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+function openAdmissionModal() { openModal('admissionModal'); }
+function openStaffModal() { openModal('staffModal'); }
+function openMessageModal() { openModal('messageModal'); }
+function openExamModal() {
+  const sel = document.getElementById('exam-student');
+  sel.innerHTML = db.students.map(s => `<option value="${s.id}">${s.name} (Class ${s.class})</option>`).join('') || '<option>No students yet</option>';
+  openModal('examModal');
+}
+function openAIPModal() {
+  const sel = document.getElementById('aip-staff');
+  sel.innerHTML = db.staff.map(s => `<option value="${s.id}">${s.name}</option>`).join('') || '<option>No staff yet</option>';
+  openModal('aipModal');
+}
+function openEventModal() { openModal('eventModal'); }
+function openHWModal() { openModal('hwModal'); }
+
+// =============================================
+// ADMISSION → STUDENTS
+// =============================================
+function submitAdmission() {
+  const name = document.getElementById('adm-name').value.trim();
+  if (!name) { notify('Student name is required', 'error'); return; }
+  const admRec = {
+    id: Date.now(),
+    name,
+    father: document.getElementById('adm-father').value.trim(),
+    class: document.getElementById('adm-class').value,
+    section: document.getElementById('adm-section').value,
+    roll: document.getElementById('adm-roll').value.trim(),
+    dob: document.getElementById('adm-dob').value,
+    contact: document.getElementById('adm-contact').value.trim(),
+    address: document.getElementById('adm-address').value.trim(),
+    prev: document.getElementById('adm-prev').value.trim(),
+    date: new Date().toISOString().split('T')[0],
+    status: 'Approved'
+  };
+  db.admissions.push(admRec);
+  // Also add to students
+  db.students.push({
+    id: admRec.id,
+    name: admRec.name,
+    father: admRec.father,
+    class: admRec.class,
+    section: admRec.section,
+    roll: admRec.roll,
+    contact: admRec.contact,
+    dob: admRec.dob,
+    address: admRec.address
+  });
+  saveData(db);
+  closeModal('admissionModal');
+  notify(`${name} admitted successfully!`, 'success', '✅ Admission');
+  updateBadges();
+  renderAdmissions();
+  renderStudents();
+  renderDashboard();
+  // Reset
+  ['adm-name','adm-father','adm-roll','adm-contact','adm-address','adm-prev','adm-dob'].forEach(id => document.getElementById(id).value = '');
+}
+
+function renderAdmissions() {
+  const tbody = document.getElementById('admissionTable');
+  if (!db.admissions.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🧾</div><h3>No admissions yet</h3><p>Click "New Admission" to start</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = db.admissions.map((a, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${a.name}</strong></td>
+      <td><span class="badge badge-primary">Class ${a.class}-${a.section}</span></td>
+      <td>${a.date}</td>
+      <td><span class="badge badge-success">${a.status}</span></td>
+      <td class="td-actions">
+        <button class="btn btn-sm btn-danger btn-icon" onclick="deleteAdmission(${a.id})" title="Delete">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function deleteAdmission(id) {
+  if (!confirm('Delete this admission record?')) return;
+  db.admissions = db.admissions.filter(a => a.id !== id);
+  db.students = db.students.filter(s => s.id !== id);
+  saveData(db);
+  renderAdmissions();
+  renderStudents();
+  renderDashboard();
+  updateBadges();
+}
+
+// =============================================
+// STUDENTS
+// =============================================
+function renderStudents() {
+  const search = document.getElementById('studentSearch')?.value.toLowerCase() || '';
+  const classFilter = document.getElementById('studentClassFilter')?.value || '';
+  let students = db.students;
+  if (search) students = students.filter(s => s.name.toLowerCase().includes(search) || (s.roll||'').includes(search) || (s.father||'').toLowerCase().includes(search));
+  if (classFilter) students = students.filter(s => s.class == classFilter);
+
+  const tbody = document.getElementById('studentsTable');
+  if (!students.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">👩‍🎓</div><h3>No students found</h3><p>Use Admission module to add students</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = students.map((s, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.roll || '—'}</td>
+      <td><span class="badge badge-primary">Class ${s.class}</span></td>
+      <td>${s.section || '—'}</td>
+      <td>${s.father || '—'}</td>
+      <td>${s.contact || '—'}</td>
+      <td class="td-actions">
+        <button class="btn btn-sm btn-outline btn-icon" onclick="editStudent(${s.id})" title="Edit">✏️</button>
+        <button class="btn btn-sm btn-danger btn-icon" onclick="deleteStudent(${s.id})" title="Delete">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function editStudent(id) {
+  const s = db.students.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('edit-student-id').value = id;
+  document.getElementById('edit-student-name').value = s.name;
+  document.getElementById('edit-student-father').value = s.father || '';
+  document.getElementById('edit-student-class').value = s.class;
+  document.getElementById('edit-student-section').value = s.section || 'A';
+  document.getElementById('edit-student-roll').value = s.roll || '';
+  document.getElementById('edit-student-contact').value = s.contact || '';
+  openModal('editStudentModal');
+}
+
+function saveEditStudent() {
+  const id = parseInt(document.getElementById('edit-student-id').value);
+  const s = db.students.find(x => x.id === id);
+  if (!s) return;
+  s.name = document.getElementById('edit-student-name').value;
+  s.father = document.getElementById('edit-student-father').value;
+  s.class = document.getElementById('edit-student-class').value;
+  s.section = document.getElementById('edit-student-section').value;
+  s.roll = document.getElementById('edit-student-roll').value;
+  s.contact = document.getElementById('edit-student-contact').value;
+  saveData(db);
+  closeModal('editStudentModal');
+  renderStudents();
+  notify('Student updated!', 'success');
+}
+
+function deleteStudent(id) {
+  if (!confirm('Remove this student?')) return;
+  db.students = db.students.filter(s => s.id !== id);
+  db.admissions = db.admissions.filter(a => a.id !== id);
+  saveData(db);
+  renderStudents();
+  renderDashboard();
+  updateBadges();
+  notify('Student removed', 'warning');
+}
+
+// =============================================
+// STAFF
+// =============================================
+function submitStaff() {
+  const name = document.getElementById('staff-name').value.trim();
+  if (!name) { notify('Name is required', 'error'); return; }
+  db.staff.push({
+    id: Date.now(),
+    name,
+    designation: document.getElementById('staff-desig').value,
+    subject: document.getElementById('staff-subject').value.trim(),
+    empId: document.getElementById('staff-empid').value.trim(),
+    contact: document.getElementById('staff-contact').value.trim(),
+    qualification: document.getElementById('staff-qual').value.trim()
+  });
+  saveData(db);
+  closeModal('staffModal');
+  notify(`${name} added to staff!`, 'success');
+  renderStaff();
+  updateBadges();
+  ['staff-name','staff-subject','staff-empid','staff-contact','staff-qual'].forEach(id => document.getElementById(id).value = '');
+}
+
+function renderStaff() {
+  const tbody = document.getElementById('staffTable');
+  if (!db.staff.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👩‍🏫</div><h3>No staff added yet</h3></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = db.staff.map((s, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${s.name}</strong><br><span class="fs-sm text-muted">${s.qualification||''}</span></td>
+      <td><span class="badge badge-info">${s.designation}</span></td>
+      <td>${s.subject || '—'}</td>
+      <td>${s.empId || '—'}</td>
+      <td>${s.contact || '—'}</td>
+      <td class="td-actions">
+        <button class="btn btn-sm btn-danger btn-icon" onclick="deleteStaff(${s.id})" title="Delete">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function deleteStaff(id) {
+  if (!confirm('Remove this staff member?')) return;
+  db.staff = db.staff.filter(s => s.id !== id);
+  saveData(db);
+  renderStaff();
+  updateBadges();
+}
+
+// =============================================
+// ATTENDANCE
+// =============================================
+function renderAttendance() {
+  const dateInput = document.getElementById('attDate');
+  if (!dateInput.value) dateInput.value = new Date().toISOString().split('T')[0];
+  const classFilter = document.getElementById('attClass').value;
+  let students = db.students;
+  if (classFilter) students = students.filter(s => s.class == classFilter);
+
+  const date = dateInput.value;
+  const existing = db.attendance[date] || {};
+
+  const grid = document.getElementById('attendanceGrid');
+  if (!students.length) {
+    grid.innerHTML = `<div class="card" style="grid-column:1/-1"><div class="empty-state"><div class="empty-icon">📅</div><h3>No students</h3><p>Add students via Admission module</p></div></div>`;
+    return;
+  }
+
+  grid.innerHTML = students.map(s => {
+    const status = existing[s.id] || '';
+    return `
+      <div class="attendance-student-card" id="att-card-${s.id}">
+        <div>
+          <div class="fw-bold">${s.name}</div>
+          <div class="fs-sm text-muted">Class ${s.class} | Roll: ${s.roll||'N/A'}</div>
+        </div>
+        <div class="att-status-btns">
+          <button class="att-btn present ${status==='P'?'active':''}" onclick="setAtt(${s.id},'P',this)">P</button>
+          <button class="att-btn absent ${status==='A'?'active':''}" onclick="setAtt(${s.id},'A',this)">A</button>
+          <button class="att-btn leave ${status==='L'?'active':''}" onclick="setAtt(${s.id},'L',this)">L</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  updateAttSummary(date, students);
+  renderAttHistory();
+}
+
+const tempAtt = {};
+function setAtt(studentId, status, btn) {
+  tempAtt[studentId] = status;
+  const card = btn.closest('.attendance-student-card');
+  card.querySelectorAll('.att-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function saveAttendance() {
+  const date = document.getElementById('attDate').value;
+  if (!date) { notify('Please select a date', 'error'); return; }
+  if (!db.attendance[date]) db.attendance[date] = {};
+  Object.assign(db.attendance[date], tempAtt);
+
+  // Also mark from rendered cards
+  document.querySelectorAll('.attendance-student-card').forEach(card => {
+    const activeBtn = card.querySelector('.att-btn.active');
+    if (activeBtn) {
+      const sid = parseInt(card.id.replace('att-card-',''));
+      db.attendance[date][sid] = activeBtn.classList.contains('present') ? 'P' : activeBtn.classList.contains('absent') ? 'A' : 'L';
+    }
+  });
+
+  saveData(db);
+  renderDashboard();
+  renderAttHistory();
+  updateAttSummary(date, db.students);
+  notify(`Attendance saved for ${date}!`, 'success');
+}
+
+function updateAttSummary(date, students) {
+  const rec = db.attendance[date] || {};
+  let p = 0, a = 0, l = 0;
+  students.forEach(s => {
+    if (rec[s.id] === 'P') p++;
+    else if (rec[s.id] === 'A') a++;
+    else if (rec[s.id] === 'L') l++;
+  });
+  const total = students.length;
+  const pct = total ? Math.round((p/total)*100) : 0;
+  document.getElementById('attSummary').innerHTML = `
+    <div class="d-flex gap-3 flex-wrap">
+      <span class="badge badge-success" style="font-size:13px">✅ Present: ${p}</span>
+      <span class="badge badge-danger" style="font-size:13px">❌ Absent: ${a}</span>
+      <span class="badge badge-warning" style="font-size:13px">🏖️ Leave: ${l}</span>
+      <span class="badge badge-info" style="font-size:13px">📊 Total: ${total}</span>
+      <span class="badge badge-primary" style="font-size:13px">📈 ${pct}%</span>
+    </div>
+  `;
+}
+
+function renderAttHistory() {
+  const tbody = document.getElementById('attHistoryTable');
+  const entries = Object.entries(db.attendance).sort((a,b) => b[0].localeCompare(a[0])).slice(0, 20);
+  if (!entries.length) { tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding:20px">No history yet</td></tr>`; return; }
+  tbody.innerHTML = entries.map(([date, rec]) => {
+    const p = Object.values(rec).filter(v=>v==='P').length;
+    const a = Object.values(rec).filter(v=>v==='A').length;
+    const l = Object.values(rec).filter(v=>v==='L').length;
+    const total = p+a+l;
+    const pct = total ? Math.round((p/total)*100) : 0;
+    return `<tr>
+      <td>${date}</td>
+      <td>—</td>
+      <td><span class="badge badge-success">${p}</span></td>
+      <td><span class="badge badge-danger">${a}</span></td>
+      <td><span class="badge badge-warning">${l}</span></td>
+      <td><strong>${pct}%</strong></td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('attDate').addEventListener('change', renderAttendance);
+document.getElementById('attClass').addEventListener('change', renderAttendance);
+
+// =============================================
+// MESSAGING
+// =============================================
+function submitMessage() {
+  const text = document.getElementById('msg-text').value.trim();
+  if (!text) { notify('Message is required', 'error'); return; }
+  db.messages.unshift({
+    id: Date.now(),
+    from: document.getElementById('msg-from').value || 'Admin',
+    to: document.getElementById('msg-to').value,
+    category: document.getElementById('msg-category').value,
+    text,
+    time: new Date().toLocaleString()
+  });
+  saveData(db);
+  closeModal('messageModal');
+  notify('Message sent!', 'success');
+  updateBadges();
+  renderMessages();
+  renderDashboard();
+  document.getElementById('msg-text').value = '';
+}
+
+function renderMessages() {
+  const list = document.getElementById('messageList');
+  if (!db.messages.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📩</div><h3>No messages yet</h3></div>`;
+    return;
+  }
+  list.innerHTML = db.messages.map(m => `
+    <div class="message-item">
+      <div class="message-meta">
+        <span class="message-from">👤 ${m.from}</span>
+        <span class="badge badge-${m.category==='Urgent'?'danger':m.category==='Holiday'?'warning':'info'}">${m.category}</span>
+        <span>→ <strong>${m.to}</strong></span>
+        <span class="message-time">${m.time}</span>
+        <button class="btn btn-sm btn-danger btn-icon" onclick="deleteMessage(${m.id})">🗑️</button>
+      </div>
+      <div class="message-text">${m.text}</div>
+    </div>
+  `).join('');
+}
+
+function deleteMessage(id) {
+  db.messages = db.messages.filter(m => m.id !== id);
+  saveData(db);
+  renderMessages();
+  updateBadges();
+}
+
+// =============================================
+// EXAMS
+// =============================================
+function submitExam() {
+  const sid = parseInt(document.getElementById('exam-student').value);
+  const student = db.students.find(s => s.id === sid);
+  if (!student) { notify('No students available', 'error'); return; }
+  const marks = {
+    english: +document.getElementById('mark-eng').value||0,
+    urdu: +document.getElementById('mark-urdu').value||0,
+    math: +document.getElementById('mark-math').value||0,
+    science: +document.getElementById('mark-sci').value||0,
+    sst: +document.getElementById('mark-sst').value||0,
+    optional: +document.getElementById('mark-opt').value||0
+  };
+  const total = Object.values(marks).reduce((a,b)=>a+b,0);
+  const pct = Math.round((total/600)*100);
+  db.exams.push({
+    id: Date.now(),
+    studentId: sid,
+    studentName: student.name,
+    class: student.class,
+    term: document.getElementById('exam-term').value,
+    marks,
+    total,
+    percentage: pct,
+    grade: pct>=80?'A+':pct>=70?'A':pct>=60?'B+':pct>=50?'B':pct>=40?'C':'F',
+    date: new Date().toISOString().split('T')[0]
+  });
+  saveData(db);
+  closeModal('examModal');
+  notify('Result saved!', 'success');
+  renderExams();
+}
+
+function renderExams() {
+  const classF = document.getElementById('examClassFilter')?.value||'';
+  const termF = document.getElementById('examTermFilter')?.value||'';
+  let exams = db.exams;
+  if (classF) exams = exams.filter(e => e.class == classF);
+  if (termF) exams = exams.filter(e => e.term == termF);
+
+  const el = document.getElementById('examsList');
+  if (!exams.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><h3>No results added yet</h3><p>Add exam results via the button above</p></div>`;
+    return;
+  }
+  el.innerHTML = exams.map(e => `
+    <div class="result-card">
+      <div class="d-flex justify-between align-center flex-wrap gap-2">
+        <div>
+          <div class="fw-bold" style="font-size:15px">${e.studentName}</div>
+          <div class="fs-sm text-muted">Class ${e.class} | ${e.term} | ${e.date}</div>
+        </div>
+        <div class="d-flex align-center gap-2">
+          <span class="badge badge-${e.grade==='F'?'danger':e.grade.includes('A')?'success':'warning'}" style="font-size:14px">${e.grade}</span>
+          <span class="fw-bold">${e.percentage}%</span>
+          <button class="btn btn-sm btn-danger btn-icon" onclick="deleteExam(${e.id})">🗑️</button>
+        </div>
+      </div>
+      <div class="marks-grid">
+        ${Object.entries(e.marks).map(([sub, mk]) => `
+          <div class="mark-box">
+            <div class="subject">${sub.toUpperCase()}</div>
+            <div class="marks" style="color:${mk>=40?'var(--accent2)':'var(--danger)'}">${mk}</div>
+          </div>
+        `).join('')}
+        <div class="mark-box" style="background:var(--primary);color:#fff">
+          <div class="subject" style="color:rgba(255,255,255,0.7)">TOTAL</div>
+          <div class="marks" style="color:#fff">${e.total}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteExam(id) {
+  db.exams = db.exams.filter(e => e.id !== id);
+  saveData(db);
+  renderExams();
+}
+
+// =============================================
+// AIP TRACKER
+// =============================================
+function submitAIP() {
+  const title = document.getElementById('aip-title').value.trim();
+  if (!title) { notify('Goal title is required', 'error'); return; }
+  const staffId = parseInt(document.getElementById('aip-staff').value);
+  const staff = db.staff.find(s => s.id === staffId);
+  db.aip.push({
+    id: Date.now(),
+    staffId,
+    staffName: staff ? staff.name : 'Unknown',
+    title,
+    description: document.getElementById('aip-desc').value.trim(),
+    targetDate: document.getElementById('aip-date').value,
+    priority: document.getElementById('aip-priority').value,
+    progress: parseInt(document.getElementById('aip-progress').value),
+    createdAt: new Date().toISOString().split('T')[0]
+  });
+  saveData(db);
+  closeModal('aipModal');
+  notify('AIP Goal added!', 'success');
+  renderAIP();
+  renderDashboard();
+}
+
+function renderAIP() {
+  const el = document.getElementById('aipList');
+  if (!db.aip.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📘</div><h3>No AIP goals yet</h3><p>Add Annual Improvement Plan goals for staff</p></div>`;
+    return;
+  }
+  el.innerHTML = db.aip.map(a => {
+    const pColor = a.progress >= 80 ? 'var(--accent2)' : a.progress >= 50 ? 'var(--accent)' : 'var(--danger)';
+    return `
+      <div class="aip-card">
+        <div class="d-flex justify-between align-center flex-wrap gap-2" style="margin-bottom:10px">
+          <div>
+            <div class="fw-bold" style="font-size:15px">${a.title}</div>
+            <div class="fs-sm text-muted">👩‍🏫 ${a.staffName} | 📅 Target: ${a.targetDate || 'N/A'}</div>
+          </div>
+          <div class="d-flex align-center gap-2">
+            <span class="badge badge-${a.priority==='High'?'danger':a.priority==='Medium'?'warning':'success'}">${a.priority} Priority</span>
+            <button class="btn btn-sm btn-danger btn-icon" onclick="deleteAIP(${a.id})">🗑️</button>
+          </div>
+        </div>
+        ${a.description ? `<p class="fs-sm text-muted" style="margin-bottom:10px">${a.description}</p>` : ''}
+        <div class="d-flex justify-between align-center">
+          <span class="fs-sm fw-bold">Progress: ${a.progress}%</span>
+          <button class="btn btn-sm btn-outline" onclick="updateAIPProgress(${a.id})">📈 Update</button>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" style="width:${a.progress}%;background:${pColor}"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateAIPProgress(id) {
+  const val = prompt('Enter new progress (0-100):');
+  if (val === null) return;
+  const n = Math.min(100, Math.max(0, parseInt(val)||0));
+  const goal = db.aip.find(a => a.id === id);
+  if (goal) { goal.progress = n; saveData(db); renderAIP(); }
+}
+
+function deleteAIP(id) {
+  db.aip = db.aip.filter(a => a.id !== id);
+  saveData(db);
+  renderAIP();
+  renderDashboard();
+}
+
+// =============================================
+// EVENTS / ACTIVITIES
+// =============================================
+function submitEvent() {
+  const title = document.getElementById('event-title').value.trim();
+  if (!title) { notify('Event title required', 'error'); return; }
+  db.events.push({
+    id: Date.now(),
+    title,
+    date: document.getElementById('event-date').value,
+    category: document.getElementById('event-cat').value,
+    description: document.getElementById('event-desc').value.trim(),
+    coordinator: document.getElementById('event-coord').value.trim()
+  });
+  saveData(db);
+  closeModal('eventModal');
+  notify('Event added!', 'success');
+  renderEvents();
+  renderDashboard();
+  ['event-title','event-desc','event-coord','event-date'].forEach(id => document.getElementById(id).value = '');
+}
+
+function renderEvents() {
+  const el = document.getElementById('eventList');
+  if (!db.events.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><h3>No events yet</h3></div>`;
+    return;
+  }
+  const sorted = [...db.events].sort((a,b) => (a.date||'').localeCompare(b.date||''));
+  el.innerHTML = sorted.map(ev => {
+    const d = ev.date ? new Date(ev.date) : null;
+    const day = d ? d.getDate() : '?';
+    const mon = d ? d.toLocaleString('default',{month:'short'}) : '—';
+    const catColors = {Sports:'var(--accent2)',Cultural:'var(--purple)',Academic:'var(--primary-light)',Holiday:'var(--accent)',Meeting:'var(--info)',Other:'var(--text-muted)'};
+    return `
+      <div class="event-item">
+        <div class="event-date-badge" style="background:${catColors[ev.category]||'var(--primary)'}">
+          <div class="day">${day}</div>
+          <div class="month">${mon}</div>
+        </div>
+        <div class="event-info" style="flex:1">
+          <div class="event-title">${ev.title} <span class="badge badge-info">${ev.category}</span></div>
+          <div class="event-desc">${ev.description||''} ${ev.coordinator?'| 👤 '+ev.coordinator:''}</div>
+        </div>
+        <button class="btn btn-sm btn-danger btn-icon" onclick="deleteEvent(${ev.id})">🗑️</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function deleteEvent(id) {
+  db.events = db.events.filter(e => e.id !== id);
+  saveData(db);
+  renderEvents();
+  renderDashboard();
+}
+
+// =============================================
+// HOMEWORK
+// =============================================
+function submitHW() {
+  const desc = document.getElementById('hw-desc').value.trim();
+  const subject = document.getElementById('hw-subject').value.trim();
+  if (!desc || !subject) { notify('Subject and description required', 'error'); return; }
+  db.homework.push({
+    id: Date.now(),
+    class: document.getElementById('hw-class').value,
+    subject,
+    due: document.getElementById('hw-due').value,
+    teacher: document.getElementById('hw-teacher').value.trim(),
+    description: desc,
+    date: new Date().toISOString().split('T')[0],
+    completed: false
+  });
+  saveData(db);
+  closeModal('hwModal');
+  notify('Homework added!', 'success');
+  updateBadges();
+  renderHomework();
+  renderDashboard();
+  ['hw-subject','hw-teacher','hw-desc','hw-due'].forEach(id => document.getElementById(id).value = '');
+}
+
+function renderHomework() {
+  const el = document.getElementById('homeworkList');
+  if (!db.homework.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📚</div><h3>No homework assigned</h3></div>`;
+    return;
+  }
+  el.innerHTML = db.homework.map(h => `
+    <div class="hw-card">
+      <span style="font-size:24px">📚</span>
+      <div style="flex:1">
+        <div class="d-flex justify-between align-center flex-wrap gap-2">
+          <div>
+            <strong>${h.subject}</strong> – Class ${h.class}
+            ${h.completed ? '<span class="badge badge-success" style="margin-left:6px">✅ Done</span>' : ''}
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-success" onclick="toggleHW(${h.id})">${h.completed?'↩️ Undo':'✅ Mark Done'}</button>
+            <button class="btn btn-sm btn-danger btn-icon" onclick="deleteHW(${h.id})">🗑️</button>
+          </div>
+        </div>
+        <div class="fs-sm text-muted mt-2">${h.description}</div>
+        <div class="fs-sm text-muted mt-2">
+          ${h.teacher?'👩‍🏫 '+h.teacher+' |':''} 📅 Due: ${h.due||'N/A'} | 🗓️ Assigned: ${h.date}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleHW(id) {
+  const hw = db.homework.find(h => h.id === id);
+  if (hw) { hw.completed = !hw.completed; saveData(db); renderHomework(); updateBadges(); renderDashboard(); }
+}
+
+function deleteHW(id) {
+  db.homework = db.homework.filter(h => h.id !== id);
+  saveData(db);
+  renderHomework();
+  updateBadges();
+  renderDashboard();
+}
+
+// =============================================
+// DASHBOARD
+// =============================================
+function renderDashboard() {
+  const today = new Date().toISOString().split('T')[0];
+  const todayAtt = db.attendance[today] || {};
+  const presentToday = Object.values(todayAtt).filter(v=>v==='P').length;
+  const attPct = db.students.length ? Math.round((presentToday/db.students.length)*100) : 0;
+  const pendingHW = db.homework.filter(h=>!h.completed).length;
+  const activeAIP = db.aip.filter(a=>a.progress<100).length;
+  const upcomingEvents = db.events.filter(e => e.date >= today).length;
+
+  document.getElementById('dashStats').innerHTML = `
+    <div class="stat-card blue">
+      <div class="stat-icon blue">👩‍🎓</div>
+      <div class="stat-info"><div class="stat-value">${db.students.length}</div><div class="stat-label">Total Students</div></div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon green">👩‍🏫</div>
+      <div class="stat-info"><div class="stat-value">${db.staff.length}</div><div class="stat-label">Total Staff</div></div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-icon amber">📅</div>
+      <div class="stat-info"><div class="stat-value">${attPct}%</div><div class="stat-label">Today's Attendance</div></div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-icon purple">📅</div>
+      <div class="stat-info"><div class="stat-value">${upcomingEvents}</div><div class="stat-label">Upcoming Events</div></div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-icon red">📚</div>
+      <div class="stat-info"><div class="stat-value">${pendingHW}</div><div class="stat-label">Pending Homework</div></div>
+    </div>
+    <div class="stat-card cyan">
+      <div class="stat-icon cyan">📘</div>
+      <div class="stat-info"><div class="stat-value">${activeAIP}</div><div class="stat-label">Active AIP Goals</div></div>
+    </div>
+  `;
+
+  // Recent events
+  const evEl = document.getElementById('dashEvents');
+  const upcoming = db.events.filter(e => e.date >= today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,3);
+  evEl.innerHTML = upcoming.length ? upcoming.map(e => `
+    <div class="event-item" style="margin-bottom:8px">
+      <div class="event-date-badge" style="min-width:44px;padding:6px">
+        <div class="day" style="font-size:16px">${e.date?new Date(e.date).getDate():'?'}</div>
+        <div class="month">${e.date?new Date(e.date).toLocaleString('default',{month:'short'}):'—'}</div>
+      </div>
+      <div class="event-info">
+        <div class="event-title" style="font-size:13px">${e.title}</div>
+        <div class="event-desc">${e.category}</div>
+      </div>
+    </div>
+  `).join('') : `<div class="empty-state" style="padding:20px"><div class="empty-icon" style="font-size:28px">📅</div><p>No upcoming events</p></div>`;
+
+  // Recent homework
+  const hwEl = document.getElementById('dashHomework');
+  const pending = db.homework.filter(h=>!h.completed).slice(0,3);
+  hwEl.innerHTML = pending.length ? pending.map(h => `
+    <div class="d-flex align-center gap-2" style="padding:8px 0;border-bottom:1px solid var(--border)">
+      <span>📚</span>
+      <div style="flex:1">
+        <div class="fw-bold fs-sm">${h.subject} – Class ${h.class}</div>
+        <div class="fs-sm text-muted">Due: ${h.due||'N/A'}</div>
+      </div>
+    </div>
+  `).join('') : `<div class="empty-state" style="padding:20px"><p>No pending homework</p></div>`;
+
+  // Recent messages
+  const msgEl = document.getElementById('dashMessages');
+  const recent = db.messages.slice(0,3);
+  msgEl.innerHTML = recent.length ? recent.map(m => `
+    <div class="d-flex align-center gap-2" style="padding:8px 0;border-bottom:1px solid var(--border)">
+      <span>📩</span>
+      <div style="flex:1">
+        <div class="fw-bold fs-sm">${m.from} → ${m.to}</div>
+        <div class="fs-sm text-muted">${m.text.substring(0,50)}...</div>
+      </div>
+    </div>
+  `).join('') : `<div class="empty-state" style="padding:20px"><p>No messages yet</p></div>`;
+}
+
+// =============================================
+// BADGES
+// =============================================
+function updateBadges() {
+  document.getElementById('badge-students').textContent = db.students.length;
+  document.getElementById('badge-staff').textContent = db.staff.length;
+  document.getElementById('badge-msg').textContent = db.messages.length;
+  document.getElementById('badge-hw').textContent = db.homework.filter(h=>!h.completed).length;
+}
+
+// =============================================
+// GLOBAL SEARCH
+// =============================================
+const searchInput = document.getElementById('globalSearch');
+const searchDropdown = document.getElementById('search-results-dropdown');
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  if (!q) { searchDropdown.classList.remove('show'); return; }
+
+  const results = [];
+  db.students.filter(s => s.name.toLowerCase().includes(q) || (s.roll||'').includes(q)).slice(0,3).forEach(s => {
+    results.push({ label: s.name, sub: `Class ${s.class} | Roll: ${s.roll||'N/A'}`, tag: 'student', tagClass: 'tag-student', section: 'students' });
+  });
+  db.staff.filter(s => s.name.toLowerCase().includes(q) || (s.subject||'').toLowerCase().includes(q)).slice(0,3).forEach(s => {
+    results.push({ label: s.name, sub: s.designation, tag: 'staff', tagClass: 'tag-staff', section: 'staff' });
+  });
+  db.messages.filter(m => m.text.toLowerCase().includes(q) || m.from.toLowerCase().includes(q)).slice(0,2).forEach(m => {
+    results.push({ label: m.from + ': ' + m.text.substring(0,40), sub: m.time, tag: 'message', tagClass: 'tag-msg', section: 'messaging' });
+  });
+
+  if (!results.length) {
+    searchDropdown.innerHTML = `<div class="search-result-item text-muted">No results found</div>`;
+  } else {
+    searchDropdown.innerHTML = results.map(r => `
+      <div class="search-result-item" onclick="showSection('${r.section}');searchInput.value='';searchDropdown.classList.remove('show')">
+        <div style="flex:1">
+          <div class="fw-bold fs-sm">${r.label}</div>
+          <div class="fs-sm text-muted">${r.sub}</div>
+        </div>
+        <span class="search-result-tag ${r.tagClass}">${r.tag}</span>
+      </div>
+    `).join('');
+  }
+  searchDropdown.classList.add('show');
+});
+
+document.addEventListener('click', e => {
+  if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+    searchDropdown.classList.remove('show');
+  }
+});
+
+// =============================================
+// EXPORT / IMPORT
+// =============================================
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const data = JSON.stringify(db, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `gghss-khanyar-backup-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  notify('Data exported!', 'success', '📤 Export');
+});
+
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+
+document.getElementById('importFile').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (confirm('This will REPLACE all current data. Continue?')) {
+        db = imported;
+        saveData(db);
+        updateBadges();
+        renderDashboard();
+        notify('Data imported!', 'success', '📥 Import');
+      }
+    } catch {
+      notify('Invalid backup file', 'error');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+// =============================================
+// PWA SERVICE WORKER REGISTRATION
+// =============================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('SW registered'))
+      .catch(() => console.log('SW registration failed'));
+  });
+}
+
+// =============================================
+// INIT
+// =============================================
+updateBadges();
+renderDashboard();
+// Set today's date for attendance
+document.getElementById('attDate').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>

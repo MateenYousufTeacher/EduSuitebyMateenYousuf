@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#1a3a5c"/>
+<meta name="description" content="GGHSS Khanyar Admission Management System"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="apple-touch-icon" href="author.jpg"/>
+<title>GGHSS Khanyar – Admission System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  --navy: #1a3a5c;
+  --navy-light: #234f7d;
+  --gold: #c9a84c;
+  --gold-light: #f0ca6a;
+  --cream: #fdf8f0;
+  --white: #ffffff;
+  --gray-100: #f4f6f9;
+  --gray-200: #e8ecf1;
+  --gray-400: #9aacbb;
+  --gray-600: #5a6e82;
+  --gray-800: #2d3e50;
+  --success: #27ae60;
+  --danger: #e74c3c;
+  --warning: #f39c12;
+  --pending: #3498db;
+  --shadow: 0 4px 20px rgba(26,58,92,0.12);
+  --shadow-lg: 0 8px 40px rgba(26,58,92,0.18);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --transition: all 0.25s ease;
+}
+
+[data-theme="dark"] {
+  --navy: #0d1f33;
+  --navy-light: #1a3a5c;
+  --cream: #0f1923;
+  --white: #162231;
+  --gray-100: #1c2d3e;
+  --gray-200: #243447;
+  --gray-400: #5a7a99;
+  --gray-600: #8aaabb;
+  --gray-800: #c8dae8;
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--cream);
+  color: var(--gray-800);
+  min-height: 100vh;
+  transition: var(--transition);
+}
+
+/* ── HEADER ── */
+.school-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 60%, #2a5f8f 100%);
+  color: var(--white);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+.school-header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.12);
+}
+.school-header::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; left: -40px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(201,168,76,0.08);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px 20px 10px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.school-emblem {
+  width: 70px; height: 70px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+
+.school-title-block h1 {
+  font-family: 'Amiri', serif;
+  font-size: clamp(16px, 4vw, 24px);
+  font-weight: 700;
+  color: var(--gold-light);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  line-height: 1.3;
+}
+.school-title-block p {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 3px;
+  letter-spacing: 0.5px;
+}
+
+.gold-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 6px 20px;
+}
+
+/* Staff cards */
+.staff-cards {
+  display: flex;
+  gap: 12px;
+  padding: 12px 20px 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.staff-card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  backdrop-filter: blur(4px);
+  min-width: 200px;
+  max-width: 260px;
+  flex: 1;
+}
+.staff-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  object-fit: cover;
+  background: var(--navy-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.staff-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.staff-info { flex: 1; min-width: 0; }
+.staff-info strong {
+  display: block;
+  font-size: 13px;
+  color: var(--gold-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.staff-info span {
+  font-size: 11px;
+  opacity: 0.75;
+  display: block;
+  margin-top: 1px;
+}
+
+/* ── NAV TABS ── */
+.nav-bar {
+  background: var(--white);
+  box-shadow: var(--shadow);
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 3px solid var(--gold);
+}
+.nav-bar::-webkit-scrollbar { display: none; }
+.nav-btn {
+  flex: 0 0 auto;
+  padding: 14px 18px;
+  border: none;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -3px;
+}
+.nav-btn.active, .nav-btn:hover {
+  color: var(--navy);
+  border-bottom-color: var(--gold);
+  background: rgba(201,168,76,0.07);
+}
+
+/* ── MAIN CONTENT ── */
+.main { padding: 20px 16px; max-width: 960px; margin: 0 auto; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid var(--gray-200);
+}
+.card-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gray-200);
+  margin-left: 8px;
+}
+
+/* ── FORM ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width:600px){ .form-grid { grid-template-columns: 1fr; } }
+
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+.form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px 13px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: var(--gray-800);
+  background: var(--cream);
+  transition: var(--transition);
+  outline: none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--navy);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(26,58,92,0.1);
+}
+.form-group textarea { resize: vertical; min-height: 70px; }
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: var(--white);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(26,58,92,0.35); }
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--navy);
+}
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(201,168,76,0.4); }
+.btn-success { background: var(--success); color: var(--white); padding: 6px 12px; font-size: 12px; }
+.btn-danger  { background: var(--danger);  color: var(--white); padding: 6px 12px; font-size: 12px; }
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--navy);
+  color: var(--navy);
+}
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+
+/* ── STATS DASHBOARD ── */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 14px; }
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  border-top: 4px solid transparent;
+  transition: var(--transition);
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.stat-card.total  { border-top-color: var(--navy); }
+.stat-card.approved { border-top-color: var(--success); }
+.stat-card.pending  { border-top-color: var(--pending); }
+.stat-card.rejected { border-top-color: var(--danger); }
+.stat-icon { font-size: 28px; margin-bottom: 8px; }
+.stat-num {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1;
+}
+.stat-label { font-size: 12px; color: var(--gray-600); margin-top: 4px; font-weight: 600; }
+
+/* ── CLASS-WISE CHART ── */
+.class-bars { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.class-bar-row { display: flex; align-items: center; gap: 10px; }
+.class-bar-label { font-size: 13px; font-weight: 700; color: var(--navy); width: 60px; }
+.class-bar-track {
+  flex: 1;
+  height: 18px;
+  background: var(--gray-200);
+  border-radius: 9px;
+  overflow: hidden;
+}
+.class-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--navy), var(--gold));
+  border-radius: 9px;
+  transition: width 0.6s ease;
+}
+.class-bar-count { font-size: 13px; font-weight: 700; color: var(--gray-600); width: 24px; text-align: right; }
+
+/* ── SEARCH & FILTER ── */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.search-bar input,
+.search-bar select {
+  padding: 9px 13px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  background: var(--white);
+  color: var(--gray-800);
+  outline: none;
+  transition: var(--transition);
+}
+.search-bar input:focus,
+.search-bar select:focus { border-color: var(--navy); }
+.search-bar input { flex: 1; min-width: 160px; }
+
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { background: var(--navy); color: var(--white); }
+thead th { padding: 11px 12px; text-align: left; font-weight: 700; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid var(--gray-200); transition: var(--transition); }
+tbody tr:hover { background: var(--gray-100); }
+tbody td { padding: 10px 12px; vertical-align: middle; }
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-pending  { background: #dbeafe; color: #1d4ed8; }
+.badge-approved { background: #dcfce7; color: #166534; }
+.badge-rejected { background: #fee2e2; color: #991b1b; }
+
+/* ── TOAST ── */
+.toast-container {
+  position: fixed;
+  bottom: 24px; right: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.toast {
+  background: var(--navy);
+  color: var(--white);
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 4px solid var(--gold);
+  max-width: 280px;
+}
+.toast.success { border-left-color: var(--success); }
+.toast.error   { border-left-color: var(--danger); }
+@keyframes slideIn { from { transform: translateX(120%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+@keyframes fadeOut { from { opacity:1; } to { opacity:0; transform:translateX(120%); } }
+
+/* ── DARK MODE TOGGLE ── */
+.top-bar {
+  background: var(--navy);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 6px 16px;
+  gap: 12px;
+}
+.dark-toggle {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--gold-light);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: var(--transition);
+}
+.dark-toggle:hover { background: rgba(255,255,255,0.2); }
+
+/* ── PRINT ── */
+@media print {
+  .nav-bar, .top-bar, .search-bar, .action-btns, .btn-success, .btn-danger { display: none !important; }
+  .card { box-shadow: none; border: 1px solid #ddd; }
+  .school-header { print-color-adjust: exact; }
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--gray-400);
+}
+.empty-state svg { margin-bottom: 12px; opacity: 0.4; }
+.empty-state p { font-size: 15px; font-weight: 600; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  animation: popIn 0.25s ease;
+}
+@keyframes popIn { from { transform:scale(0.88); opacity:0; } to { transform:scale(1); opacity:1; } }
+.modal h3 { font-size: 18px; color: var(--navy); margin-bottom: 16px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* ── ROLL NUMBER CARD ── */
+.roll-card {
+  background: linear-gradient(135deg, var(--navy), var(--navy-light));
+  color: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  margin: 12px 0;
+}
+.roll-card .roll-num {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--gold-light);
+  letter-spacing: 4px;
+}
+.roll-card p { font-size: 12px; opacity: 0.75; margin-top: 4px; }
+
+/* ── PAGE TITLE ── */
+.page-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── EXPORT ── */
+.export-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px) {
+  .staff-cards { flex-direction: column; align-items: center; }
+  .staff-card { min-width: 100%; }
+  thead th:nth-child(4), tbody td:nth-child(4),
+  thead th:nth-child(5), tbody td:nth-child(5) { display: none; }
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--gray-100); }
+::-webkit-scrollbar-thumb { background: var(--gray-400); border-radius: 3px; }
+
+/* install banner */
+#install-banner {
+  display: none;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  color: var(--navy);
+  padding: 10px 16px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+#install-banner.show { display: flex; }
+#install-banner button { background: var(--navy); color: var(--white); border: none; padding: 5px 14px; border-radius: 20px; font-family: 'Nunito', sans-serif; font-weight: 700; cursor: pointer; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- INSTALL BANNER -->
+<div id="install-banner">
+  📲 Install GGHSS Admission App on your device!
+  <button id="install-btn">Install</button>
+  <button onclick="document.getElementById('install-banner').classList.remove('show')" style="background:transparent;color:var(--navy);border:none;font-size:18px;cursor:pointer;">✕</button>
+</div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <span style="color:rgba(255,255,255,0.6);font-size:11px;font-weight:700;letter-spacing:1px;">GGHSS KHANYAR • JKBOSE</span>
+  <button class="dark-toggle" id="darkToggle">🌙 Dark Mode</button>
+</div>
+
+<!-- SCHOOL HEADER -->
+<header class="school-header">
+  <div class="header-top">
+    <div class="school-emblem">🏫</div>
+    <div class="school-title-block">
+      <h1>Govt Girls Higher Secondary School<br>Khanyar, Srinagar</h1>
+      <p>Affiliated to JKBOSE • Admission Management System</p>
+    </div>
+  </div>
+  <div class="gold-divider"></div>
+  <div class="staff-cards">
+    <!-- Author -->
+    <div class="staff-card">
+      <div class="staff-avatar">
+        <img src="author.jpg" alt="Mateen Yousuf" onerror="this.parentElement.innerHTML='👨‍🏫'"/>
+      </div>
+      <div class="staff-info">
+        <strong>Mateen Yousuf</strong>
+        <span>Teacher & Developer</span>
+        <span style="font-size:10px;color:var(--gold-light);margin-top:3px;">💻 System Developed By</span>
+      </div>
+    </div>
+    <!-- Principal -->
+    <div class="staff-card">
+      <div class="staff-avatar">
+        <img src="principal.jpg" alt="Ms Wahida Sheikh" onerror="this.parentElement.innerHTML='👩‍💼'"/>
+      </div>
+      <div class="staff-info">
+        <strong>Ms Wahida Sheikh</strong>
+        <span>Principal</span>
+        <span style="font-size:10px;color:var(--gold-light);margin-top:3px;">🏫 GGHSS Khanyar</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-bar">
+  <button class="nav-btn active" data-tab="dashboard">📊 Dashboard</button>
+  <button class="nav-btn" data-tab="admission">📝 New Admission</button>
+  <button class="nav-btn" data-tab="applications">📋 Applications</button>
+  <button class="nav-btn" data-tab="export">📤 Export</button>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ══ DASHBOARD ══ -->
+  <section id="dashboard" class="section active">
+    <div class="page-title">📊 Admission Dashboard</div>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card total">
+        <div class="stat-icon">📁</div>
+        <div class="stat-num" id="statTotal">0</div>
+        <div class="stat-label">Total Applications</div>
+      </div>
+      <div class="stat-card approved">
+        <div class="stat-icon">✅</div>
+        <div class="stat-num" id="statApproved">0</div>
+        <div class="stat-label">Approved</div>
+      </div>
+      <div class="stat-card pending">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-num" id="statPending">0</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card rejected">
+        <div class="stat-icon">❌</div>
+        <div class="stat-num" id="statRejected">0</div>
+        <div class="stat-label">Rejected</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <div class="card-title">📚 Class-wise Admissions</div>
+      <div class="class-bars" id="classBars"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🕒 Recent Applications</div>
+      <div class="table-wrap">
+        <table id="recentTable">
+          <thead><tr><th>#</th><th>Name</th><th>Class</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="recentBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ NEW ADMISSION ══ -->
+  <section id="admission" class="section">
+    <div class="page-title">📝 New Admission Form</div>
+    <div class="card">
+      <div class="form-grid" id="admissionForm">
+
+        <div class="form-group full">
+          <label>Student Name *</label>
+          <input type="text" id="f_name" placeholder="Full name of student" required/>
+        </div>
+
+        <div class="form-group">
+          <label>Father / Guardian Name *</label>
+          <input type="text" id="f_father" placeholder="Father's name" required/>
+        </div>
+
+        <div class="form-group">
+          <label>Date of Birth *</label>
+          <input type="date" id="f_dob" required/>
+        </div>
+
+        <div class="form-group">
+          <label>Gender *</label>
+          <select id="f_gender">
+            <option value="">– Select –</option>
+            <option>Female</option>
+            <option>Male</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Class Applying For *</label>
+          <select id="f_class">
+            <option value="">– Select Class –</option>
+            <option value="9">Class 9</option>
+            <option value="10">Class 10</option>
+            <option value="11">Class 11</option>
+            <option value="12">Class 12</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Previous School</label>
+          <input type="text" id="f_prevschool" placeholder="Name of previous school"/>
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="tel" id="f_phone" placeholder="10-digit mobile number" maxlength="10"/>
+        </div>
+
+        <div class="form-group">
+          <label>Aadhaar Number (Optional)</label>
+          <input type="text" id="f_aadhaar" placeholder="12-digit Aadhaar" maxlength="12"/>
+        </div>
+
+        <div class="form-group full">
+          <label>Address *</label>
+          <textarea id="f_address" placeholder="Full residential address"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Admission Date</label>
+          <input type="text" id="f_admdate" readonly style="background:var(--gray-100);color:var(--gray-600);"/>
+        </div>
+
+        <div class="form-group" style="align-self:end;">
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" onclick="submitApplication()">📨 Submit Application</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ APPLICATIONS ══ -->
+  <section id="applications" class="section">
+    <div class="page-title">📋 Application Tracker</div>
+    <div class="card">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Search by name or phone…" oninput="renderApplications()"/>
+        <select id="filterClass" onchange="renderApplications()">
+          <option value="">All Classes</option>
+          <option value="9">Class 9</option>
+          <option value="10">Class 10</option>
+          <option value="11">Class 11</option>
+          <option value="12">Class 12</option>
+        </select>
+        <select id="filterStatus" onchange="renderApplications()">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Father</th>
+              <th>Class</th>
+              <th>Phone</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="applicationsBody"></tbody>
+        </table>
+      </div>
+      <div id="appEmptyState" class="empty-state" style="display:none;">
+        <svg width="60" height="60" viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" stroke="#9aacbb" stroke-width="2"/><path d="M20 30h20M30 20v20" stroke="#9aacbb" stroke-width="2" stroke-linecap="round"/></svg>
+        <p>No applications found</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ EXPORT ══ -->
+  <section id="export" class="section">
+    <div class="page-title">📤 Export & Print</div>
+    <div class="card">
+      <div class="card-title">📋 Export Options</div>
+      <div class="export-btns">
+        <button class="btn btn-primary" onclick="exportAll()">📄 Export All Applications</button>
+        <button class="btn btn-gold" onclick="exportApproved()">✅ Export Approved Students</button>
+        <button class="btn btn-outline" onclick="printAdmissionList()">🖨️ Print Admission List</button>
+      </div>
+      <div id="exportPreview"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL: Approval Confirmation -->
+<div class="modal-overlay" id="approveModal">
+  <div class="modal">
+    <h3>✅ Confirm Admission</h3>
+    <p style="color:var(--gray-600);font-size:14px;">Approve this application and generate a Roll Number?</p>
+    <div class="roll-card" id="rollCardPreview" style="margin-top:14px;">
+      <p>Generated Roll Number</p>
+      <div class="roll-num" id="generatedRoll">—</div>
+      <p id="rollStudentName" style="margin-top:6px;font-size:14px;"></p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('approveModal')">Cancel</button>
+      <button class="btn btn-success" id="confirmApproveBtn">✅ Confirm & Approve</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Reject Confirmation -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal">
+    <h3>❌ Reject Application</h3>
+    <p style="color:var(--gray-600);font-size:14px;">Are you sure you want to reject this application?</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('rejectModal')">Cancel</button>
+      <button class="btn btn-danger" id="confirmRejectBtn">❌ Yes, Reject</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA LAYER
+// ══════════════════════════════════════════════
+const STORAGE_KEY = 'gghss_admissions';
+
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function getData() { return loadData(); }
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Set today's date
+  document.getElementById('f_admdate').value = new Date().toLocaleDateString('en-IN');
+
+  // Nav tabs
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      if (btn.dataset.tab === 'dashboard') refreshDashboard();
+      if (btn.dataset.tab === 'applications') renderApplications();
+    });
+  });
+
+  // Dark mode
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') applyDark();
+  document.getElementById('darkToggle').addEventListener('click', toggleDark);
+
+  refreshDashboard();
+});
+
+// ══════════════════════════════════════════════
+//  DARK MODE
+// ══════════════════════════════════════════════
+function toggleDark() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (isDark) { document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme','light'); document.getElementById('darkToggle').textContent='🌙 Dark Mode'; }
+  else { applyDark(); }
+}
+function applyDark() {
+  document.documentElement.setAttribute('data-theme','dark');
+  localStorage.setItem('theme','dark');
+  document.getElementById('darkToggle').textContent='☀️ Light Mode';
+}
+
+// ══════════════════════════════════════════════
+//  SUBMIT APPLICATION
+// ══════════════════════════════════════════════
+function submitApplication() {
+  const name     = document.getElementById('f_name').value.trim();
+  const father   = document.getElementById('f_father').value.trim();
+  const dob      = document.getElementById('f_dob').value;
+  const gender   = document.getElementById('f_gender').value;
+  const cls      = document.getElementById('f_class').value;
+  const phone    = document.getElementById('f_phone').value.trim();
+  const address  = document.getElementById('f_address').value.trim();
+  const prevsch  = document.getElementById('f_prevschool').value.trim();
+  const aadhaar  = document.getElementById('f_aadhaar').value.trim();
+
+  if (!name || !father || !dob || !gender || !cls || !phone || !address) {
+    toast('⚠️ Please fill all required fields!', 'error'); return;
+  }
+  if (!/^\d{10}$/.test(phone)) {
+    toast('⚠️ Enter a valid 10-digit phone number!', 'error'); return;
+  }
+
+  const data = getData();
+  const id = 'APP' + Date.now();
+  const newApp = {
+    id, name, father, dob, gender, class: cls, phone, address,
+    prevschool: prevsch, aadhaar,
+    date: new Date().toLocaleDateString('en-IN'),
+    dateRaw: new Date().toISOString().split('T')[0],
+    status: 'Pending',
+    rollNumber: null,
+    approvedOn: null
+  };
+  data.push(newApp);
+  saveData(data);
+
+  // Reset form
+  ['f_name','f_father','f_dob','f_gender','f_class','f_phone','f_address','f_prevschool','f_aadhaar'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  toast('✅ Application submitted successfully!', 'success');
+  refreshDashboard();
+}
+
+// ══════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════
+function refreshDashboard() {
+  const data = getData();
+  const total    = data.length;
+  const approved = data.filter(a => a.status === 'Approved').length;
+  const pending  = data.filter(a => a.status === 'Pending').length;
+  const rejected = data.filter(a => a.status === 'Rejected').length;
+
+  animateNum('statTotal', total);
+  animateNum('statApproved', approved);
+  animateNum('statPending', pending);
+  animateNum('statRejected', rejected);
+
+  // Class bars
+  const classes = ['9','10','11','12'];
+  const classBars = document.getElementById('classBars');
+  const maxCount = Math.max(1, ...classes.map(c => data.filter(a => a.class === c).length));
+  classBars.innerHTML = classes.map(c => {
+    const count = data.filter(a => a.class === c).length;
+    const pct = (count / maxCount * 100).toFixed(1);
+    return `<div class="class-bar-row">
+      <span class="class-bar-label">Class ${c}</span>
+      <div class="class-bar-track"><div class="class-bar-fill" style="width:${pct}%"></div></div>
+      <span class="class-bar-count">${count}</span>
+    </div>`;
+  }).join('');
+
+  // Recent table
+  const recent = [...data].sort((a,b) => b.dateRaw > a.dateRaw ? 1 : -1).slice(0, 8);
+  const tbody = document.getElementById('recentBody');
+  tbody.innerHTML = recent.map((a, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${esc(a.name)}</strong></td>
+      <td>Class ${esc(a.class)}</td>
+      <td>${esc(a.date)}</td>
+      <td><span class="badge badge-${a.status.toLowerCase()}">${a.status}</span></td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:20px;">No applications yet</td></tr>';
+}
+
+function animateNum(id, target) {
+  const el = document.getElementById(id);
+  const start = parseInt(el.textContent) || 0;
+  const steps = 20;
+  let i = 0;
+  const timer = setInterval(() => {
+    i++;
+    el.textContent = Math.round(start + (target - start) * (i / steps));
+    if (i >= steps) { clearInterval(timer); el.textContent = target; }
+  }, 20);
+}
+
+// ══════════════════════════════════════════════
+//  APPLICATIONS LIST
+// ══════════════════════════════════════════════
+function renderApplications() {
+  const data = getData();
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const filterCls = document.getElementById('filterClass').value;
+  const filterSt = document.getElementById('filterStatus').value;
+
+  let filtered = data.filter(a => {
+    const matchSearch = !search || a.name.toLowerCase().includes(search) || a.phone.includes(search);
+    const matchCls = !filterCls || a.class === filterCls;
+    const matchSt = !filterSt || a.status === filterSt;
+    return matchSearch && matchCls && matchSt;
+  });
+
+  const tbody = document.getElementById('applicationsBody');
+  const empty = document.getElementById('appEmptyState');
+
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map((a, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${esc(a.name)}</strong><br><small style="color:var(--gray-400)">${esc(a.id)}</small></td>
+      <td>${esc(a.father)}</td>
+      <td>Class ${esc(a.class)}</td>
+      <td>${esc(a.phone)}</td>
+      <td>${esc(a.date)}</td>
+      <td>
+        <span class="badge badge-${a.status.toLowerCase()}">${a.status}</span>
+        ${a.rollNumber ? `<br><small style="color:var(--success);font-weight:700;">Roll: ${a.rollNumber}</small>` : ''}
+      </td>
+      <td class="action-btns">
+        ${a.status === 'Pending' ? `
+          <button class="btn btn-success btn-sm" onclick="openApprove('${a.id}')">✅ Approve</button>
+          <button class="btn btn-danger btn-sm" style="margin-top:4px;" onclick="openReject('${a.id}')">❌ Reject</button>
+        ` : `<span style="color:var(--gray-400);font-size:12px;">Done</span>`}
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+//  APPROVE / REJECT
+// ══════════════════════════════════════════════
+let pendingAction = null;
+
+function openApprove(id) {
+  const data = getData();
+  const app = data.find(a => a.id === id);
+  if (!app) return;
+  const roll = generateRoll(app.class);
+  document.getElementById('generatedRoll').textContent = roll;
+  document.getElementById('rollStudentName').textContent = app.name + ' | Class ' + app.class;
+  pendingAction = { type: 'approve', id, roll };
+  document.getElementById('approveModal').classList.add('open');
+  document.getElementById('confirmApproveBtn').onclick = confirmApprove;
+}
+
+function confirmApprove() {
+  if (!pendingAction) return;
+  const data = getData();
+  const idx = data.findIndex(a => a.id === pendingAction.id);
+  if (idx === -1) return;
+  data[idx].status = 'Approved';
+  data[idx].rollNumber = pendingAction.roll;
+  data[idx].approvedOn = new Date().toLocaleDateString('en-IN');
+  saveData(data);
+  closeModal('approveModal');
+  renderApplications();
+  refreshDashboard();
+  toast(`✅ Approved! Roll No: ${pendingAction.roll}`, 'success');
+  pendingAction = null;
+}
+
+function openReject(id) {
+  pendingAction = { type: 'reject', id };
+  document.getElementById('rejectModal').classList.add('open');
+  document.getElementById('confirmRejectBtn').onclick = confirmReject;
+}
+
+function confirmReject() {
+  if (!pendingAction) return;
+  const data = getData();
+  const idx = data.findIndex(a => a.id === pendingAction.id);
+  if (idx === -1) return;
+  data[idx].status = 'Rejected';
+  saveData(data);
+  closeModal('rejectModal');
+  renderApplications();
+  refreshDashboard();
+  toast('❌ Application rejected.', 'error');
+  pendingAction = null;
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); pendingAction = null; }
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) closeModal(ov.id); });
+});
+
+// ══════════════════════════════════════════════
+//  ROLL NUMBER GENERATION
+// ══════════════════════════════════════════════
+function generateRoll(cls) {
+  const data = getData();
+  const year = new Date().getFullYear().toString().slice(-2);
+  const existing = data
+    .filter(a => a.class === cls && a.rollNumber)
+    .map(a => parseInt((a.rollNumber || '0').slice(-3)) || 0);
+  const next = (Math.max(0, ...existing) + 1).toString().padStart(3, '0');
+  return `GGK${year}${cls.padStart(2,'0')}${next}`;
+}
+
+// ══════════════════════════════════════════════
+//  EXPORT
+// ══════════════════════════════════════════════
+function exportAll() {
+  const data = getData();
+  if (!data.length) { toast('⚠️ No applications to export!', 'error'); return; }
+  generateExportTable(data, 'All Applications');
+}
+
+function exportApproved() {
+  const data = getData().filter(a => a.status === 'Approved');
+  if (!data.length) { toast('⚠️ No approved students!', 'error'); return; }
+  generateExportTable(data, 'Approved Students');
+}
+
+function generateExportTable(data, title) {
+  const html = `
+    <div id="exportContent" style="margin-top:16px;">
+      <div style="text-align:center;margin-bottom:12px;">
+        <strong style="font-size:16px;color:var(--navy);">GGHSS Khanyar – ${title}</strong><br>
+        <small style="color:var(--gray-600);">Printed on: ${new Date().toLocaleDateString('en-IN')}</small>
+      </div>
+      <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Name</th><th>Father</th><th>Class</th><th>Phone</th><th>DOB</th><th>Date</th><th>Status</th><th>Roll No</th>
+        </tr></thead>
+        <tbody>
+          ${data.map((a,i) => `<tr>
+            <td>${i+1}</td><td>${esc(a.name)}</td><td>${esc(a.father)}</td>
+            <td>Class ${esc(a.class)}</td><td>${esc(a.phone)}</td><td>${esc(a.dob)}</td>
+            <td>${esc(a.date)}</td>
+            <td><span class="badge badge-${a.status.toLowerCase()}">${a.status}</span></td>
+            <td>${a.rollNumber || '—'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      </div>
+    </div>`;
+  document.getElementById('exportPreview').innerHTML = html;
+  toast('📄 Preview generated! Use Print button to print.', 'success');
+}
+
+function printAdmissionList() {
+  if (!document.getElementById('exportPreview').innerHTML) { exportAll(); }
+  setTimeout(() => window.print(), 300);
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function toast(msg, type = '') {
+  const container = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  container.appendChild(t);
+  setTimeout(() => {
+    t.style.animation = 'fadeOut 0.3s ease forwards';
+    setTimeout(() => t.remove(), 300);
+  }, 3000);
+}
+
+// ══════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════════════
+//  SERVICE WORKER REGISTRATION
+// ══════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(reg => console.log('SW registered:', reg.scope))
+    .catch(err => console.warn('SW error:', err));
+}
+
+// ══════════════════════════════════════════════
+//  PWA INSTALL
+// ══════════════════════════════════════════════
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('show');
+});
+
+document.getElementById('install-btn').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const result = await deferredPrompt.userChoice;
+    if (result.outcome === 'accepted') toast('✅ App installed successfully!', 'success');
+    deferredPrompt = null;
+    document.getElementById('install-banner').classList.remove('show');
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').classList.remove('show');
+  toast('🎉 App installed!', 'success');
+});
+</script>
+</body>
+</html>

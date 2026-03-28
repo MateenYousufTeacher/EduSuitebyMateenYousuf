@@ -1,0 +1,38 @@
+// GGHSS Khanyar – Exam & Result System Service Worker
+const CACHE = 'gghss-exam-v1';
+const ASSETS = ['./', './index.html', './manifest.json', './author.jpg', './principal.jpg'];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c =>
+      Promise.allSettled(ASSETS.map(u => c.add(u).catch(() => {})))
+    ).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET' || e.request.url.startsWith('chrome-extension://')) return;
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(res => {
+        if (!res || res.status !== 200 || res.type === 'opaque') return res;
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      }).catch(() => e.request.mode === 'navigate' ? caches.match('./index.html') : new Response('Offline', { status: 503 }));
+    })
+  );
+});
+
+self.addEventListener('message', e => {
+  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
+});

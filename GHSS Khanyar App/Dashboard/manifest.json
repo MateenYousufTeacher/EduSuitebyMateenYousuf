@@ -1,0 +1,36 @@
+{
+  "name": "GGHSS Khanyar – School ERP",
+  "short_name": "GGHSS ERP",
+  "description": "Complete School ERP System for Govt Girls Higher Secondary School Khanyar",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a3a5c",
+  "theme_color": "#1a3a5c",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "author.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "author.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Home",
+      "url": "./index.html",
+      "description": "Go to Dashboard"
+    }
+  ]
+}

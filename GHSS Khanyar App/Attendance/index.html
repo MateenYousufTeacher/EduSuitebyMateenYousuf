@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a4a6b">
+<meta name="description" content="GGHSS Khanyar Student Attendance System">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="GGHSS Attend">
+<title>GGHSS Khanyar – Attendance System</title>
+<link rel="manifest" href="manifest.json">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --primary: #1a4a6b;
+    --primary-light: #2563a8;
+    --accent: #e8a020;
+    --accent-light: #f5c842;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --surface2: #e8eef5;
+    --text: #1e293b;
+    --text2: #64748b;
+    --border: #cbd5e1;
+    --shadow: 0 4px 24px rgba(26,74,107,0.10);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --font-head: 'Playfair Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --header-h: 220px;
+    --transition: 0.22s cubic-bezier(.4,0,.2,1);
+  }
+
+  [data-dark="true"] {
+    --primary: #2563a8;
+    --primary-light: #3b82f6;
+    --accent: #f5c842;
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface2: #273548;
+    --text: #f1f5f9;
+    --text2: #94a3b8;
+    --border: #334155;
+    --shadow: 0 4px 24px rgba(0,0,0,0.40);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  /* ===== HEADER ===== */
+  .app-header {
+    background: linear-gradient(135deg, var(--primary) 0%, #0f2d45 60%, #1a3a5c 100%);
+    color: #fff;
+    padding: 28px 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .app-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  .app-header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: -40px;
+    width: 160px; height: 160px;
+    background: rgba(232,160,32,0.08);
+    border-radius: 50%;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    position: relative; z-index: 2;
+  }
+
+  .school-identity { flex: 1; }
+
+  .school-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(232,160,32,0.18);
+    border: 1px solid rgba(232,160,32,0.4);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 10px;
+  }
+
+  .school-name {
+    font-family: var(--font-head);
+    font-size: clamp(16px, 4vw, 22px);
+    font-weight: 700;
+    line-height: 1.25;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .school-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.04em;
+  }
+
+  .header-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .btn-dark {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: background var(--transition);
+    white-space: nowrap;
+  }
+  .btn-dark:hover { background: rgba(255,255,255,0.22); }
+
+  .header-date {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    text-align: right;
+  }
+
+  /* Staff Cards */
+  .staff-row {
+    display: flex;
+    gap: 12px;
+    position: relative; z-index: 2;
+  }
+
+  .staff-card {
+    flex: 1;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    backdrop-filter: blur(8px);
+  }
+
+  .staff-photo {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    object-fit: cover;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    overflow: hidden;
+  }
+
+  .staff-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .staff-info { min-width: 0; }
+
+  .staff-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .staff-role {
+    font-size: 11px;
+    color: var(--accent-light);
+    margin-top: 2px;
+  }
+
+  /* ===== MAIN ===== */
+  .main-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px 14px 80px;
+  }
+
+  /* ===== NAV TABS ===== */
+  .nav-tabs {
+    display: flex;
+    gap: 6px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 6px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+
+  .nav-tab {
+    flex: 1;
+    min-width: 72px;
+    padding: 9px 6px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text2);
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    transition: all var(--transition);
+    white-space: nowrap;
+  }
+  .nav-tab.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(26,74,107,0.25);
+  }
+  .nav-tab span { display: block; font-size: 16px; margin-bottom: 2px; }
+
+  /* ===== SECTIONS ===== */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    transition: background var(--transition);
+  }
+
+  .card-title {
+    font-family: var(--font-head);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ===== FORM CONTROLS ===== */
+  select, input[type="text"], input[type="date"] {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    outline: none;
+    transition: border-color var(--transition), background var(--transition);
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  select:focus, input:focus {
+    border-color: var(--primary-light);
+    background: var(--surface);
+  }
+
+  .select-wrap {
+    position: relative;
+  }
+  .select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text2);
+    pointer-events: none;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-light); transform: translateY(-1px); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { opacity: 0.88; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { opacity: 0.88; }
+  .btn-accent { background: var(--accent); color: #1e293b; }
+  .btn-accent:hover { background: var(--accent-light); }
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--border); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  /* ===== DATE + SEARCH ROW ===== */
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .controls-row > * { flex: 1; min-width: 140px; }
+
+  /* ===== STUDENT LIST ===== */
+  .student-list { list-style: none; }
+
+  .student-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    transition: opacity 0.2s;
+  }
+  .student-item:last-child { border-bottom: none; }
+  .student-item.hidden { display: none; }
+
+  .student-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text2);
+    flex-shrink: 0;
+  }
+
+  .student-name-wrap { flex: 1; min-width: 0; }
+
+  .student-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .student-name-input {
+    width: 100%;
+    border: 1px solid var(--primary-light);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 13px;
+    font-family: var(--font-body);
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .attend-btns { display: flex; gap: 6px; flex-shrink: 0; }
+
+  .att-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .att-btn.present-active {
+    background: #dcfce7;
+    border-color: var(--success);
+  }
+  .att-btn.absent-active {
+    background: #fee2e2;
+    border-color: var(--danger);
+  }
+  [data-dark="true"] .att-btn.present-active { background: #14532d44; }
+  [data-dark="true"] .att-btn.absent-active { background: #7f1d1d44; }
+
+  .att-btn:hover { transform: scale(1.1); }
+
+  .del-btn {
+    width: 30px; height: 30px;
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--transition), color var(--transition);
+  }
+  .del-btn:hover { background: #fee2e2; color: var(--danger); }
+
+  /* ===== STAT CARDS ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    border-top: 3px solid var(--primary);
+    transition: background var(--transition);
+  }
+  .stat-card.green { border-top-color: var(--success); }
+  .stat-card.red { border-top-color: var(--danger); }
+  .stat-card.gold { border-top-color: var(--accent); }
+
+  .stat-val {
+    font-family: var(--font-head);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .stat-card.green .stat-val { color: var(--success); }
+  .stat-card.red .stat-val { color: var(--danger); }
+  .stat-card.gold .stat-val { color: var(--accent); }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-bar-wrap {
+    background: var(--surface2);
+    border-radius: 20px;
+    height: 8px;
+    overflow: hidden;
+    margin: 6px 0;
+  }
+  .progress-bar {
+    height: 100%;
+    border-radius: 20px;
+    background: var(--success);
+    transition: width 0.5s;
+  }
+
+  /* ===== REPORT TABLE ===== */
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .report-table th {
+    background: var(--surface2);
+    color: var(--text2);
+    font-weight: 600;
+    padding: 9px 10px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .report-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .report-table tr:hover td { background: var(--surface2); }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-red { background: #fee2e2; color: #b91c1c; }
+  [data-dark="true"] .badge-green { background: #14532d44; color: #4ade80; }
+  [data-dark="true"] .badge-red { background: #7f1d1d44; color: #f87171; }
+
+  /* ===== TOAST ===== */
+  #toast-container {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  .toast {
+    background: #1e293b;
+    color: #f1f5f9;
+    padding: 12px 22px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--font-body);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.4s forwards;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes toastOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(16px); }
+  }
+
+  /* ===== INSTALL BANNER ===== */
+  #install-banner {
+    display: none;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%);
+    color: #1e293b;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  #install-banner.visible { display: flex; }
+
+  #install-banner .btn-install {
+    background: #1e293b;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-body);
+  }
+
+  /* ===== SECTION HEADERS ===== */
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 18px;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ===== MONTH NAV ===== */
+  .month-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px;
+    margin-bottom: 14px;
+  }
+  .month-nav button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .month-nav span { flex: 1; text-align: center; font-weight: 600; font-size: 14px; color: var(--text); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 420px) {
+    .staff-row { flex-direction: column; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .controls-row { flex-direction: column; }
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text2);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ===== SCROLLABLE TABLE WRAP ===== */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* ===== FAB ===== */
+  .fab {
+    position: fixed;
+    bottom: 22px; right: 18px;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(26,74,107,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: all var(--transition);
+  }
+  .fab:hover { transform: scale(1.1); background: var(--primary-light); }
+
+  /* ===== COUNT BADGE ===== */
+  .count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: #1e293b;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 2px 7px;
+    margin-left: 6px;
+  }
+  .count-info {
+    font-size: 12px;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+
+  /* ===== ABOUT SECTION ===== */
+  .about-card {
+    text-align: center;
+    padding: 32px 20px;
+  }
+  .about-logo {
+    font-size: 52px;
+    margin-bottom: 12px;
+  }
+  .about-title {
+    font-family: var(--font-head);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+  }
+  .about-sub { font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .about-sep { height: 1px; background: var(--border); margin: 20px 0; }
+
+  .version-tag {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 12px;
+  }
+
+  /* Animated entry */
+  .card { animation: slideUp 0.35s ease both; }
+  @keyframes slideUp {
+    from { opacity:0; transform: translateY(18px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface2); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Install Banner -->
+<div id="install-banner">
+  📲 Install this app on your device for offline access!
+  <button class="btn-install" id="install-btn">Install App</button>
+  <button style="background:none;border:none;font-size:16px;cursor:pointer;" id="dismiss-banner">✕</button>
+</div>
+
+<!-- Header -->
+<header class="app-header">
+  <div class="header-top">
+    <div class="school-identity">
+      <div class="school-badge">🏫 J&K BOSE Affiliated</div>
+      <div class="school-name">Govt Girls Higher Secondary School Khanyar</div>
+      <div class="school-sub">Srinagar, Jammu &amp; Kashmir</div>
+    </div>
+    <div class="header-controls">
+      <button class="btn-dark" id="dark-toggle">🌙 Dark</button>
+      <div class="header-date" id="header-date"></div>
+    </div>
+  </div>
+  <div class="staff-row">
+    <div class="staff-card">
+      <div class="staff-photo">
+        <img src="principal.jpg" alt="Principal" onerror="this.parentElement.textContent='👩‍💼'">
+      </div>
+      <div class="staff-info">
+        <div class="staff-name">Ms. Wahida Sheikh</div>
+        <div class="staff-role">🎓 Principal</div>
+      </div>
+    </div>
+    <div class="staff-card">
+      <div class="staff-photo">
+        <img src="author.jpg" alt="Developer" onerror="this.parentElement.textContent='👨‍💻'">
+      </div>
+      <div class="staff-info">
+        <div class="staff-name">Mateen Yousuf</div>
+        <div class="staff-role">🧑‍🏫 Developer &amp; Teacher</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Nav Tabs -->
+<div class="main-wrap">
+  <nav class="nav-tabs" id="nav-tabs">
+    <button class="nav-tab active" data-tab="attendance"><span>📋</span>Attendance</button>
+    <button class="nav-tab" data-tab="students"><span>👩‍🎓</span>Students</button>
+    <button class="nav-tab" data-tab="reports"><span>📊</span>Reports</button>
+    <button class="nav-tab" data-tab="export"><span>📤</span>Export</button>
+    <button class="nav-tab" data-tab="about"><span>ℹ️</span>About</button>
+  </nav>
+
+  <!-- ============ ATTENDANCE TAB ============ -->
+  <section class="section active" id="tab-attendance">
+    <div class="card">
+      <div class="card-title">📅 Mark Attendance</div>
+      <div class="controls-row">
+        <div class="select-wrap">
+          <select id="att-class-select">
+            <option value="class9">Class 9</option>
+            <option value="class10">Class 10</option>
+            <option value="class11">Class 11</option>
+            <option value="class12">Class 12</option>
+          </select>
+        </div>
+        <input type="date" id="att-date" />
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+        <input type="text" id="att-search" placeholder="🔍 Search student..." style="flex:1;">
+      </div>
+      <div id="att-summary" class="count-info"></div>
+    </div>
+
+    <div class="card" style="padding:12px 18px;">
+      <div class="section-head">
+        <div class="section-title">Student List <span class="count-badge" id="att-count">0</span></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-success btn-sm" id="mark-all-present">✅ All Present</button>
+          <button class="btn btn-danger btn-sm" id="mark-all-absent">❌ All Absent</button>
+        </div>
+      </div>
+      <ul class="student-list" id="att-list"></ul>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="save-attendance">💾 Save Attendance</button>
+      <button class="btn btn-ghost" id="reset-day">🔄 Reset Day</button>
+    </div>
+  </section>
+
+  <!-- ============ STUDENTS TAB ============ -->
+  <section class="section" id="tab-students">
+    <div class="card">
+      <div class="card-title">👩‍🎓 Manage Students</div>
+      <div class="controls-row">
+        <div class="select-wrap">
+          <select id="stu-class-select">
+            <option value="class9">Class 9</option>
+            <option value="class10">Class 10</option>
+            <option value="class11">Class 11</option>
+            <option value="class12">Class 12</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="new-student-name" placeholder="New student name..." style="flex:1;">
+          <button class="btn btn-primary" id="add-student-btn">➕ Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:12px 18px;">
+      <div class="section-head">
+        <div class="section-title">Students <span class="count-badge" id="stu-count">0</span></div>
+      </div>
+      <ul class="student-list" id="stu-list"></ul>
+    </div>
+  </section>
+
+  <!-- ============ REPORTS TAB ============ -->
+  <section class="section" id="tab-reports">
+    <div class="card">
+      <div class="card-title">📊 Attendance Report</div>
+      <div class="controls-row">
+        <div class="select-wrap">
+          <select id="rep-class-select">
+            <option value="class9">Class 9</option>
+            <option value="class10">Class 10</option>
+            <option value="class11">Class 11</option>
+            <option value="class12">Class 12</option>
+          </select>
+        </div>
+        <input type="month" id="rep-month" />
+      </div>
+      <button class="btn btn-primary" id="generate-report-btn" style="width:100%;">📊 Generate Report</button>
+    </div>
+
+    <div id="report-output"></div>
+  </section>
+
+  <!-- ============ EXPORT TAB ============ -->
+  <section class="section" id="tab-export">
+    <div class="card">
+      <div class="card-title">📤 Export Attendance</div>
+      <div class="controls-row">
+        <div class="select-wrap">
+          <select id="exp-class-select">
+            <option value="class9">Class 9</option>
+            <option value="class10">Class 10</option>
+            <option value="class11">Class 11</option>
+            <option value="class12">Class 12</option>
+          </select>
+        </div>
+        <input type="date" id="exp-date" />
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="export-text-btn">📄 Export as Text</button>
+        <button class="btn btn-accent" id="export-print-btn">🖨️ Print View</button>
+        <button class="btn btn-ghost" id="export-month-btn">📅 Monthly Export</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🗑️ Data Management</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:14px;">Clear all stored attendance data. This action cannot be undone.</p>
+      <button class="btn btn-danger" id="clear-all-btn">🗑️ Clear All Data</button>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT TAB ============ -->
+  <section class="section" id="tab-about">
+    <div class="card about-card">
+      <div class="about-logo">🏫</div>
+      <div class="about-title">GGHSS Khanyar Attendance System</div>
+      <div class="about-sub">
+        A fully offline Progressive Web App for managing daily student attendance at<br>
+        <strong>Govt Girls Higher Secondary School, Khanyar, Srinagar</strong>
+      </div>
+      <div class="about-sep"></div>
+      <div class="about-sub">
+        <strong>Developed by:</strong> Mateen Yousuf (Teacher &amp; Developer)<br>
+        <strong>Principal:</strong> Ms. Wahida Sheikh<br>
+        <strong>Affiliated:</strong> J&amp;K Board of School Education (JKBOSE)<br>
+        <strong>Technology:</strong> HTML + CSS + Vanilla JavaScript (PWA)
+      </div>
+      <div class="version-tag">Version 1.0.0 · Offline Ready</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🚀 Quick Guide</div>
+      <div style="font-size:13px;line-height:1.9;color:var(--text2);">
+        <strong style="color:var(--text);">📋 Attendance Tab</strong> — Select class &amp; date, mark each student Present or Absent, then tap Save.<br>
+        <strong style="color:var(--text);">👩‍🎓 Students Tab</strong> — Add or remove students per class. Click names to edit them.<br>
+        <strong style="color:var(--text);">📊 Reports Tab</strong> — Generate monthly summary reports per class.<br>
+        <strong style="color:var(--text);">📤 Export Tab</strong> — Export attendance as text file or print view.<br>
+        <strong style="color:var(--text);">🌙 Dark Mode</strong> — Toggle using the button in the header.
+      </div>
+    </div>
+  </section>
+
+</div><!-- /main-wrap -->
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<script>
+// ===== DATA =====
+const DEFAULT_STUDENTS = {
+  class9:  ["Aisha Bashir","Fatima Noor","Zainab Mir","Huma Wani","Sana Bhat","Ruqaya Jan","Nadia Qadri","Shazia Khan","Asma Lone","Rabia Sheikh","Insha Dar","Mehwish Ganie","Saba Andrabi","Farida Mufti","Gulshan Rather","Tahira Beg","Afshan Sofi","Noor Ul Ain","Sumayya Parray","Lubna Akhtar"],
+  class10: ["Aroha Wani","Bisma Maqbool","Dilshad Jan","Erum Nabi","Fauzia Mir","Gulnar Lone","Hafsa Qadri","Iqra Bashir","Javeria Bhat","Kulsoom Rather","Laila Sheikh","Maryam Dar","Najma Andrabi","Ozra Mufti","Parisa Khan","Qurat Ul Ain","Rohma Beg","Sadiya Ganie","Tahira Sofi","Uzma Parray"],
+  class11: ["Amina Bashir","Bushra Noor","Chaman Mir","Dua Wani","Ehsana Bhat","Firdous Jan","Ghazala Qadri","Hinna Khan","Ishrat Lone","Javeria Sheikh","Kiran Dar","Lubna Mufti","Mahnoor Rather","Nusrat Beg","Omra Ganie","Parveen Andrabi","Qudsia Sofi","Razia Parray","Sadia Akhtar","Tahira Kaw"],
+  class12: ["Ayesha Lone","Bakhtawar Bhat","Celina Jan","Dania Mir","Eisha Khan","Farhat Sheikh","Ghulam Fatima","Humaira Dar","Irfana Mufti","Jaweria Rather","Khurshida Beg","Lareeb Ganie","Mehreen Andrabi","Nazia Sofi","Owais Parray","Parween Akhtar","Qambar Kaw","Rabia Qadri","Sameena Wani","Tahira Bashir"]
+};
+
+function getStudents(cls) {
+  const key = `students_${cls}`;
+  const saved = localStorage.getItem(key);
+  if (saved) return JSON.parse(saved);
+  localStorage.setItem(key, JSON.stringify(DEFAULT_STUDENTS[cls]));
+  return DEFAULT_STUDENTS[cls];
+}
+
+function saveStudents(cls, arr) {
+  localStorage.setItem(`students_${cls}`, JSON.stringify(arr));
+}
+
+function getAttendance() {
+  const saved = localStorage.getItem('attendanceData');
+  if (saved) return JSON.parse(saved);
+  return { class9:{}, class10:{}, class11:{}, class12:{} };
+}
+
+function saveAttendanceData(data) {
+  localStorage.setItem('attendanceData', JSON.stringify(data));
+}
+
+function todayStr() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function showToast(msg, type='info') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  const icons = { success:'✅', error:'❌', info:'ℹ️', warn:'⚠️' };
+  t.textContent = (icons[type]||'ℹ️') + ' ' + msg;
+  if (type==='success') t.style.background='#15803d';
+  if (type==='error') t.style.background='#b91c1c';
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 2800);
+}
+
+// ===== DARK MODE =====
+let darkMode = localStorage.getItem('darkMode') === 'true';
+function applyDark() {
+  document.body.setAttribute('data-dark', darkMode);
+  document.getElementById('dark-toggle').textContent = darkMode ? '☀️ Light' : '🌙 Dark';
+}
+applyDark();
+document.getElementById('dark-toggle').addEventListener('click', () => {
+  darkMode = !darkMode;
+  localStorage.setItem('darkMode', darkMode);
+  applyDark();
+});
+
+// ===== HEADER DATE =====
+function updateHeaderDate() {
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('header-date').textContent = now.toLocaleDateString('en-IN', opts);
+}
+updateHeaderDate();
+
+// ===== TAB NAVIGATION =====
+const tabs = document.querySelectorAll('.nav-tab');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'attendance') renderAttList();
+    if (tab.dataset.tab === 'students') renderStuList();
+    if (tab.dataset.tab === 'reports') {
+      const m = new Date(); document.getElementById('rep-month').value = m.toISOString().slice(0,7);
+    }
+  });
+});
+
+// ===== ATTENDANCE TAB =====
+const attClassSel = document.getElementById('att-class-select');
+const attDate = document.getElementById('att-date');
+const attSearch = document.getElementById('att-search');
+const attList = document.getElementById('att-list');
+
+attDate.value = todayStr();
+let currentAttState = {};
+
+function renderAttList() {
+  const cls = attClassSel.value;
+  const date = attDate.value || todayStr();
+  const students = getStudents(cls);
+  const attData = getAttendance();
+  const dayData = (attData[cls] && attData[cls][date]) || [];
+
+  // Build currentAttState from saved or default
+  currentAttState = {};
+  students.forEach(name => {
+    const found = dayData.find(s => s.name === name);
+    currentAttState[name] = found ? found.status : null;
+  });
+
+  const q = attSearch.value.toLowerCase();
+  attList.innerHTML = '';
+  let visible = 0;
+
+  students.forEach((name, i) => {
+    if (q && !name.toLowerCase().includes(q)) return;
+    visible++;
+    const li = document.createElement('li');
+    li.className = 'student-item';
+    li.dataset.name = name;
+    const status = currentAttState[name];
+    li.innerHTML = `
+      <div class="student-num">${i+1}</div>
+      <div class="student-name-wrap">
+        <div class="student-name">${name}</div>
+      </div>
+      <div class="attend-btns">
+        <button class="att-btn ${status==='Present'?'present-active':''}" data-action="present" title="Present">✅</button>
+        <button class="att-btn ${status==='Absent'?'absent-active':''}" data-action="absent" title="Absent">❌</button>
+      </div>
+    `;
+    li.querySelectorAll('.att-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.action;
+        const s = action === 'present' ? 'Present' : 'Absent';
+        currentAttState[name] = currentAttState[name] === s ? null : s;
+        renderAttList();
+      });
+    });
+    attList.appendChild(li);
+  });
+
+  document.getElementById('att-count').textContent = visible;
+  updateAttSummary(students);
+}
+
+function updateAttSummary(students) {
+  const total = students.length;
+  const present = Object.values(currentAttState).filter(v => v==='Present').length;
+  const absent = Object.values(currentAttState).filter(v => v==='Absent').length;
+  const unmarked = total - present - absent;
+  document.getElementById('att-summary').textContent =
+    `✅ Present: ${present}  ❌ Absent: ${absent}  ⬜ Unmarked: ${unmarked}  👩‍🎓 Total: ${total}`;
+}
+
+attClassSel.addEventListener('change', renderAttList);
+attDate.addEventListener('change', renderAttList);
+attSearch.addEventListener('input', renderAttList);
+
+document.getElementById('mark-all-present').addEventListener('click', () => {
+  const cls = attClassSel.value;
+  getStudents(cls).forEach(n => currentAttState[n] = 'Present');
+  renderAttList();
+});
+
+document.getElementById('mark-all-absent').addEventListener('click', () => {
+  const cls = attClassSel.value;
+  getStudents(cls).forEach(n => currentAttState[n] = 'Absent');
+  renderAttList();
+});
+
+document.getElementById('save-attendance').addEventListener('click', () => {
+  const cls = attClassSel.value;
+  const date = attDate.value || todayStr();
+  const students = getStudents(cls);
+  const attData = getAttendance();
+  if (!attData[cls]) attData[cls] = {};
+  attData[cls][date] = students.map(name => ({
+    name,
+    status: currentAttState[name] || 'Unmarked'
+  }));
+  saveAttendanceData(attData);
+  showToast('Attendance saved successfully!', 'success');
+});
+
+document.getElementById('reset-day').addEventListener('click', () => {
+  const cls = attClassSel.value;
+  const date = attDate.value || todayStr();
+  const attData = getAttendance();
+  if (attData[cls]) delete attData[cls][date];
+  saveAttendanceData(attData);
+  currentAttState = {};
+  renderAttList();
+  showToast('Day reset done.', 'info');
+});
+
+renderAttList();
+
+// ===== STUDENTS TAB =====
+const stuClassSel = document.getElementById('stu-class-select');
+const stuList = document.getElementById('stu-list');
+
+function renderStuList() {
+  const cls = stuClassSel.value;
+  const students = getStudents(cls);
+  stuList.innerHTML = '';
+  document.getElementById('stu-count').textContent = students.length;
+
+  students.forEach((name, i) => {
+    const li = document.createElement('li');
+    li.className = 'student-item';
+    li.innerHTML = `
+      <div class="student-num">${i+1}</div>
+      <div class="student-name-wrap">
+        <div class="student-name" title="Click to edit">${name}</div>
+      </div>
+      <button class="del-btn" data-i="${i}" title="Delete">🗑️</button>
+    `;
+    const nameEl = li.querySelector('.student-name');
+    nameEl.addEventListener('click', () => {
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'student-name-input';
+      inp.value = name;
+      li.querySelector('.student-name-wrap').replaceChild(inp, nameEl);
+      inp.focus();
+      inp.addEventListener('blur', () => {
+        const newName = inp.value.trim();
+        if (newName && newName !== name) {
+          const arr = getStudents(cls);
+          arr[i] = newName;
+          saveStudents(cls, arr);
+          showToast('Student name updated.', 'success');
+        }
+        renderStuList();
+      });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
+    });
+    li.querySelector('.del-btn').addEventListener('click', () => {
+      if (!confirm(`Delete "${name}"?`)) return;
+      const arr = getStudents(cls);
+      arr.splice(i, 1);
+      saveStudents(cls, arr);
+      renderStuList();
+      showToast('Student removed.', 'warn');
+    });
+    stuList.appendChild(li);
+  });
+}
+
+stuClassSel.addEventListener('change', renderStuList);
+renderStuList();
+
+document.getElementById('add-student-btn').addEventListener('click', () => {
+  const inp = document.getElementById('new-student-name');
+  const name = inp.value.trim();
+  if (!name) { showToast('Enter a student name.', 'error'); return; }
+  const cls = stuClassSel.value;
+  const arr = getStudents(cls);
+  if (arr.includes(name)) { showToast('Student already exists.', 'warn'); return; }
+  arr.push(name);
+  saveStudents(cls, arr);
+  inp.value = '';
+  renderStuList();
+  showToast('Student added!', 'success');
+});
+
+document.getElementById('new-student-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('add-student-btn').click();
+});
+
+// ===== REPORTS TAB =====
+const repClassSel = document.getElementById('rep-class-select');
+const repMonth = document.getElementById('rep-month');
+repMonth.value = new Date().toISOString().slice(0,7);
+
+document.getElementById('generate-report-btn').addEventListener('click', () => {
+  const cls = repClassSel.value;
+  const month = repMonth.value;
+  if (!month) { showToast('Select a month.', 'error'); return; }
+
+  const students = getStudents(cls);
+  const attData = getAttendance();
+  const clsData = attData[cls] || {};
+
+  // Filter dates for month
+  const dates = Object.keys(clsData).filter(d => d.startsWith(month)).sort();
+
+  if (dates.length === 0) {
+    document.getElementById('report-output').innerHTML = `
+      <div class="card"><div class="empty-state"><div class="icon">📭</div><p>No attendance data for this month.</p></div></div>`;
+    return;
+  }
+
+  // Per-student summary
+  const summary = {};
+  students.forEach(name => {
+    summary[name] = { present: 0, absent: 0, total: dates.length };
+  });
+
+  dates.forEach(date => {
+    const dayData = clsData[date] || [];
+    dayData.forEach(s => {
+      if (summary[s.name]) {
+        if (s.status === 'Present') summary[s.name].present++;
+        else if (s.status === 'Absent') summary[s.name].absent++;
+      }
+    });
+  });
+
+  const totalDays = dates.length;
+  let totalPresent = 0, totalAbsent = 0;
+  students.forEach(n => { totalPresent += summary[n].present; totalAbsent += summary[n].absent; });
+  const totalSlots = students.length * totalDays;
+  const overallPct = totalSlots ? Math.round(totalPresent/totalSlots*100) : 0;
+
+  const [yr, mn] = month.split('-');
+  const monthName = new Date(yr, mn-1, 1).toLocaleString('default', { month:'long', year:'numeric' });
+
+  const clsLabel = { class9:'Class 9', class10:'Class 10', class11:'Class 11', class12:'Class 12' };
+
+  let rows = '';
+  students.forEach((name, i) => {
+    const s = summary[name];
+    const pct = s.total ? Math.round(s.present/s.total*100) : 0;
+    const status = pct >= 75 ? `<span class="badge badge-green">✅ ${pct}%</span>` : `<span class="badge badge-red">⚠️ ${pct}%</span>`;
+    rows += `<tr>
+      <td>${i+1}</td>
+      <td>${name}</td>
+      <td>${s.present}</td>
+      <td>${s.absent}</td>
+      <td>${s.total}</td>
+      <td>${status}</td>
+    </tr>`;
+  });
+
+  document.getElementById('report-output').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="stat-val">${overallPct}%</div>
+        <div class="stat-label">Overall Present</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">${totalDays}</div>
+        <div class="stat-label">School Days</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-val">${students.length}</div>
+        <div class="stat-label">Total Students</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-val">${100-overallPct}%</div>
+        <div class="stat-label">Overall Absent</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 ${clsLabel[cls]} — ${monthName}</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" style="width:${overallPct}%"></div></div>
+      <div class="count-info" style="margin-bottom:12px;">Class Attendance: ${overallPct}% — ${overallPct>=75?'Good Standing':'Needs Improvement'}</div>
+      <div class="table-wrap">
+        <table class="report-table">
+          <thead><tr><th>#</th><th>Student Name</th><th>Present</th><th>Absent</th><th>Days</th><th>%</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+});
+
+// ===== EXPORT TAB =====
+const expClassSel = document.getElementById('exp-class-select');
+const expDate = document.getElementById('exp-date');
+expDate.value = todayStr();
+
+document.getElementById('export-text-btn').addEventListener('click', () => {
+  const cls = expClassSel.value;
+  const date = expDate.value || todayStr();
+  const attData = getAttendance();
+  const dayData = (attData[cls] && attData[cls][date]) || [];
+  if (!dayData.length) { showToast('No data for selected date.', 'error'); return; }
+
+  const clsLabel = { class9:'Class 9', class10:'Class 10', class11:'Class 11', class12:'Class 12' };
+  let txt = `GGHSS KHANYAR – ATTENDANCE REPORT\n`;
+  txt += `School: Govt Girls Higher Secondary School, Khanyar\n`;
+  txt += `Class: ${clsLabel[cls]}   Date: ${date}\n`;
+  txt += `Principal: Ms. Wahida Sheikh\n`;
+  txt += `Generated: ${new Date().toLocaleString('en-IN')}\n`;
+  txt += `${'='.repeat(50)}\n\n`;
+  txt += `S.No   Student Name                  Status\n`;
+  txt += `${'─'.repeat(50)}\n`;
+  dayData.forEach((s, i) => {
+    txt += `${String(i+1).padEnd(7)}${s.name.padEnd(30)}${s.status}\n`;
+  });
+  const pres = dayData.filter(s=>s.status==='Present').length;
+  const abs = dayData.filter(s=>s.status==='Absent').length;
+  txt += `\n${'─'.repeat(50)}\n`;
+  txt += `Total: ${dayData.length}   Present: ${pres}   Absent: ${abs}\n`;
+  txt += `Attendance: ${Math.round(pres/dayData.length*100)}%\n`;
+
+  const blob = new Blob([txt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `attendance_${cls}_${date}.txt`;
+  a.click();
+  showToast('Text file downloaded!', 'success');
+});
+
+document.getElementById('export-print-btn').addEventListener('click', () => {
+  const cls = expClassSel.value;
+  const date = expDate.value || todayStr();
+  const attData = getAttendance();
+  const dayData = (attData[cls] && attData[cls][date]) || [];
+  if (!dayData.length) { showToast('No data for selected date.', 'error'); return; }
+
+  const clsLabel = { class9:'Class 9', class10:'Class 10', class11:'Class 11', class12:'Class 12' };
+  const pres = dayData.filter(s=>s.status==='Present').length;
+  const abs = dayData.filter(s=>s.status==='Absent').length;
+
+  let rows = dayData.map((s,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td>${s.name}</td>
+      <td style="color:${s.status==='Present'?'#166534':'#991b1b'};font-weight:600;">${s.status}</td>
+    </tr>`).join('');
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Attendance ${cls} ${date}</title>
+  <style>
+    body{font-family:Arial,sans-serif;padding:24px;color:#1e293b;}
+    h2{color:#1a4a6b;} table{width:100%;border-collapse:collapse;margin-top:16px;}
+    th{background:#1a4a6b;color:#fff;padding:10px;text-align:left;}
+    td{padding:9px 10px;border-bottom:1px solid #e2e8f0;}
+    tr:nth-child(even) td{background:#f8fafc;}
+    .footer{margin-top:20px;font-size:12px;color:#64748b;}
+    @media print{.no-print{display:none;}}
+  </style></head><body>
+  <h2>🏫 GGHSS Khanyar – Attendance Report</h2>
+  <p><strong>Class:</strong> ${clsLabel[cls]} &nbsp; <strong>Date:</strong> ${date}</p>
+  <p><strong>Present:</strong> ${pres} &nbsp; <strong>Absent:</strong> ${abs} &nbsp; <strong>%:</strong> ${Math.round(pres/dayData.length*100)}%</p>
+  <table><thead><tr><th>#</th><th>Student Name</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>
+  <div class="footer">Principal: Ms. Wahida Sheikh &nbsp;|&nbsp; Generated: ${new Date().toLocaleString('en-IN')} &nbsp;|&nbsp; Developer: Mateen Yousuf</div>
+  <br><button class="no-print" onclick="window.print()">🖨️ Print</button>
+  </body></html>`);
+  win.document.close();
+  showToast('Print view opened!', 'success');
+});
+
+document.getElementById('export-month-btn').addEventListener('click', () => {
+  const cls = expClassSel.value;
+  const month = expDate.value ? expDate.value.slice(0,7) : todayStr().slice(0,7);
+  const students = getStudents(cls);
+  const attData = getAttendance();
+  const clsData = attData[cls] || {};
+  const dates = Object.keys(clsData).filter(d => d.startsWith(month)).sort();
+  if (!dates.length) { showToast('No data for this month.', 'error'); return; }
+
+  const clsLabel = { class9:'Class 9', class10:'Class 10', class11:'Class 11', class12:'Class 12' };
+  let txt = `GGHSS KHANYAR – MONTHLY ATTENDANCE REPORT\n`;
+  txt += `School: Govt Girls Higher Secondary School, Khanyar\n`;
+  txt += `Class: ${clsLabel[cls]}   Month: ${month}\n`;
+  txt += `${'='.repeat(60)}\n\n`;
+  txt += `${'Student Name'.padEnd(30)}`;
+  dates.forEach(d => txt += d.slice(8).padEnd(4));
+  txt += `P    A    %\n${'─'.repeat(60)}\n`;
+
+  students.forEach(name => {
+    let p=0, a=0;
+    let row = name.padEnd(30);
+    dates.forEach(date => {
+      const dayData = clsData[date] || [];
+      const st = dayData.find(s => s.name === name);
+      const sym = st ? (st.status==='Present'?'P':'A') : '-';
+      if(sym==='P') p++; else if(sym==='A') a++;
+      row += sym.padEnd(4);
+    });
+    const pct = dates.length ? Math.round(p/dates.length*100) : 0;
+    row += `${String(p).padEnd(5)}${String(a).padEnd(5)}${pct}%`;
+    txt += row + '\n';
+  });
+
+  const blob = new Blob([txt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `monthly_attendance_${cls}_${month}.txt`;
+  a.click();
+  showToast('Monthly report downloaded!', 'success');
+});
+
+document.getElementById('clear-all-btn').addEventListener('click', () => {
+  if (!confirm('Clear ALL attendance data? This cannot be undone.')) return;
+  localStorage.removeItem('attendanceData');
+  showToast('All data cleared.', 'warn');
+});
+
+// ===== PWA INSTALL =====
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('visible');
+});
+
+document.getElementById('install-btn').addEventListener('click', () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(r => {
+    if (r.outcome === 'accepted') showToast('App installed! 🎉', 'success');
+    deferredPrompt = null;
+    document.getElementById('install-banner').classList.remove('visible');
+  });
+});
+
+document.getElementById('dismiss-banner').addEventListener('click', () => {
+  document.getElementById('install-banner').classList.remove('visible');
+});
+
+// ===== SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('SW registered'))
+      .catch(e => console.log('SW error', e));
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f3d2e">
+<meta name="description" content="GGHSS Khanyar – Exam & Result Management System">
+<link rel="manifest" href="manifest.json">
+<title>GGHSS Khanyar – Exam & Result System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #f2f6f3;
+  --surface: #ffffff;
+  --surface2: #e8f0eb;
+  --primary: #0f3d2e;
+  --primary-l: #1a5c44;
+  --accent: #c9a84c;
+  --accent-l: #f0d07a;
+  --text: #0d2218;
+  --text2: #3d5a4a;
+  --text3: #7a9a87;
+  --border: #d0e0d5;
+  --shadow: 0 2px 16px rgba(15,61,46,.09);
+  --shadow-lg: 0 6px 36px rgba(15,61,46,.15);
+  --r: 14px; --r-sm: 8px;
+  --A: #1a7a4a; --A-bg: #e6f5ec;
+  --B: #1a6b9a; --B-bg: #e6f1fa;
+  --C: #c8a94b; --C-bg: #fef8e6;
+  --D: #c07a1a; --D-bg: #fef0e0;
+  --F: #c0392b; --F-bg: #fdecea;
+  --tr: .22s cubic-bezier(.4,0,.2,1);
+  --font-d: 'Cormorant Garamond', Georgia, serif;
+  --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+[data-theme="dark"] {
+  --bg: #0a1a10; --surface: #0f2318; --surface2: #162e1f;
+  --text: #e0f0e5; --text2: #8ab89a; --text3: #4a7a5a;
+  --border: #1e3f2a; --shadow: 0 2px 16px rgba(0,0,0,.5);
+  --A-bg: #0d2e1a; --B-bg: #0d1f2e; --C-bg: #2e2200; --D-bg: #2e1800; --F-bg: #2e0d0d;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--tr),color var(--tr)}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(140deg,var(--primary) 0%,var(--primary-l) 55%,#1d6b4a 100%);color:#fff;position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M0 0h4v4H0V0zm8 0h4v4H8V0zm8 0h4v4h-4V0zm8 0h4v4h-4V0zm8 0h4v4h-4V0zm8 0h4v4h-4V0zm8 0h4v4h-4V0zM0 8h4v4H0V8zm48 0h4v4h-4V8zM0 16h4v4H0v-4zm48 0h4v4h-4v-4zM0 24h4v4H0v-4zm48 0h4v4h-4v-4zM0 32h4v4H0v-4zm48 0h4v4h-4v-4zM0 40h4v4H0v-4zm48 0h4v4h-4v-4zM0 48h4v4H0v-4zm8 0h4v4H8v-4zm8 0h4v4h-4v-4zm8 0h4v4h-4v-4zm8 0h4v4h-4v-4zm8 0h4v4h-4v-4zm8 0h4v4h-4v-4z'/%3E%3C/g%3E%3C/svg%3E")}
+.hdr-top{display:flex;align-items:center;justify-content:center;gap:14px;padding:20px 20px 8px;position:relative;z-index:1}
+.hdr-emblem{width:60px;height:60px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 4px 14px rgba(0,0,0,.3);flex-shrink:0}
+.hdr-name{font-family:var(--font-d);font-size:clamp(1rem,3.5vw,1.55rem);font-weight:700;line-height:1.2;text-shadow:0 2px 8px rgba(0,0,0,.3);text-align:center}
+.hdr-sub{font-size:.76rem;opacity:.8;margin-top:3px;letter-spacing:.06em;text-transform:uppercase;text-align:center}
+.hdr-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);margin:8px 20px;position:relative;z-index:1}
+.staff-row{display:flex;gap:10px;padding:10px 16px 18px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.staff-card{background:rgba(255,255,255,.11);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;min-width:190px;flex:1;max-width:260px}
+.s-photo{width:48px;height:48px;border-radius:50%;border:2px solid var(--accent);background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden}
+.s-photo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.s-role{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;opacity:.7;color:var(--accent-l)}
+.s-name{font-size:.9rem;font-weight:600;margin-top:2px}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:8px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(15,61,46,.07)}
+.nav-tabs{display:flex;gap:3px;overflow-x:auto;padding-bottom:2px}
+.nav-tab{padding:7px 12px;border-radius:18px;border:none;background:none;cursor:pointer;font-family:var(--font);font-size:.8rem;font-weight:600;color:var(--text2);transition:all var(--tr);white-space:nowrap}
+.nav-tab.active{background:var(--primary);color:#fff}
+.nav-tab:hover:not(.active){background:var(--surface2)}
+.tb-acts{display:flex;gap:6px;align-items:center}
+.icon-btn{width:34px;height:34px;border-radius:50%;border:none;background:var(--surface2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all var(--tr)}
+.icon-btn:hover{background:var(--primary);color:#fff}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1100px;margin:0 auto;padding:18px 14px 80px}
+.section{display:none}.section.active{display:block}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:18px}
+.stat-card{background:var(--surface);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);border-top:4px solid var(--primary);transition:transform var(--tr)}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card.a{border-color:var(--A)}.stat-card.f{border-color:var(--F)}.stat-card.acc{border-color:var(--accent)}
+.stat-val{font-family:var(--font-d);font-size:1.9rem;font-weight:700;color:var(--primary);line-height:1}
+.stat-card.a .stat-val{color:var(--A)}.stat-card.f .stat-val{color:var(--F)}.stat-card.acc .stat-val{color:var(--accent)}
+.stat-lbl{font-size:.76rem;color:var(--text3);margin-top:3px;font-weight:500}
+
+/* ── CARD ── */
+.card{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:22px;margin-bottom:18px}
+.card-title{font-family:var(--font-d);font-size:1.1rem;font-weight:700;color:var(--primary);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+/* ── FORM ── */
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.fc{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:var(--font);font-size:.92rem;color:var(--text);background:var(--bg);transition:all var(--tr);outline:none;appearance:none}
+.fc:focus{border-color:var(--primary);background:var(--surface);box-shadow:0 0 0 3px rgba(15,61,46,.09)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:480px){.form-row{grid-template-columns:1fr}}
+
+/* ── BUTTONS ── */
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-l));color:#fff;border:none;border-radius:var(--r-sm);padding:11px 24px;font-family:var(--font);font-size:.92rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all var(--tr);box-shadow:0 4px 12px rgba(15,61,46,.22)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(15,61,46,.3)}
+.btn-sm{padding:7px 14px;font-size:.8rem}
+.btn-outline{background:none;border:1.5px solid var(--primary);color:var(--primary);border-radius:var(--r-sm);padding:8px 16px;font-family:var(--font);font-size:.82rem;font-weight:600;cursor:pointer;transition:all var(--tr);display:inline-flex;align-items:center;gap:6px}
+.btn-outline:hover{background:var(--primary);color:#fff}
+.btn-danger{background:none;border:1.5px solid var(--F);color:var(--F);border-radius:var(--r-sm);padding:7px 14px;font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;transition:all var(--tr)}
+.btn-danger:hover{background:var(--F);color:#fff}
+.btns-row{display:flex;gap:10px;flex-wrap:wrap}
+
+/* ── EXAM LIST ── */
+.exam-list{display:flex;flex-direction:column;gap:10px}
+.exam-item{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-left:4px solid var(--primary);transition:all var(--tr)}
+.exam-item:hover{transform:translateX(3px)}
+.exam-info{}
+.exam-name{font-weight:700;font-size:.97rem}
+.exam-meta{font-size:.78rem;color:var(--text3);margin-top:3px;display:flex;gap:12px;flex-wrap:wrap}
+.exam-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ── MARKS TABLE ── */
+.marks-table-wrap{overflow-x:auto;margin-top:8px}
+.marks-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.marks-table th{background:var(--primary);color:#fff;padding:10px 14px;text-align:left;font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.marks-table td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.marks-table tr:last-child td{border-bottom:none}
+.marks-table tr:hover td{background:var(--surface2)}
+.marks-input{width:80px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:.88rem;text-align:center;background:var(--bg);color:var(--text);outline:none;transition:border-color var(--tr)}
+.marks-input:focus{border-color:var(--primary)}
+.grade-pill{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:800;letter-spacing:.04em}
+.grade-A{background:var(--A-bg);color:var(--A)}
+.grade-B{background:var(--B-bg);color:var(--B)}
+.grade-C{background:var(--C-bg);color:var(--C)}
+.grade-D{background:var(--D-bg);color:var(--D)}
+.grade-F{background:var(--F-bg);color:var(--F)}
+
+/* ── RESULT CARD ── */
+.result-card{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow-lg);padding:0;overflow:hidden;margin-bottom:16px;border:1px solid var(--border)}
+.rc-header{background:linear-gradient(135deg,var(--primary),var(--primary-l));color:#fff;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.rc-student{font-weight:700;font-size:1.05rem}
+.rc-exam{font-size:.78rem;opacity:.8;margin-top:2px}
+.rc-grade-big{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;font-family:var(--font-d);flex-shrink:0}
+.rc-body{padding:16px 22px}
+.rc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.rc-stat{text-align:center;background:var(--surface2);border-radius:var(--r-sm);padding:10px}
+.rc-stat-val{font-family:var(--font-d);font-size:1.3rem;font-weight:700;color:var(--primary)}
+.rc-stat-lbl{font-size:.72rem;color:var(--text3);margin-top:2px}
+.rc-marks-list{font-size:.87rem}
+.rc-mark-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
+.rc-mark-row:last-child{border-bottom:none}
+.pass-chip{background:var(--A-bg);color:var(--A);padding:2px 8px;border-radius:10px;font-size:.72rem;font-weight:700}
+.fail-chip{background:var(--F-bg);color:var(--F);padding:2px 8px;border-radius:10px;font-size:.72rem;font-weight:700}
+
+/* ── SEARCH ── */
+.search-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.search-bar .fc{flex:1;min-width:160px;max-width:320px}
+
+/* ── PERFORMANCE BARS ── */
+.perf-bar-wrap{margin-top:6px}
+.perf-bar-item{margin-bottom:10px}
+.perf-bar-label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--text2);margin-bottom:4px;font-weight:500}
+.perf-bar-bg{height:10px;background:var(--surface2);border-radius:5px;overflow:hidden}
+.perf-bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--primary),var(--primary-l));transition:width 1s ease}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:48px 20px;color:var(--text3)}
+.empty-icon{font-size:44px;margin-bottom:10px}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity var(--tr)}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow-lg);width:100%;max-width:480px;max-height:90vh;overflow-y:auto;transform:translateY(16px);transition:transform var(--tr)}
+.overlay.open .modal{transform:translateY(0)}
+.modal-hdr{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-weight:700;font-size:1rem;color:var(--text)}
+.modal-body{padding:18px 22px 22px}
+.modal-footer{padding:0 22px 18px;display:flex;gap:8px;justify-content:flex-end}
+.btn-cancel{padding:9px 18px;border:1.5px solid var(--border);border-radius:var(--r-sm);background:none;color:var(--text2);cursor:pointer;font-family:var(--font);font-size:.88rem;transition:all var(--tr)}
+.btn-cancel:hover{background:var(--surface2)}
+
+/* ── TOAST ── */
+.toasts{position:fixed;bottom:22px;right:18px;z-index:999;display:flex;flex-direction:column;gap:7px;max-width:300px}
+.toast{background:var(--surface);border-radius:var(--r-sm);box-shadow:var(--shadow-lg);padding:12px 16px;font-size:.86rem;font-weight:500;display:flex;align-items:center;gap:9px;border-left:4px solid var(--primary);animation:tin .3s ease}
+.toast.ok{border-color:var(--A)}.toast.err{border-color:var(--F)}.toast.warn{border-color:var(--accent)}
+@keyframes tin{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes tout{to{opacity:0;transform:translateX(24px)}}
+
+/* ── INSTALL ── */
+#inst-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--primary);color:#fff;padding:12px 18px;align-items:center;justify-content:space-between;gap:10px;z-index:150;box-shadow:0 -4px 18px rgba(0,0,0,.2)}
+#inst-bar.show{display:flex}
+#inst-bar p{font-size:.86rem;flex:1}
+.btn-inst{padding:8px 18px;background:var(--accent);color:#0d2218;border:none;border-radius:var(--r-sm);font-weight:700;cursor:pointer;font-family:var(--font);font-size:.86rem}
+.btn-dis{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:18px}
+
+/* ── PRINT ── */
+@media print{
+  .topbar,.tb-acts,.exam-actions,.search-bar,.btns-row,#inst-bar,.toasts,.hdr-divider{display:none!important}
+  .result-card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+  body{background:#fff;color:#000}
+}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-top">
+    <div class="hdr-emblem">🏫</div>
+    <div>
+      <div class="hdr-name">Govt Girls Higher Secondary School Khanyar</div>
+      <div class="hdr-sub">📍 Khanyar, Srinagar — Exam & Result Management System</div>
+    </div>
+  </div>
+  <div class="hdr-divider"></div>
+  <div class="staff-row">
+    <div class="staff-card">
+      <div class="s-photo"><img src="author.jpg" alt="Mateen Yousuf" onerror="this.parentNode.innerHTML='👨‍🏫'"></div>
+      <div><div class="s-role">Developer</div><div class="s-name">Mateen Yousuf</div><div class="s-role" style="margin-top:2px">Teacher, GGHSS Khanyar</div></div>
+    </div>
+    <div class="staff-card">
+      <div class="s-photo"><img src="principal.jpg" alt="Ms Wahida Sheikh" onerror="this.parentNode.innerHTML='👩‍💼'"></div>
+      <div><div class="s-role">Principal</div><div class="s-name">Ms. Wahida Sheikh</div><div class="s-role" style="margin-top:2px">GGHSS Khanyar</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="goTab('dashboard')">📊 Dashboard</button>
+    <button class="nav-tab" onclick="goTab('create')">📝 Create Exam</button>
+    <button class="nav-tab" onclick="goTab('marks')">✏️ Enter Marks</button>
+    <button class="nav-tab" onclick="goTab('results')">🏆 Results</button>
+    <button class="nav-tab" onclick="goTab('guide')">📖 Guide</button>
+  </div>
+  <div class="tb-acts">
+    <button class="icon-btn" id="darkBtn" onclick="toggleDark()" title="Dark Mode">🌙</button>
+    <button class="icon-btn" onclick="window.print()" title="Print">🖨️</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ── DASHBOARD ── -->
+<section class="section active" id="sec-dashboard">
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-val" id="dTotal">0</div><div class="stat-lbl">📝 Total Exams</div></div>
+    <div class="stat-card acc"><div class="stat-val" id="dStudents">0</div><div class="stat-lbl">👩‍🎓 Students Entered</div></div>
+    <div class="stat-card a"><div class="stat-val" id="dPass">0%</div><div class="stat-lbl">✅ Pass Rate</div></div>
+    <div class="stat-card f"><div class="stat-val" id="dFail">0</div><div class="stat-lbl">❌ Failed Students</div></div>
+  </div>
+
+  <!-- Class Performance -->
+  <div class="card">
+    <div class="card-title">📈 Class Performance Overview</div>
+    <div id="classPerfWrap">
+      <div class="empty"><div class="empty-icon">📊</div><p>No exam data yet. Create exams and enter marks first.</p></div>
+    </div>
+  </div>
+
+  <!-- Exams List -->
+  <div class="card">
+    <div class="card-title">📋 All Exams</div>
+    <div class="exam-list" id="examListDash"></div>
+  </div>
+
+</section>
+
+<!-- ── CREATE EXAM ── -->
+<section class="section" id="sec-create">
+  <div class="card">
+    <div class="card-title">📝 Create New Exam</div>
+    <div class="form-row">
+      <div class="fg">
+        <label class="fl">Exam Name *</label>
+        <select class="fc" id="cExamType">
+          <option value="">-- Select Type --</option>
+          <option>Unit Test 1</option><option>Unit Test 2</option>
+          <option>Half Yearly</option><option>Pre-Annual</option><option>Annual</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Class *</label>
+        <select class="fc" id="cClass">
+          <option value="">-- Select Class --</option>
+          <option>9</option><option>10</option><option>11</option><option>12</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg">
+        <label class="fl">Subject *</label>
+        <input type="text" class="fc" id="cSubject" placeholder="e.g. Mathematics, Physics…">
+      </div>
+      <div class="fg">
+        <label class="fl">Maximum Marks *</label>
+        <input type="number" class="fc" id="cMaxMarks" placeholder="e.g. 100" min="1" max="1000">
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">Custom Exam Name (optional)</label>
+      <input type="text" class="fc" id="cCustomName" placeholder="Leave blank to use selected type">
+    </div>
+    <button class="btn-primary" onclick="createExam()">➕ Create Exam</button>
+  </div>
+
+  <!-- Existing Exams -->
+  <div class="card">
+    <div class="card-title">📋 Existing Exams</div>
+    <div class="exam-list" id="examListCreate"></div>
+  </div>
+</section>
+
+<!-- ── MARKS ENTRY ── -->
+<section class="section" id="sec-marks">
+  <div class="card">
+    <div class="card-title">✏️ Enter Student Marks</div>
+    <div class="form-row">
+      <div class="fg">
+        <label class="fl">Select Exam *</label>
+        <select class="fc" id="mExam" onchange="loadStudentTable()">
+          <option value="">-- Select Exam --</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Preset Students</label>
+        <select class="fc" id="mPreset" onchange="applyPreset()">
+          <option value="">-- Use Existing Students --</option>
+          <option value="class9">Class 9 (Default 25 Students)</option>
+          <option value="class10">Class 10 (Default 25 Students)</option>
+          <option value="class11">Class 11 (Default 25 Students)</option>
+          <option value="class12">Class 12 (Default 25 Students)</option>
+        </select>
+      </div>
+    </div>
+    <div id="marksSection" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:.88rem;color:var(--text3)" id="marksExamInfo"></div>
+        <div class="btns-row">
+          <button class="btn-primary btn-sm" onclick="saveAllMarks()">💾 Save All Marks</button>
+          <button class="btn-outline btn-sm" onclick="autoFillDemo()">🎲 Demo Fill</button>
+        </div>
+      </div>
+      <div class="marks-table-wrap">
+        <table class="marks-table">
+          <thead>
+            <tr><th>#</th><th>Student Name</th><th>Marks Obtained</th><th>Max Marks</th><th>%</th><th>Grade</th><th>Status</th></tr>
+          </thead>
+          <tbody id="marksTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RESULTS ── -->
+<section class="section" id="sec-results">
+  <div class="search-bar">
+    <input type="text" class="fc" id="rSearch" placeholder="🔍 Search student name…" oninput="renderResults()">
+    <select class="fc" id="rClass" style="max-width:140px" onchange="renderResults()">
+      <option value="">All Classes</option>
+      <option>9</option><option>10</option><option>11</option><option>12</option>
+    </select>
+    <select class="fc" id="rGrade" style="max-width:140px" onchange="renderResults()">
+      <option value="">All Grades</option>
+      <option>A</option><option>B</option><option>C</option><option>D</option><option>F</option>
+    </select>
+    <button class="btn-outline" onclick="exportResults()">📄 Export Text</button>
+    <button class="btn-outline" onclick="window.print()">🖨️ Print</button>
+  </div>
+  <div id="resultsList"></div>
+</section>
+
+<!-- ── GUIDE ── -->
+<section class="section" id="sec-guide">
+  <div class="card">
+    <div class="card-title">📖 Setup & Usage Guide</div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;gap:14px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">1</div>
+        <div><strong>Save Your Files</strong><br><span style="font-size:.88rem;color:var(--text2)">Create a folder <code style="background:var(--surface2);padding:1px 5px;border-radius:4px">jkbose-school-app</code>. Place <code style="background:var(--surface2);padding:1px 5px;border-radius:4px">index.html</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:4px">manifest.json</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:4px">service-worker.js</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:4px">author.jpg</code>, <code style="background:var(--surface2);padding:1px 5px;border-radius:4px">principal.jpg</code> inside it.</span></div>
+      </div>
+      <div style="display:flex;gap:14px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">2</div>
+        <div><strong>Run Locally</strong><br><span style="font-size:.88rem;color:var(--text2)"><b>VS Code:</b> Install "Live Server" extension → right-click index.html → Open with Live Server.<br><b>Python:</b> <code style="background:var(--surface2);padding:1px 5px;border-radius:4px">python -m http.server 8080</code> → visit http://localhost:8080</span></div>
+      </div>
+      <div style="display:flex;gap:14px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">3</div>
+        <div><strong>Install as App</strong><br><span style="font-size:.88rem;color:var(--text2)"><b>Android Chrome:</b> Menu → "Add to Home Screen".<br><b>Desktop Chrome:</b> Click ⊕ icon in address bar → Install.</span></div>
+      </div>
+      <div style="display:flex;gap:14px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">4</div>
+        <div><strong>Host for Free</strong><br><span style="font-size:.88rem;color:var(--text2)"><b>Netlify:</b> Drag folder to netlify.com/drop — instant URL!<br><b>GitHub Pages:</b> Push to GitHub repo → Settings → Pages.<br><b>Cloudflare Pages:</b> pages.cloudflare.com</span></div>
+      </div>
+      <div style="display:flex;gap:14px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">5</div>
+        <div><strong>Workflow</strong><br><span style="font-size:.88rem;color:var(--text2)">1️⃣ Create Exam → 2️⃣ Select exam in "Enter Marks" → Choose preset students → Fill marks → Save → 3️⃣ View Results tab for auto-calculated grades and cards.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<!-- DELETE EXAM MODAL -->
+<div class="overlay" id="delOverlay">
+  <div class="modal">
+    <div class="modal-hdr"><span class="modal-title">🗑️ Delete Exam</span><button class="icon-btn" onclick="closeOverlay('delOverlay')">✕</button></div>
+    <div class="modal-body"><p style="font-size:.93rem;color:var(--text2)">Are you sure you want to delete this exam and all its student marks? This cannot be undone.</p></div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeOverlay('delOverlay')">Cancel</button><button class="btn-danger" id="delConfirmBtn">Delete</button></div>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div id="inst-bar">
+  <p>📱 Install GGHSS Exam App for offline use!</p>
+  <button class="btn-inst" id="instBtn">Install</button>
+  <button class="btn-dis" onclick="document.getElementById('inst-bar').classList.remove('show')">✕</button>
+</div>
+
+<div class="toasts" id="toastWrap"></div>
+
+<script>
+// ─── DATA ───
+let exams   = JSON.parse(localStorage.getItem('gghss_exams')   || '[]');
+let results = JSON.parse(localStorage.getItem('gghss_results') || '{}');
+// exams: [{id, name, class, subject, maxMarks, created}]
+// results: { examId: [{student, marks, pct, grade, pass}] }
+
+// ─── PRESET STUDENTS ───
+const PRESETS = {
+  class9:  ['Aisha Bashir','Ruqaiya Nabi','Saba Manzoor','Huma Qadri','Nida Firdous','Zara Lone','Maria Sheikh','Afreen Wani','Saima Bhat','Shazia Dar','Rukhsar Hamid','Insha Khan','Sumaiya Ahmad','Fareeda Bano','Nasreen Malik','Dilshada Mir','Sehzina Gul','Bilqees Reshi','Tabassum Jan','Nighat Yousuf','Haleema Peer','Shabnam Zargar','Asiya Rather','Kulsoom Sofi','Mehvish Akhter'],
+  class10: ['Amna Rashid','Sadia Hussain','Hafsa Mufti','Razia Sultan','Uzma Qureshi','Farhana Mir','Zubeda Lone','Nusrat Bano','Shamim Jan','Gulnaz Wani','Asma Gojri','Tahira Bhat','Shirin Dar','Parveena Akhter','Rukhsana Ganai','Mehnaz Khan','Nahida Reshi','Ifat Naz','Shabana Ahmad','Samreen Sheikh','Sameena Hamid','Jasia Rather','Monisa Peer','Fehmeeda Sofi','Binish Yousuf'],
+  class11: ['Aaliya Hassan','Sana Mirza','Ruba Farooq','Hina Amin','Toiba Wani','Alisha Bhat','Subia Dar','Fiza Qazi','Mehak Lone','Rubia Sheikh','Gowhar Nabi','Ulfat Bashir','Mariam Jan','Rifat Manzoor','Humaira Malik','Kouser Hamid','Shireen Reshi','Nazia Ahmad','Waseema Sofi','Shaista Rather','Dilruba Peer','Gulshan Zargar','Nilofer Ganai','Rashida Farhat','Sobia Noor'],
+  class12: ['Zahida Jabeen','Shahista Gul','Mufida Rashid','Tahira Jan','Asifa Bhat','Samina Wani','Farida Dar','Nasima Lone','Shaheen Khan','Rubina Mir','Nargis Hamid','Perveen Akhter','Gulfam Reshi','Shaheena Ahmad','Mubeena Sheikh','Rukhsana Sofi','Naseema Rather','Dilnoza Peer','Shafiqa Nabi','Zakia Bashir','Humaira Manzoor','Rehana Malik','Fatima Zargar','Asiya Ganai','Bilqees Farhat']
+};
+
+let activeTab = 'dashboard';
+let deferredPrompt = null;
+let pendingDelId = null;
+let currentStudents = [];
+let currentExamId   = null;
+
+// ─── UTILS ───
+function save(){
+  localStorage.setItem('gghss_exams', JSON.stringify(exams));
+  localStorage.setItem('gghss_results', JSON.stringify(results));
+}
+function uid(){ return Date.now() + Math.floor(Math.random()*9999); }
+function getGrade(pct){
+  if(pct>=90) return 'A';
+  if(pct>=75) return 'B';
+  if(pct>=60) return 'C';
+  if(pct>=40) return 'D';
+  return 'F';
+}
+function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ─── TABS ───
+function goTab(t){
+  activeTab = t;
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+t).classList.add('active');
+  const labels={dashboard:'dashboard',create:'create',marks:'marks',results:'results',guide:'guide'};
+  document.querySelectorAll('.nav-tab').forEach(b=>{
+    const txt=b.textContent.toLowerCase();
+    if(txt.includes(t==='dashboard'?'dashboard':t==='create'?'create':t==='marks'?'marks':t==='results'?'results':'guide')) b.classList.add('active');
+  });
+  if(t==='dashboard') renderDashboard();
+  if(t==='create')    renderExamListCreate();
+  if(t==='marks')     populateExamSelect();
+  if(t==='results')   renderResults();
+}
+
+// ─── CREATE EXAM ───
+function createExam(){
+  const type   = document.getElementById('cExamType').value;
+  const cls    = document.getElementById('cClass').value;
+  const subj   = document.getElementById('cSubject').value.trim();
+  const max    = parseInt(document.getElementById('cMaxMarks').value);
+  const custom = document.getElementById('cCustomName').value.trim();
+  if(!type||!cls||!subj||!max){ toast('⚠️ All fields are required.','warn'); return; }
+  const name = custom || type;
+  exams.push({ id: uid(), name, class: cls, subject: subj, maxMarks: max, created: new Date().toLocaleString() });
+  save();
+  toast('✅ Exam created!','ok');
+  document.getElementById('cExamType').value='';
+  document.getElementById('cClass').value='';
+  document.getElementById('cSubject').value='';
+  document.getElementById('cMaxMarks').value='';
+  document.getElementById('cCustomName').value='';
+  renderExamListCreate();
+  renderDashboard();
+}
+
+// ─── EXAM ITEM HTML ───
+function examItemHTML(ex, showDel=true){
+  return `<div class="exam-item" id="ei-${ex.id}">
+    <div class="exam-info">
+      <div class="exam-name">📝 ${escH(ex.name)} – Class ${escH(ex.class)}</div>
+      <div class="exam-meta">
+        <span>📚 ${escH(ex.subject)}</span>
+        <span>🔢 Max: ${ex.maxMarks}</span>
+        <span>🕒 ${ex.created}</span>
+        <span>👩‍🎓 ${(results[ex.id]||[]).length} students</span>
+      </div>
+    </div>
+    <div class="exam-actions">
+      <button class="btn-outline btn-sm" onclick="goMarksFor(${ex.id})">✏️ Enter Marks</button>
+      ${showDel?`<button class="btn-danger" onclick="confirmDel(${ex.id})">🗑️</button>`:''}
+    </div>
+  </div>`;
+}
+
+function renderExamListCreate(){
+  const el = document.getElementById('examListCreate');
+  el.innerHTML = exams.length ? exams.map(e=>examItemHTML(e)).join('') : '<div class="empty"><div class="empty-icon">📋</div><p>No exams yet.</p></div>';
+}
+
+// ─── MARKS ───
+function populateExamSelect(){
+  const sel = document.getElementById('mExam');
+  sel.innerHTML = '<option value="">-- Select Exam --</option>' + exams.map(e=>`<option value="${e.id}">${escH(e.name)} – Class ${escH(e.class)} (${escH(e.subject)})</option>`).join('');
+}
+
+function goMarksFor(id){
+  goTab('marks');
+  setTimeout(()=>{
+    populateExamSelect();
+    document.getElementById('mExam').value = id;
+    loadStudentTable();
+  },50);
+}
+
+function applyPreset(){
+  const v = document.getElementById('mPreset').value;
+  if(!v) return;
+  currentStudents = [...PRESETS[v]];
+  loadStudentTable();
+}
+
+function loadStudentTable(){
+  const eid = document.getElementById('mExam').value;
+  if(!eid){ document.getElementById('marksSection').style.display='none'; return; }
+  currentExamId = parseInt(eid);
+  const ex = exams.find(e=>e.id===currentExamId);
+  if(!ex) return;
+
+  // merge saved students
+  const saved = results[currentExamId] || [];
+  if(saved.length > 0 && currentStudents.length===0){
+    currentStudents = saved.map(r=>r.student);
+  }
+  if(currentStudents.length===0){
+    // default class preset
+    const key = 'class'+ex.class;
+    currentStudents = PRESETS[key] ? [...PRESETS[key]] : [];
+  }
+
+  document.getElementById('marksExamInfo').textContent = `${ex.name} – Class ${ex.class} | Subject: ${ex.subject} | Max: ${ex.maxMarks}`;
+  document.getElementById('marksSection').style.display = 'block';
+
+  const tbody = document.getElementById('marksTbody');
+  tbody.innerHTML = currentStudents.map((s,i)=>{
+    const sr = saved.find(r=>r.student===s);
+    const val = sr ? sr.marks : '';
+    return `<tr>
+      <td>${i+1}</td>
+      <td>${escH(s)}</td>
+      <td><input class="marks-input" type="number" id="mi-${i}" value="${val}" min="0" max="${ex.maxMarks}" oninput="liveGrade(${i},${ex.maxMarks})" placeholder="--"></td>
+      <td>${ex.maxMarks}</td>
+      <td id="mpct-${i}">${sr?sr.pct+'%':'--'}</td>
+      <td id="mgrd-${i}">${sr?`<span class="grade-pill grade-${sr.grade}">${sr.grade}</span>`:'--'}</td>
+      <td id="msts-${i}">${sr?(sr.pass?'<span class="pass-chip">Pass</span>':'<span class="fail-chip">Fail</span>'):'--'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function liveGrade(i, max){
+  const v = parseFloat(document.getElementById(`mi-${i}`).value);
+  if(isNaN(v)||v<0) { document.getElementById(`mpct-${i}`).textContent='--'; document.getElementById(`mgrd-${i}`).innerHTML='--'; document.getElementById(`msts-${i}`).innerHTML='--'; return; }
+  const pct = Math.round((v/max)*100);
+  const g = getGrade(pct);
+  document.getElementById(`mpct-${i}`).textContent = pct+'%';
+  document.getElementById(`mgrd-${i}`).innerHTML = `<span class="grade-pill grade-${g}">${g}</span>`;
+  document.getElementById(`msts-${i}`).innerHTML = pct>=40 ? '<span class="pass-chip">Pass</span>' : '<span class="fail-chip">Fail</span>';
+}
+
+function saveAllMarks(){
+  if(!currentExamId){ toast('⚠️ Select an exam first.','warn'); return; }
+  const ex = exams.find(e=>e.id===currentExamId);
+  if(!ex) return;
+  const arr = [];
+  let saved=0;
+  currentStudents.forEach((s,i)=>{
+    const v = parseFloat(document.getElementById(`mi-${i}`)?.value);
+    if(isNaN(v)||v<0) return;
+    const pct = Math.round((v/ex.maxMarks)*100);
+    const g = getGrade(pct);
+    arr.push({ student:s, marks:v, maxMarks:ex.maxMarks, pct, grade:g, pass:pct>=40 });
+    saved++;
+  });
+  results[currentExamId] = arr;
+  save();
+  toast(`✅ ${saved} student records saved!`,'ok');
+  renderDashboard();
+}
+
+function autoFillDemo(){
+  if(!currentExamId){ toast('⚠️ Select an exam first.','warn'); return; }
+  const ex = exams.find(e=>e.id===currentExamId);
+  currentStudents.forEach((_,i)=>{
+    const inp = document.getElementById(`mi-${i}`);
+    if(!inp) return;
+    const m = Math.floor(Math.random()*(ex.maxMarks+1));
+    inp.value = m;
+    liveGrade(i,ex.maxMarks);
+  });
+  toast('🎲 Demo marks filled!','ok');
+}
+
+// ─── DELETE ───
+function confirmDel(id){
+  pendingDelId = id;
+  document.getElementById('delOverlay').classList.add('open');
+  document.getElementById('delConfirmBtn').onclick = doDelete;
+}
+function doDelete(){
+  exams = exams.filter(e=>e.id!==pendingDelId);
+  delete results[pendingDelId];
+  save();
+  closeOverlay('delOverlay');
+  toast('🗑️ Exam deleted','err');
+  renderExamListCreate();
+  renderDashboard();
+}
+function closeOverlay(id){ document.getElementById(id).classList.remove('open'); }
+
+// ─── DASHBOARD ───
+function renderDashboard(){
+  // stats
+  let totalStudents=0, totalPass=0, totalFail=0;
+  Object.values(results).forEach(arr=>{
+    totalStudents+=arr.length;
+    arr.forEach(r=>{ if(r.pass) totalPass++; else totalFail++; });
+  });
+  document.getElementById('dTotal').textContent = exams.length;
+  document.getElementById('dStudents').textContent = totalStudents;
+  document.getElementById('dPass').textContent = totalStudents ? Math.round((totalPass/totalStudents)*100)+'%' : '0%';
+  document.getElementById('dFail').textContent = totalFail;
+
+  // class performance
+  const cpw = document.getElementById('classPerfWrap');
+  const classes = ['9','10','11','12'];
+  let html = '';
+  classes.forEach(cls=>{
+    const clsExams = exams.filter(e=>e.class===cls);
+    if(!clsExams.length) return;
+    let all=[], passCount=0;
+    clsExams.forEach(ex=>{
+      (results[ex.id]||[]).forEach(r=>{ all.push(r.pct); if(r.pass) passCount++; });
+    });
+    if(!all.length) return;
+    const avg = Math.round(all.reduce((a,b)=>a+b,0)/all.length);
+    const high = Math.max(...all), low = Math.min(...all);
+    const passPct = Math.round((passCount/all.length)*100);
+    html += `<div style="margin-bottom:18px">
+      <div style="font-weight:700;font-size:.97rem;margin-bottom:10px;color:var(--primary)">🏫 Class ${cls} — ${all.length} students across ${clsExams.length} exam(s)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:12px">
+        <div style="background:var(--surface2);border-radius:var(--r-sm);padding:10px;text-align:center"><div style="font-family:var(--font-d);font-size:1.4rem;font-weight:700;color:var(--primary)">${avg}%</div><div style="font-size:.74rem;color:var(--text3)">Average</div></div>
+        <div style="background:var(--A-bg);border-radius:var(--r-sm);padding:10px;text-align:center"><div style="font-family:var(--font-d);font-size:1.4rem;font-weight:700;color:var(--A)">${high}%</div><div style="font-size:.74rem;color:var(--text3)">Highest</div></div>
+        <div style="background:var(--F-bg);border-radius:var(--r-sm);padding:10px;text-align:center"><div style="font-family:var(--font-d);font-size:1.4rem;font-weight:700;color:var(--F)">${low}%</div><div style="font-size:.74rem;color:var(--text3)">Lowest</div></div>
+        <div style="background:var(--B-bg);border-radius:var(--r-sm);padding:10px;text-align:center"><div style="font-family:var(--font-d);font-size:1.4rem;font-weight:700;color:var(--B)">${passPct}%</div><div style="font-size:.74rem;color:var(--text3)">Pass Rate</div></div>
+      </div>
+      <div class="perf-bar-item"><div class="perf-bar-label"><span>Class Average</span><span>${avg}%</span></div><div class="perf-bar-bg"><div class="perf-bar-fill" style="width:${avg}%"></div></div></div>
+      <div class="perf-bar-item"><div class="perf-bar-label"><span>Pass Rate</span><span>${passPct}%</span></div><div class="perf-bar-bg"><div class="perf-bar-fill" style="width:${passPct}%;background:linear-gradient(90deg,var(--A),#2ecc71)"></div></div></div>
+    </div>`;
+  });
+  cpw.innerHTML = html || '<div class="empty"><div class="empty-icon">📊</div><p>No results data yet. Enter marks to see performance.</p></div>';
+
+  // exam list
+  const el = document.getElementById('examListDash');
+  el.innerHTML = exams.length ? exams.map(e=>examItemHTML(e,false)).join('') : '<div class="empty"><div class="empty-icon">📋</div><p>No exams created yet.</p></div>';
+}
+
+// ─── RESULTS ───
+function renderResults(){
+  const q   = (document.getElementById('rSearch')?.value||'').toLowerCase();
+  const cls = document.getElementById('rClass')?.value||'';
+  const gf  = document.getElementById('rGrade')?.value||'';
+  const container = document.getElementById('resultsList');
+
+  let cards = [];
+  exams.forEach(ex=>{
+    if(cls && ex.class!==cls) return;
+    const rows = (results[ex.id]||[]).filter(r=>{
+      if(q && !r.student.toLowerCase().includes(q)) return false;
+      if(gf && r.grade!==gf) return false;
+      return true;
+    });
+    rows.forEach(r=>{
+      const gc = `grade-${r.grade}`;
+      cards.push(`<div class="result-card">
+        <div class="rc-header">
+          <div>
+            <div class="rc-student">👩‍🎓 ${escH(r.student)}</div>
+            <div class="rc-exam">📝 ${escH(ex.name)} | Class ${escH(ex.class)} | ${escH(ex.subject)}</div>
+          </div>
+          <div class="rc-grade-big ${gc}">${r.grade}</div>
+        </div>
+        <div class="rc-body">
+          <div class="rc-stats">
+            <div class="rc-stat"><div class="rc-stat-val">${r.marks}/${ex.maxMarks}</div><div class="rc-stat-lbl">Marks</div></div>
+            <div class="rc-stat"><div class="rc-stat-val">${r.pct}%</div><div class="rc-stat-lbl">Percentage</div></div>
+            <div class="rc-stat"><div class="rc-stat-val">${r.pass?'✅':'❌'}</div><div class="rc-stat-lbl">${r.pass?'Pass':'Fail'}</div></div>
+          </div>
+          <div class="rc-marks-list">
+            <div class="rc-mark-row"><span>📚 ${escH(ex.subject)}</span><span>${r.marks} / ${ex.maxMarks} &nbsp; <span class="grade-pill ${gc}">${r.grade}</span></span></div>
+          </div>
+        </div>
+      </div>`);
+    });
+  });
+
+  container.innerHTML = cards.length
+    ? cards.join('')
+    : '<div class="empty"><div class="empty-icon">🏆</div><p>No results found. Enter marks in the "Enter Marks" tab first.</p></div>';
+}
+
+// ─── EXPORT ───
+function exportResults(){
+  if(!exams.length){ toast('No data to export.','warn'); return; }
+  let txt = 'GGHSS KHANYAR – EXAM & RESULT REPORT\n';
+  txt += 'Principal: Ms. Wahida Sheikh | Developer: Mateen Yousuf\n';
+  txt += '='.repeat(60)+'\n\n';
+  exams.forEach(ex=>{
+    const rows = results[ex.id]||[];
+    if(!rows.length) return;
+    txt += `EXAM: ${ex.name} | CLASS: ${ex.class} | SUBJECT: ${ex.subject} | MAX: ${ex.maxMarks}\n`;
+    txt += '-'.repeat(50)+'\n';
+    rows.forEach((r,i)=>{
+      txt += `${i+1}. ${r.student} — Marks: ${r.marks}/${ex.maxMarks} | ${r.pct}% | Grade: ${r.grade} | ${r.pass?'PASS':'FAIL'}\n`;
+    });
+    const avg = rows.length ? Math.round(rows.reduce((a,r)=>a+r.pct,0)/rows.length) : 0;
+    const passing = rows.filter(r=>r.pass).length;
+    txt += `\nAverage: ${avg}% | Pass: ${passing}/${rows.length} (${Math.round((passing/rows.length)*100)}%)\n\n`;
+  });
+  const blob = new Blob([txt],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `GGHSS_Results_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  toast('📄 Results exported!','ok');
+}
+
+// ─── DARK MODE ───
+function toggleDark(){
+  const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme',isDark?'':'dark');
+  document.getElementById('darkBtn').textContent = isDark?'🌙':'☀️';
+  localStorage.setItem('gghss_exam_theme',isDark?'light':'dark');
+}
+
+// ─── TOAST ───
+function toast(msg,type='ok'){
+  const tc=document.getElementById('toastWrap');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.textContent=msg;
+  tc.appendChild(t);
+  setTimeout(()=>{ t.style.animation='tout .3s ease forwards'; setTimeout(()=>t.remove(),300); },3000);
+}
+
+// ─── PWA ───
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredPrompt=e;
+  document.getElementById('inst-bar').classList.add('show');
+});
+document.getElementById('instBtn').addEventListener('click',()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(()=>{ deferredPrompt=null; document.getElementById('inst-bar').classList.remove('show'); });
+});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+
+// ─── INIT ───
+(function(){
+  const theme = localStorage.getItem('gghss_exam_theme');
+  if(theme==='dark'){ document.documentElement.setAttribute('data-theme','dark'); document.getElementById('darkBtn').textContent='☀️'; }
+  renderDashboard();
+})();
+</script>
+</body>
+</html>

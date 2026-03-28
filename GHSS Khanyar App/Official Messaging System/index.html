@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a3a5c">
+<meta name="description" content="GGHSS Khanyar – School Messaging & Communication System">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>GGHSS Khanyar – Messaging System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #2c5282;
+    --accent: #c8a94b;
+    --accent-light: #f0d87a;
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --surface2: #e8edf5;
+    --text: #1a2433;
+    --text2: #4a5568;
+    --text3: #718096;
+    --urgent: #c0392b;
+    --urgent-bg: #fdecea;
+    --important: #d4850a;
+    --important-bg: #fef5e7;
+    --normal: #1a6b9a;
+    --normal-bg: #e8f4fd;
+    --border: #dce4ef;
+    --shadow: 0 4px 20px rgba(26,58,92,0.10);
+    --shadow-lg: 0 8px 40px rgba(26,58,92,0.16);
+    --radius: 14px;
+    --radius-sm: 8px;
+    --header-h: 220px;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --transition: 0.25s cubic-bezier(.4,0,.2,1);
+  }
+
+  [data-theme="dark"] {
+    --primary: #2c5282;
+    --primary-light: #3a6fa8;
+    --accent: #c8a94b;
+    --bg: #0f1923;
+    --surface: #1a2535;
+    --surface2: #22334a;
+    --text: #e8edf5;
+    --text2: #a0aec0;
+    --text3: #718096;
+    --border: #2d3f55;
+    --shadow: 0 4px 20px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.5);
+    --urgent-bg: #3a1515;
+    --important-bg: #3a2a0a;
+    --normal-bg: #0d2233;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  /* ─── HEADER ─── */
+  .school-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 60%, #1e5799 100%);
+    color: #fff;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .school-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 20px 24px 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .school-emblem {
+    width: 64px; height: 64px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+  }
+  .school-title-block { text-align: center; }
+  .school-name {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+    font-weight: 700;
+    line-height: 1.2;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .school-subtitle {
+    font-size: 0.78rem;
+    opacity: 0.85;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .header-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    margin: 10px 24px;
+    position: relative; z-index: 1;
+  }
+  .staff-cards {
+    display: flex;
+    gap: 12px;
+    padding: 12px 20px 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative; z-index: 1;
+  }
+  .staff-card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 200px;
+    flex: 1;
+    max-width: 280px;
+  }
+  .staff-photo {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    object-fit: cover;
+    background: rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .staff-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .staff-info {}
+  .staff-role {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.75;
+    color: var(--accent-light);
+  }
+  .staff-name { font-size: 0.92rem; font-weight: 600; margin-top: 2px; }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(26,58,92,0.08);
+  }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab {
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text2);
+    transition: all var(--transition);
+    white-space: nowrap;
+  }
+  .nav-tab.active {
+    background: var(--primary);
+    color: #fff;
+  }
+  .nav-tab:hover:not(.active) { background: var(--surface2); }
+  .topbar-actions { display: flex; gap: 8px; align-items: center; }
+  .icon-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--surface2);
+    color: var(--text2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: all var(--transition);
+  }
+  .icon-btn:hover { background: var(--primary); color: #fff; }
+
+  /* ─── MAIN LAYOUT ─── */
+  .main-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 16px 80px;
+  }
+
+  /* ─── STATS ─── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary);
+    transition: transform var(--transition);
+  }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-card.urgent { border-color: var(--urgent); }
+  .stat-card.important { border-color: var(--important); }
+  .stat-card.pinned { border-color: var(--accent); }
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .stat-card.urgent .stat-value { color: var(--urgent); }
+  .stat-card.important .stat-value { color: var(--important); }
+  .stat-card.pinned .stat-value { color: var(--accent); }
+  .stat-label { font-size: 0.78rem; color: var(--text3); margin-top: 4px; font-weight: 500; }
+
+  /* ─── SECTIONS ─── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ─── CARD ─── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ─── FORM ─── */
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .form-control {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.93rem;
+    color: var(--text);
+    background: var(--bg);
+    transition: all var(--transition);
+    outline: none;
+    appearance: none;
+  }
+  .form-control:focus {
+    border-color: var(--primary);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(26,58,92,0.10);
+  }
+  textarea.form-control { min-height: 100px; resize: vertical; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+
+  /* ─── PRIORITY SELECTOR ─── */
+  .priority-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .priority-pill {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    font-size: 0.83rem;
+    font-weight: 600;
+    transition: all var(--transition);
+    background: none;
+    color: var(--text2);
+    font-family: var(--font-body);
+  }
+  .priority-pill[data-val="Normal"].selected { background: var(--normal-bg); border-color: var(--normal); color: var(--normal); }
+  .priority-pill[data-val="Important"].selected { background: var(--important-bg); border-color: var(--important); color: var(--important); }
+  .priority-pill[data-val="Urgent"].selected { background: var(--urgent-bg); border-color: var(--urgent); color: var(--urgent); }
+  .priority-pill:not(.selected):hover { background: var(--surface2); }
+
+  /* ─── SEND BTN ─── */
+  .btn-send {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px 28px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all var(--transition);
+    box-shadow: 0 4px 14px rgba(26,58,92,0.25);
+  }
+  .btn-send:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,58,92,0.35); }
+  .btn-send:active { transform: translateY(0); }
+
+  /* ─── SEARCH & FILTER BAR ─── */
+  .filter-bar {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-bar .form-control { max-width: 260px; margin: 0; flex: 1; min-width: 140px; }
+  .filter-bar select { max-width: 160px; }
+  .btn-clear {
+    padding: 9px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 0.83rem;
+    font-family: var(--font-body);
+    font-weight: 500;
+    transition: all var(--transition);
+  }
+  .btn-clear:hover { background: var(--surface2); }
+
+  /* ─── MESSAGE CARDS ─── */
+  .messages-list { display: flex; flex-direction: column; gap: 14px; }
+  .msg-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border-left: 5px solid var(--normal);
+    overflow: hidden;
+    transition: all var(--transition);
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .msg-card.important { border-color: var(--important); }
+  .msg-card.urgent { border-color: var(--urgent); }
+  .msg-card.pinned-msg { border-color: var(--accent); box-shadow: var(--shadow-lg); }
+  .msg-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 16px 18px 10px;
+    gap: 10px;
+  }
+  .msg-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .msg-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    flex: 1;
+    min-width: 0;
+  }
+  .priority-badge {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .priority-badge.normal { background: var(--normal-bg); color: var(--normal); }
+  .priority-badge.important { background: var(--important-bg); color: var(--important); }
+  .priority-badge.urgent { background: var(--urgent-bg); color: var(--urgent); }
+  .pin-badge {
+    background: #fff8e0;
+    color: #b8860b;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  [data-theme="dark"] .pin-badge { background: #3a2e0a; color: var(--accent-light); }
+  .msg-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .msg-action-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: var(--surface2);
+    cursor: pointer;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--transition);
+    color: var(--text2);
+  }
+  .msg-action-btn:hover { background: var(--primary); color: #fff; }
+  .msg-action-btn.delete:hover { background: var(--urgent); }
+  .msg-meta {
+    padding: 0 18px 10px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .msg-meta-item {
+    font-size: 0.77rem;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .msg-content {
+    padding: 10px 18px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 0.91rem;
+    color: var(--text2);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .urgent-banner {
+    background: var(--urgent-bg);
+    border-top: 1px solid rgba(192,57,43,0.2);
+    padding: 6px 18px;
+    font-size: 0.78rem;
+    color: var(--urgent);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text3);
+  }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.95rem; }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(20px);
+    transition: transform var(--transition);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-title { font-weight: 700; font-size: 1.05rem; color: var(--text); }
+  .modal-body { padding: 20px 24px 24px; }
+  .modal-footer { padding: 0 24px 20px; display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-cancel {
+    padding: 10px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    transition: all var(--transition);
+  }
+  .btn-cancel:hover { background: var(--surface2); }
+  .btn-save {
+    padding: 10px 24px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all var(--transition);
+  }
+  .btn-save:hover { background: var(--primary-light); }
+
+  /* ─── TOAST ─── */
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 320px;
+  }
+  .toast {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid var(--primary);
+    animation: toastIn 0.3s ease;
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+  .toast.success { border-color: #27ae60; }
+  .toast.error { border-color: var(--urgent); }
+  .toast.announcement { border-color: var(--accent); }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes toastOut { to { opacity: 0; transform: translateX(30px); } }
+
+  /* ─── ANNOUNCEMENT STRIP ─── */
+  .announcement-strip {
+    background: linear-gradient(90deg, var(--urgent) 0%, #e74c3c 100%);
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    overflow: hidden;
+    position: relative;
+  }
+  .announcement-strip .strip-icon { font-size: 18px; flex-shrink: 0; }
+  .marquee { overflow: hidden; flex: 1; }
+  .marquee-inner {
+    white-space: nowrap;
+    animation: marquee 18s linear infinite;
+    display: inline-block;
+  }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ─── CLASS DIST ─── */
+  .class-dist {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .class-dist-item {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    text-align: center;
+  }
+  .class-dist-count { font-size: 1.5rem; font-weight: 700; color: var(--primary); font-family: var(--font-display); }
+  .class-dist-label { font-size: 0.77rem; color: var(--text3); margin-top: 2px; }
+
+  /* ─── EXPORT ─── */
+  .export-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .btn-export {
+    padding: 9px 18px;
+    border: 1.5px solid var(--primary);
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition);
+  }
+  .btn-export:hover { background: var(--primary); color: #fff; }
+
+  /* ─── PINNED SECTION ─── */
+  .pinned-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ─── INSTALL BANNER ─── */
+  #install-banner {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--primary);
+    color: #fff;
+    padding: 14px 20px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    z-index: 150;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+  }
+  #install-banner.show { display: flex; }
+  #install-banner p { font-size: 0.88rem; flex: 1; }
+  .btn-install {
+    padding: 9px 20px;
+    background: var(--accent);
+    color: #1a2433;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    transition: all var(--transition);
+  }
+  .btn-install:hover { background: var(--accent-light); }
+  .btn-dismiss {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  /* ─── PRINT ─── */
+  @media print {
+    .topbar, .topbar-actions, .msg-actions, .filter-bar, .export-btns, #install-banner, .toast-container, .announcement-strip { display: none !important; }
+    .msg-card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+    body { background: #fff; color: #000; }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .staff-cards { flex-direction: column; align-items: stretch; }
+    .staff-card { max-width: 100%; }
+    .nav-tabs { overflow-x: auto; padding-bottom: 2px; }
+    .filter-bar { flex-direction: column; align-items: stretch; }
+    .filter-bar .form-control { max-width: 100%; }
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ─── GUIDE SECTION ─── */
+  .guide-step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .guide-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .guide-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+  .guide-content p { font-size: 0.88rem; color: var(--text2); line-height: 1.5; }
+  code {
+    background: var(--surface2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.83rem;
+    color: var(--primary);
+    font-family: monospace;
+  }
+</style>
+</head>
+<body>
+
+<!-- SCHOOL HEADER -->
+<header class="school-header">
+  <div class="header-top">
+    <div class="school-emblem">🏫</div>
+    <div class="school-title-block">
+      <div class="school-name">Govt Girls Higher Secondary School Khanyar</div>
+      <div class="school-subtitle">📍 Khanyar, Srinagar — Messaging & Communication System</div>
+    </div>
+  </div>
+  <div class="header-divider"></div>
+  <div class="staff-cards">
+    <div class="staff-card">
+      <div class="staff-photo" id="authorPhoto">
+        <img src="author.jpg" alt="Mateen Yousuf" onerror="this.parentNode.innerHTML='👨‍🏫'">
+      </div>
+      <div class="staff-info">
+        <div class="staff-role">Developer</div>
+        <div class="staff-name">Mateen Yousuf</div>
+        <div class="staff-role" style="margin-top:2px;">Teacher, GGHSS Khanyar</div>
+      </div>
+    </div>
+    <div class="staff-card">
+      <div class="staff-photo" id="principalPhoto">
+        <img src="principal.jpg" alt="Ms Wahida Sheikh" onerror="this.parentNode.innerHTML='👩‍💼'">
+      </div>
+      <div class="staff-info">
+        <div class="staff-role">Principal</div>
+        <div class="staff-name">Ms. Wahida Sheikh</div>
+        <div class="staff-role" style="margin-top:2px;">GGHSS Khanyar</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ANNOUNCEMENT STRIP -->
+<div class="announcement-strip" id="announcementStrip" style="display:none;">
+  <span class="strip-icon">🔔</span>
+  <div class="marquee"><span class="marquee-inner" id="marqueeText"></span></div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button class="nav-tab" onclick="switchTab('compose')">✍️ Compose</button>
+    <button class="nav-tab" onclick="switchTab('board')">📬 Board</button>
+    <button class="nav-tab" onclick="switchTab('guide')">📖 Guide</button>
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-btn" onclick="toggleDark()" title="Toggle Dark Mode" id="darkBtn">🌙</button>
+    <button class="icon-btn" onclick="exportPrint()" title="Print Messages">🖨️</button>
+    <button class="icon-btn" onclick="exportText()" title="Export as Text">💾</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+
+  <!-- DASHBOARD -->
+  <section class="section active" id="sec-dashboard">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">📩 Total Messages</div>
+      </div>
+      <div class="stat-card urgent">
+        <div class="stat-value" id="statUrgent">0</div>
+        <div class="stat-label">🚨 Urgent</div>
+      </div>
+      <div class="stat-card important">
+        <div class="stat-value" id="statImportant">0</div>
+        <div class="stat-label">⚠️ Important</div>
+      </div>
+      <div class="stat-card pinned">
+        <div class="stat-value" id="statPinned">0</div>
+        <div class="stat-label">📌 Pinned</div>
+      </div>
+    </div>
+
+    <!-- Pinned Messages -->
+    <div id="pinnedSection" style="display:none;">
+      <div class="pinned-label">📌 Pinned Announcements</div>
+      <div class="messages-list" id="pinnedList"></div>
+      <br>
+    </div>
+
+    <!-- Recent Messages -->
+    <div class="card">
+      <div class="card-title">📬 Recent Messages <span style="font-size:0.8rem;font-weight:400;color:var(--text3);">(last 5)</span></div>
+      <div class="messages-list" id="recentList"></div>
+    </div>
+
+    <!-- Class Distribution -->
+    <div class="card">
+      <div class="card-title">📊 Class-wise Distribution</div>
+      <div class="class-dist">
+        <div class="class-dist-item">
+          <div class="class-dist-count" id="distAll">0</div>
+          <div class="class-dist-label">All Students</div>
+        </div>
+        <div class="class-dist-item">
+          <div class="class-dist-count" id="dist9">0</div>
+          <div class="class-dist-label">Class 9</div>
+        </div>
+        <div class="class-dist-item">
+          <div class="class-dist-count" id="dist10">0</div>
+          <div class="class-dist-label">Class 10</div>
+        </div>
+        <div class="class-dist-item">
+          <div class="class-dist-count" id="dist11">0</div>
+          <div class="class-dist-label">Class 11</div>
+        </div>
+        <div class="class-dist-item">
+          <div class="class-dist-count" id="dist12">0</div>
+          <div class="class-dist-label">Class 12</div>
+        </div>
+        <div class="class-dist-item">
+          <div class="class-dist-count" id="distStaff">0</div>
+          <div class="class-dist-label">Staff</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div class="card">
+      <div class="card-title">📤 Export Messages</div>
+      <div class="export-btns">
+        <button class="btn-export" onclick="exportPrint()">🖨️ Print / PDF</button>
+        <button class="btn-export" onclick="exportText()">📄 Export Text File</button>
+        <button class="btn-export" onclick="exportJSON()">🗂️ Export JSON</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPOSE -->
+  <section class="section" id="sec-compose">
+    <div class="card">
+      <div class="card-title">✍️ Create New Message</div>
+
+      <div class="form-group">
+        <label class="form-label">Message Title *</label>
+        <input type="text" class="form-control" id="msgTitle" placeholder="e.g. PTM Notice, Holiday Announcement…">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Message Content *</label>
+        <textarea class="form-control" id="msgContent" placeholder="Type your full message here…"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Audience *</label>
+          <select class="form-control" id="msgAudience">
+            <option value="All Students">All Students</option>
+            <option value="Class 9">Class 9</option>
+            <option value="Class 10">Class 10</option>
+            <option value="Class 11">Class 11</option>
+            <option value="Class 12">Class 12</option>
+            <option value="Staff">Staff</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Priority *</label>
+          <div class="priority-pills">
+            <button class="priority-pill selected" data-val="Normal" onclick="selectPriority(this)">🔵 Normal</button>
+            <button class="priority-pill" data-val="Important" onclick="selectPriority(this)">⚠️ Important</button>
+            <button class="priority-pill" data-val="Urgent" onclick="selectPriority(this)">🚨 Urgent</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+        <input type="checkbox" id="msgPin" style="width:16px;height:16px;accent-color:var(--accent);">
+        <label for="msgPin" style="font-size:0.9rem;cursor:pointer;">📌 Pin this message (show at top)</label>
+      </div>
+
+      <button class="btn-send" onclick="sendMessage()">
+        📨 Send Message
+      </button>
+    </div>
+  </section>
+
+  <!-- BOARD -->
+  <section class="section" id="sec-board">
+    <div class="filter-bar">
+      <input type="text" class="form-control" id="searchInput" placeholder="🔍 Search messages…" oninput="renderBoard()">
+      <select class="form-control" id="filterAudience" onchange="renderBoard()">
+        <option value="">All Audiences</option>
+        <option value="All Students">All Students</option>
+        <option value="Class 9">Class 9</option>
+        <option value="Class 10">Class 10</option>
+        <option value="Class 11">Class 11</option>
+        <option value="Class 12">Class 12</option>
+        <option value="Staff">Staff</option>
+      </select>
+      <select class="form-control" id="filterPriority" onchange="renderBoard()">
+        <option value="">All Priorities</option>
+        <option value="Normal">Normal</option>
+        <option value="Important">Important</option>
+        <option value="Urgent">Urgent</option>
+      </select>
+      <select class="form-control" id="filterDate" onchange="renderBoard()">
+        <option value="">All Dates</option>
+        <option value="today">Today</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+      </select>
+      <button class="btn-clear" onclick="clearFilters()">✕ Clear</button>
+    </div>
+    <div class="messages-list" id="boardList"></div>
+  </section>
+
+  <!-- GUIDE -->
+  <section class="section" id="sec-guide">
+    <div class="card">
+      <div class="card-title">📖 Setup & Usage Guide</div>
+
+      <div class="guide-step">
+        <div class="guide-num">1</div>
+        <div class="guide-content">
+          <h4>📁 Save Your Files</h4>
+          <p>Create a folder named <code>jkbose-school-app</code> on your computer. Inside it, place these files: <code>index.html</code>, <code>manifest.json</code>, <code>service-worker.js</code>, <code>author.jpg</code>, <code>principal.jpg</code>.</p>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-num">2</div>
+        <div class="guide-content">
+          <h4>🌐 Run Locally</h4>
+          <p><strong>Option A – VS Code:</strong> Install the "Live Server" extension, right-click <code>index.html</code>, and click "Open with Live Server".<br>
+          <strong>Option B – Python:</strong> Open terminal in folder, run <code>python -m http.server 8080</code>, then visit <code>http://localhost:8080</code>.</p>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-num">3</div>
+        <div class="guide-content">
+          <h4>📱 Install the App</h4>
+          <p>On <strong>Android (Chrome):</strong> Tap the three-dot menu → "Add to Home Screen". On <strong>Desktop (Chrome):</strong> Look for the install icon (⊕) in the address bar and click it.</p>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-num">4</div>
+        <div class="guide-content">
+          <h4>☁️ Host for Free</h4>
+          <p><strong>GitHub Pages:</strong> Push folder to GitHub repo → Settings → Pages → Deploy from branch.<br>
+          <strong>Netlify:</strong> Drag & drop your folder at <code>netlify.com/drop</code> — instant live URL, free forever.<br>
+          <strong>Cloudflare Pages:</strong> Connect GitHub repo at <code>pages.cloudflare.com</code>.</p>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-num">5</div>
+        <div class="guide-content">
+          <h4>💾 Data Storage</h4>
+          <p>All messages are saved automatically in your browser's <strong>LocalStorage</strong>. Data persists even after closing the browser. No internet needed after first load.</p>
+        </div>
+      </div>
+
+      <div class="guide-step">
+        <div class="guide-num">6</div>
+        <div class="guide-content">
+          <h4>🔕 Offline Mode</h4>
+          <p>Once visited, the app works fully offline via the Service Worker cache. No internet needed to send or view messages.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /main-wrap -->
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">✏️ Edit Message</span>
+      <button class="icon-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId">
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input type="text" class="form-control" id="editTitle">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Content</label>
+        <textarea class="form-control" id="editContent" style="min-height:120px;"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Audience</label>
+        <select class="form-control" id="editAudience">
+          <option>All Students</option><option>Class 9</option><option>Class 10</option>
+          <option>Class 11</option><option>Class 12</option><option>Staff</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Priority</label>
+        <select class="form-control" id="editPriority">
+          <option>Normal</option><option>Important</option><option>Urgent</option>
+        </select>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:10px;">
+        <input type="checkbox" id="editPin" style="width:16px;height:16px;accent-color:var(--accent);">
+        <label for="editPin" style="font-size:0.9rem;cursor:pointer;">📌 Pin this message</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div id="install-banner">
+  <p>📱 Install GGHSS Messaging App on your device for offline use!</p>
+  <button class="btn-install" id="installBtn">Install App</button>
+  <button class="btn-dismiss" onclick="document.getElementById('install-banner').classList.remove('show')">✕</button>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ─── STATE ───
+let messagesData = JSON.parse(localStorage.getItem('gghss_messages') || '[]');
+let selectedPriority = 'Normal';
+let currentTab = 'dashboard';
+let deferredPrompt = null;
+
+// ─── SEED DATA ───
+if (messagesData.length === 0) {
+  messagesData = [
+    {
+      id: Date.now() - 90000,
+      title: "Welcome to GGHSS Messaging System",
+      content: "This is the official messaging and communication platform for Govt Girls Higher Secondary School Khanyar. All important notices, PTM dates, exam schedules and announcements will be posted here.",
+      audience: "All Students",
+      priority: "Important",
+      pinned: true,
+      date: formatDate(new Date(Date.now() - 90000))
+    },
+    {
+      id: Date.now() - 60000,
+      title: "PTM – Parent Teacher Meeting",
+      content: "Parent Teacher Meeting for Class 10 is scheduled for Monday, March 30, 2026 at 10:00 AM. All parents are requested to attend. Attendance is mandatory.",
+      audience: "Class 10",
+      priority: "Urgent",
+      pinned: false,
+      date: formatDate(new Date(Date.now() - 60000))
+    },
+    {
+      id: Date.now() - 30000,
+      title: "Staff Meeting Notice",
+      content: "All teaching staff are requested to attend a mandatory staff meeting on Saturday at 9:00 AM in the conference hall. Agenda: Academic calendar review and examination schedule.",
+      audience: "Staff",
+      priority: "Normal",
+      pinned: false,
+      date: formatDate(new Date(Date.now() - 30000))
+    }
+  ];
+  saveData();
+}
+
+// ─── UTILS ───
+function formatDate(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function saveData() {
+  localStorage.setItem('gghss_messages', JSON.stringify(messagesData));
+}
+function uuid() { return Date.now() + Math.floor(Math.random()*9999); }
+
+// ─── TABS ───
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + tab).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(b => {
+    if (b.textContent.toLowerCase().includes(tab === 'dashboard' ? 'dashboard' : tab === 'compose' ? 'compose' : tab === 'board' ? 'board' : 'guide'))
+      b.classList.add('active');
+  });
+  if (tab === 'dashboard') renderDashboard();
+  if (tab === 'board') renderBoard();
+}
+
+// ─── PRIORITY ───
+function selectPriority(el) {
+  document.querySelectorAll('.priority-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPriority = el.dataset.val;
+}
+
+// ─── SEND MESSAGE ───
+function sendMessage() {
+  const title = document.getElementById('msgTitle').value.trim();
+  const content = document.getElementById('msgContent').value.trim();
+  const audience = document.getElementById('msgAudience').value;
+  const pinned = document.getElementById('msgPin').checked;
+
+  if (!title) { showToast('⚠️ Please enter a title.', 'error'); return; }
+  if (!content) { showToast('⚠️ Please enter message content.', 'error'); return; }
+
+  const msg = {
+    id: uuid(),
+    title,
+    content,
+    audience,
+    priority: selectedPriority,
+    pinned,
+    date: formatDate(new Date())
+  };
+
+  messagesData.unshift(msg);
+  saveData();
+
+  // Reset form
+  document.getElementById('msgTitle').value = '';
+  document.getElementById('msgContent').value = '';
+  document.getElementById('msgAudience').value = 'All Students';
+  document.getElementById('msgPin').checked = false;
+  document.querySelectorAll('.priority-pill').forEach(p => p.classList.remove('selected'));
+  document.querySelector('.priority-pill[data-val="Normal"]').classList.add('selected');
+  selectedPriority = 'Normal';
+
+  showToast('✅ Message Sent Successfully!', 'success');
+  if (msg.priority === 'Urgent' || msg.pinned) showToast('🔔 New Announcement Posted!', 'announcement');
+  renderDashboard();
+  updateAnnouncementStrip();
+  switchTab('dashboard');
+}
+
+// ─── RENDER CARD ───
+function renderCard(msg, compact = false) {
+  const pClass = msg.priority.toLowerCase();
+  return `
+  <div class="msg-card ${pClass} ${msg.pinned ? 'pinned-msg' : ''}" id="card-${msg.id}">
+    ${msg.priority === 'Urgent' ? `<div class="urgent-banner">🚨 <span>URGENT – ${msg.audience}</span></div>` : ''}
+    <div class="msg-card-header">
+      <div>
+        <div class="msg-title-row">
+          <div class="msg-title">${escHtml(msg.title)}</div>
+          <span class="priority-badge ${pClass}">${msg.priority === 'Urgent' ? '🚨' : msg.priority === 'Important' ? '⚠️' : '🔵'} ${msg.priority}</span>
+          ${msg.pinned ? '<span class="pin-badge">📌 Pinned</span>' : ''}
+        </div>
+      </div>
+      <div class="msg-actions">
+        <button class="msg-action-btn" onclick="togglePin(${msg.id})" title="${msg.pinned ? 'Unpin' : 'Pin'}">${msg.pinned ? '📌' : '📍'}</button>
+        <button class="msg-action-btn" onclick="openEdit(${msg.id})" title="Edit">✏️</button>
+        <button class="msg-action-btn delete" onclick="deleteMsg(${msg.id})" title="Delete">🗑️</button>
+      </div>
+    </div>
+    <div class="msg-meta">
+      <span class="msg-meta-item">👥 ${escHtml(msg.audience)}</span>
+      <span class="msg-meta-item">🕒 ${msg.date}</span>
+    </div>
+    <div class="msg-content">${escHtml(msg.content)}</div>
+  </div>`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── DASHBOARD ───
+function renderDashboard() {
+  const total = messagesData.length;
+  const urgent = messagesData.filter(m => m.priority === 'Urgent').length;
+  const important = messagesData.filter(m => m.priority === 'Important').length;
+  const pinned = messagesData.filter(m => m.pinned).length;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statUrgent').textContent = urgent;
+  document.getElementById('statImportant').textContent = important;
+  document.getElementById('statPinned').textContent = pinned;
+
+  // Class dist
+  const audiences = ['All Students', 'Class 9', 'Class 10', 'Class 11', 'Class 12', 'Staff'];
+  const ids = ['distAll', 'dist9', 'dist10', 'dist11', 'dist12', 'distStaff'];
+  audiences.forEach((a, i) => {
+    document.getElementById(ids[i]).textContent = messagesData.filter(m => m.audience === a).length;
+  });
+
+  // Recent
+  const recent = messagesData.slice(0, 5);
+  const rl = document.getElementById('recentList');
+  rl.innerHTML = recent.length ? recent.map(m => renderCard(m)).join('') : '<div class="empty-state"><div class="empty-icon">📭</div><p>No messages yet. Compose your first message!</p></div>';
+
+  // Pinned
+  const pinnedMsgs = messagesData.filter(m => m.pinned);
+  const ps = document.getElementById('pinnedSection');
+  const pl = document.getElementById('pinnedList');
+  if (pinnedMsgs.length) {
+    ps.style.display = 'block';
+    pl.innerHTML = pinnedMsgs.map(m => renderCard(m)).join('');
+  } else {
+    ps.style.display = 'none';
+  }
+}
+
+// ─── BOARD ───
+function renderBoard() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const fa = document.getElementById('filterAudience').value;
+  const fp = document.getElementById('filterPriority').value;
+  const fd = document.getElementById('filterDate').value;
+  const now = new Date();
+
+  let filtered = messagesData.filter(msg => {
+    if (q && !msg.title.toLowerCase().includes(q) && !msg.content.toLowerCase().includes(q)) return false;
+    if (fa && msg.audience !== fa) return false;
+    if (fp && msg.priority !== fp) return false;
+    if (fd) {
+      const d = new Date(msg.date.replace(' ', 'T'));
+      if (fd === 'today' && d.toDateString() !== now.toDateString()) return false;
+      if (fd === 'week') {
+        const start = new Date(now); start.setDate(now.getDate() - 7);
+        if (d < start) return false;
+      }
+      if (fd === 'month') {
+        if (d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) return false;
+      }
+    }
+    return true;
+  });
+
+  // Pinned first
+  filtered.sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    return new Date(b.date) - new Date(a.date);
+  });
+
+  const bl = document.getElementById('boardList');
+  bl.innerHTML = filtered.length
+    ? filtered.map(m => renderCard(m)).join('')
+    : '<div class="empty-state"><div class="empty-icon">🔍</div><p>No messages match your search or filters.</p></div>';
+}
+
+function clearFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterAudience').value = '';
+  document.getElementById('filterPriority').value = '';
+  document.getElementById('filterDate').value = '';
+  renderBoard();
+}
+
+// ─── PIN ───
+function togglePin(id) {
+  const m = messagesData.find(m => m.id === id);
+  if (!m) return;
+  m.pinned = !m.pinned;
+  saveData();
+  showToast(m.pinned ? '📌 Message Pinned!' : '📍 Message Unpinned', 'success');
+  renderDashboard();
+  if (currentTab === 'board') renderBoard();
+  updateAnnouncementStrip();
+}
+
+// ─── DELETE ───
+function deleteMsg(id) {
+  if (!confirm('Delete this message permanently?')) return;
+  messagesData = messagesData.filter(m => m.id !== id);
+  saveData();
+  showToast('🗑️ Message Deleted', 'error');
+  renderDashboard();
+  if (currentTab === 'board') renderBoard();
+  updateAnnouncementStrip();
+}
+
+// ─── EDIT ───
+function openEdit(id) {
+  const m = messagesData.find(m => m.id === id);
+  if (!m) return;
+  document.getElementById('editId').value = id;
+  document.getElementById('editTitle').value = m.title;
+  document.getElementById('editContent').value = m.content;
+  document.getElementById('editAudience').value = m.audience;
+  document.getElementById('editPriority').value = m.priority;
+  document.getElementById('editPin').checked = m.pinned;
+  document.getElementById('editModal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+}
+function saveEdit() {
+  const id = parseInt(document.getElementById('editId').value);
+  const m = messagesData.find(m => m.id === id);
+  if (!m) return;
+  const t = document.getElementById('editTitle').value.trim();
+  const c = document.getElementById('editContent').value.trim();
+  if (!t || !c) { showToast('⚠️ Title and content required.', 'error'); return; }
+  m.title = t;
+  m.content = c;
+  m.audience = document.getElementById('editAudience').value;
+  m.priority = document.getElementById('editPriority').value;
+  m.pinned = document.getElementById('editPin').checked;
+  saveData();
+  closeModal();
+  showToast('✅ Message Updated!', 'success');
+  renderDashboard();
+  if (currentTab === 'board') renderBoard();
+  updateAnnouncementStrip();
+}
+
+// ─── ANNOUNCEMENT STRIP ───
+function updateAnnouncementStrip() {
+  const urgent = messagesData.filter(m => m.priority === 'Urgent' || m.pinned);
+  const strip = document.getElementById('announcementStrip');
+  if (urgent.length === 0) { strip.style.display = 'none'; return; }
+  strip.style.display = 'flex';
+  const txt = urgent.map(m => `🔔 ${m.title}`).join('   |   ');
+  const inner = txt + '   |   ' + txt;
+  document.getElementById('marqueeText').textContent = inner;
+}
+
+// ─── EXPORT ───
+function exportPrint() {
+  window.print();
+}
+function exportText() {
+  if (messagesData.length === 0) { showToast('No messages to export.', 'error'); return; }
+  let txt = 'GGHSS KHANYAR – MESSAGING SYSTEM\n';
+  txt += 'Principal: Ms. Wahida Sheikh | Developer: Mateen Yousuf\n';
+  txt += '='.repeat(60) + '\n\n';
+  messagesData.forEach(m => {
+    txt += `TITLE: ${m.title}\nDATE: ${m.date}\nAUDIENCE: ${m.audience}\nPRIORITY: ${m.priority}\n`;
+    if (m.pinned) txt += 'STATUS: Pinned\n';
+    txt += `\n${m.content}\n\n${'─'.repeat(40)}\n\n`;
+  });
+  const blob = new Blob([txt], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `GGHSS_Messages_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  showToast('💾 Text file downloaded!', 'success');
+}
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(messagesData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `GGHSS_Messages_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  showToast('🗂️ JSON file downloaded!', 'success');
+}
+
+// ─── DARK MODE ───
+function toggleDark() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+  document.getElementById('darkBtn').textContent = isDark ? '🌙' : '☀️';
+  localStorage.setItem('gghss_theme', isDark ? 'light' : 'dark');
+}
+
+// ─── TOAST ───
+function showToast(msg, type = 'success') {
+  const tc = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  tc.appendChild(t);
+  setTimeout(() => {
+    t.style.animation = 'toastOut 0.3s ease forwards';
+    setTimeout(() => t.remove(), 300);
+  }, 3000);
+}
+
+// ─── PWA ───
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('show');
+});
+document.getElementById('installBtn').addEventListener('click', () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    document.getElementById('install-banner').classList.remove('show');
+  });
+});
+window.addEventListener('appinstalled', () => {
+  showToast('📱 App installed successfully!', 'success');
+});
+
+// ─── SERVICE WORKER ───
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('SW registered'))
+    .catch(e => console.error('SW error', e));
+}
+
+// ─── INIT ───
+(function init() {
+  // Theme
+  const theme = localStorage.getItem('gghss_theme');
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('darkBtn').textContent = '☀️';
+  }
+  renderDashboard();
+  updateAnnouncementStrip();
+})();
+</script>
+</body>
+</html>
